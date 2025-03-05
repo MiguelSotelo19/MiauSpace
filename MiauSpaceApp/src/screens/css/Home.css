@@ -1,0 +1,47 @@
+header {
+    background-color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9999;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.principal {
+    background-color: #f0f0f0;
+    padding-top: 80px;
+}
+
+.logo {
+    color: purple;
+    font-size: 20px;
+}
+
+.list {
+    position: fixed; 
+    top: 80px;
+    left: 0; 
+    height: calc(99vh - 80px);  
+    background-color: white; 
+    z-index: 9998; 
+    padding-top: 20px; 
+    padding-right: 0;
+}
+
+.der {
+    background-color: white;
+    position: fixed;
+    top: 80px;
+    right: 0;
+    height: calc(99vh - 80px);
+    z-index: 9997;
+    padding: 20px;
+}
+
+.post {
+    overflow-y: auto; 
+    max-height: calc(97vh - 80px);
+    padding: 1rem;
+}
