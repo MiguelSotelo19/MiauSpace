@@ -42,12 +42,17 @@
 
 .modal-body {
     overflow-y: auto;
-    max-height: 60vh;
+    max-height: 40vh;
     padding: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+}
+
+.modal-footer {
+    overflow-y: auto;
+    max-height: 30vh;
 }
 
 .modal-image {
