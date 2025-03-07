@@ -42,12 +42,17 @@
 
 .modal-body {
     overflow-y: auto;
-    max-height: 60vh;
+    max-height: 40vh;
     padding: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+}
+
+.modal-footer {
+    overflow-y: auto;
+    max-height: 30vh;
 }
 
 .modal-image {
@@ -58,3 +63,27 @@
     max-height: 50vh;
 }
 
+.accion {
+    font-weight: bold;
+}
+
+.reaccion {
+    transform: rotate(180deg);
+    transform: scaleY(-1);
+}
+
+.reaccion-selected {
+    /*font-weight: bold;
+    transform: rotate(180deg);
+    transform: scaleY(-1);*/
+    color: blue;
+}
+
+.reaccion:hover {
+    background-color: gainsboro;
+}
+
+.icono {
+    width: 30px;
+    height: 30px;
+}
