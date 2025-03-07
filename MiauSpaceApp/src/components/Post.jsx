@@ -6,6 +6,8 @@ import { Comment } from './Comment';
 import './css/Post.css';
 
 import usuario_ from '../assets/usuario_.png';
+import reaccion from '../assets/reaccion.png';
+import comment from '../assets/comentario.png'
 
 export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
     let clase = 'd-flex flex-wrap mt-2';
@@ -56,9 +58,16 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                         )}
                     </div>
                     <hr />
-                    <div className="d-flex justify-content-evenly">
-                        <button className="w-50 me-1 p-1" data-bs-toggle="modal" data-bs-target={"#"+modalId}>Me gusta</button>
-                        <button className="w-50 ms-1 p-1" data-bs-toggle="modal" data-bs-target={"#"+modalId}>Comentar</button>
+                    <div className="d-flex justify-content-evenly align-items-center py-2">                        
+                        <button className="btn d-flex align-items-center accion reaccion-selected">
+                            <img src={reaccion} className="me-2 reaccion icono" alt="Me gusta" />
+                            Me gusta
+                        </button>
+
+                        <button className="btn d-flex align-items-center accion" data-bs-toggle="modal" data-bs-target={`#${modalId}`}>
+                            <img src={comment} className="me-2 icono" alt="Comentar" />
+                            Comentar
+                        </button>
                     </div>
                 </div>
             </div>

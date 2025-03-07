@@ -63,3 +63,27 @@
     max-height: 50vh;
 }
 
+.accion {
+    font-weight: bold;
+}
+
+.reaccion {
+    transform: rotate(180deg);
+    transform: scaleY(-1);
+}
+
+.reaccion-selected {
+    /*font-weight: bold;
+    transform: rotate(180deg);
+    transform: scaleY(-1);*/
+    color: blue;
+}
+
+.reaccion:hover {
+    background-color: gainsboro;
+}
+
+.icono {
+    width: 30px;
+    height: 30px;
+}

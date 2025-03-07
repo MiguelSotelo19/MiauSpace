@@ -1,11 +1,8 @@
 import { Post } from "../components/Post"
 
-import logo from '../assets/logo.png'
+
 import usuario from '../assets/usuario.png'
 import usuario_ from '../assets/usuario_.png'
-import salir from '../assets/salir.png'
-import amigos from '../assets/amigos.png'
-import inicio from '../assets/inicio.png'
 import imagen from '../assets/imagen.png'
 import cara_feliz from '../assets/feliz.png'
 import skibidi from '../assets/skibidi.jpeg';
@@ -15,52 +12,22 @@ import './css/Home.css'
 
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap/dist/js/bootstrap.bundle"
+import { Header } from "../components/Header"
+import { Navigation } from "../components/Navigation"
+import { SideColumn } from "../components/SideColumn"
 
 export const Home = () => {
     const images = [skibidi, skibidi, skibidi, skibidi, skibidi, skibidi, skibidi];
-    const images2 = [skibidi, skibidi, skibidi, skibidi];
+    const images2 = [skibidi, skibidi, skibidi, cara_feliz];
     const images3 = [skibidi];
 
     return(
     <> 
         <div className="container-fluid principal">
-            <header className="ps-5 pe-5">
-                <div className="d-flex align-items-center justify-content-between mt-2 mb-2 p-2">
-                    <div className="d-flex align-items-center justify-content-center">
-                        <img src={logo} className="me-3 w-25" alt="logo.jpg"/>
-                        <p className="logo">MiauSpace</p>
-                    </div>
-                    <div className="d-flex align-items-center justify-content-center">
-                        <img src={usuario} className="me-3 w-25" alt="logo.jpg"/>
-                        <p>Nombre de Perfil</p>
-                    </div>
-                </div>
-            </header>
+            <Header usuario={usuario} />
 
             <div className="row" style={{margin: 0}}>
-                <div className="col-lg-2 col-md-3 d-none d-md-flex flex-column justify-content-start list">
-                    <ul className="list-group mt-5 me-3">
-                        <li className="list-group-item pt-3 pb-3">
-                            <img src={inicio} className="me-3 w-20" alt="logo.jpg"/>
-                            Inicio
-                        </li>
-                        <li className="list-group-item pt-3 pb-3">
-                            <img src={usuario_} className="me-3 w-20" alt="logo.jpg"/>
-                            Perfil
-                        </li>
-                        <li className="list-group-item pt-3 pb-3">
-                            <img src={amigos} className="me-3 w-20" alt="logo.jpg"/>
-                            Amigos
-                        </li>
-                    </ul>
-                    <hr />
-                    <ul className="list-group">
-                        <li className="list-group-item pt-3 pb-3">
-                            <img src={salir} className="me-3 w-20" alt="logo.jpg"/>
-                            Cerrar sesión
-                        </li>
-                    </ul>
-                </div>
+                <Navigation />
 
                 <div className="col-lg-7 col-md-8 col-12 offset-lg-2 offset-md-3" style={{paddingTop: '20px'}}>
                     <div className="post">
@@ -89,9 +56,7 @@ export const Home = () => {
                     </div>
                 </div>
 
-                <div className="col-lg-3 d-none d-lg-flex justify-content-center der">
-                    <p>Barra lateral derecha</p>
-                </div>
+                <SideColumn />
 
             </div>
         </div>
