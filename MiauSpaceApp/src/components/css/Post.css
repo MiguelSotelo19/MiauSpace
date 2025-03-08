@@ -67,11 +67,6 @@
     font-weight: bold;
 }
 
-.reaccion {
-    transform: rotate(180deg);
-    transform: scaleY(-1);
-}
-
 .reaccion-selected {
     /*font-weight: bold;
     transform: rotate(180deg);

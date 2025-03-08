@@ -8,6 +8,7 @@ import './css/Post.css';
 import usuario_ from '../assets/usuario_.png';
 import reaccion from '../assets/reaccion.png';
 import comment from '../assets/comentario.png'
+import reaccion2 from '../assets/reaccion_selected.png';
 
 export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
     let clase = 'd-flex flex-wrap mt-2';
@@ -60,7 +61,7 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                     <hr />
                     <div className="d-flex justify-content-evenly align-items-center py-2">                        
                         <button className="btn d-flex align-items-center accion reaccion-selected">
-                            <img src={reaccion} className="me-2 reaccion icono" alt="Me gusta" />
+                            <img src={reaccion2} className="me-2 reaccion icono" alt="Me gusta" />
                             Me gusta
                         </button>
 
