@@ -49,7 +49,7 @@ export const Home = () => {
                             </div>
                         </div>
 
-                        <Post postId="1" picUser={usuario_} user={"Lauro Deidad"} body={"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae assumenda, totam accusamus iste distinctio, illum magni blanditiis eius corporis rerum a dolore numquam deserunt quisquam, asperiores ullam nobis ex consectetur ab aliquid voluptates? Quisquam voluptates in hic qui veritatis ipsa!"} picsBody={images}/>
+                        <Post postId="1" picUser={usuario_} user={"Lauro Deidad"} body={"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae assumenda, totam accusamus iste distinctio, illum magni blanditiis eius corporis rerum a dolore numquam deserunt quisquam, asperiores ullam nobis ex consectetur ab aliquid voluptates? Quisquam voluptates in hic qui veritatis ipsa!"} picsBody={images} />
                         <Post postId="2"  picUser={usuario_} user={"Lauro Deidad"} body={"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae assumenda, totam accusamus iste distinctio, illum magni blanditiis eius corporis rerum a dolore numquam deserunt quisquam, asperiores ullam nobis ex consectetur ab aliquid voluptates? Quisquam voluptates in hic qui veritatis ipsa!"} picsBody={images2} />
                         <Post postId="3"  picUser={usuario_} user={"Lauro Deidad"} body={"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae assumenda, totam accusamus iste distinctio, illum magni blanditiis eius corporis rerum a dolore numquam deserunt quisquam, asperiores ullam nobis ex consectetur ab aliquid voluptates? Quisquam voluptates in hic qui veritatis ipsa!"} picsBody={images3} />
                         

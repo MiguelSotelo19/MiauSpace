@@ -4,8 +4,8 @@ import './css/Comment.css'
 export const Comment = ({ usuario, comentario, perfil }) => {
     return(
         <>
-        <div className=" d-flex justify-content-evenly mb-4" style={{ width: '95%' }}>
-            <div className="d-flex align-items-start profile">
+        <div className="d-flex align-items-center justify-content-center w-100">
+            <div className="d-flex align-items-start profile me-2">
                 <img src={perfil} alt="logo.jpg"/>
             </div>
             <div className="d-flex flex-column comment">
