@@ -117,3 +117,12 @@
 .reactions-popup button:hover {
     transform: scale(1.3);
 }
+
+.imgProfile {
+    width: 30px;
+    height: 30px;
+}
+
+.imgReaction {
+    width: 25px;
+}

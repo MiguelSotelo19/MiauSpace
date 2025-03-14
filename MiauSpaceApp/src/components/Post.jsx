@@ -1,7 +1,11 @@
+import { useState, useEffect, useRef, use } from "react";
+import { Comment } from "./Comment";
+
+import "./css/Post.css";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle";
-import { Comment } from "./Comment";
-import "./css/Post.css";
+
 import usuario_ from "../assets/usuario_.png";
 import reaccion from "../assets/reaccion.png";
 import reaccion1 from "../assets/reaccion1.png";
@@ -11,7 +15,6 @@ import reaccion4 from "../assets/reaccion4.png";
 import reaccion5 from "../assets/reaccion5.png";
 import reaccion6 from "../assets/reaccion6.png";
 import comment from "../assets/comentario.png";
-import { useState, useEffect, useRef, use } from "react";
 
 export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
     const [ selected, setSelected ] = useState(false);
@@ -137,12 +140,12 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
 
                         {showReactions && (
                             <div className="reactions-popup">
-                                <button onClick={() => handleSelectReaction("1")}><img src={reaccion1} style={{width: '25px'}} /></button>
-                                <button onClick={() => handleSelectReaction("2")}><img src={reaccion2} style={{width: '25px'}} /></button>
-                                <button onClick={() => handleSelectReaction("3")}><img src={reaccion3} style={{width: '25px'}} /></button>
-                                <button onClick={() => handleSelectReaction("4")}><img src={reaccion4} style={{width: '25px'}} /></button>
-                                <button onClick={() => handleSelectReaction("5")}><img src={reaccion5} style={{width: '25px'}} /></button>
-                                <button onClick={() => handleSelectReaction("6")}><img src={reaccion6} style={{width: '25px'}} /></button>
+                                <button onClick={() => handleSelectReaction("1")}><img src={reaccion1} className="imgReaction" /></button>
+                                <button onClick={() => handleSelectReaction("2")}><img src={reaccion2} className="imgReaction" /></button>
+                                <button onClick={() => handleSelectReaction("3")}><img src={reaccion3} className="imgReaction" /></button>
+                                <button onClick={() => handleSelectReaction("4")}><img src={reaccion4} className="imgReaction" /></button>
+                                <button onClick={() => handleSelectReaction("5")}><img src={reaccion5} className="imgReaction" /></button>
+                                <button onClick={() => handleSelectReaction("6")}><img src={reaccion6} className="imgReaction" /></button>
                             </div>
                         )}
                     </div>
@@ -178,9 +181,9 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="d-flex ps-4 pe-5 mb-3 mt-3 w-100">
-                            <img src={usuario_} alt="perfil" style={{ width: "5%" }} />
-                            <input type="text" className="form-control" placeholder="Comenta aquí" />
+                        <div className="d-flex align-items-center justify-content-between ps-4 pe-5 mb-3 mt-3 w-100">
+                            <img src={usuario_} alt="perfil" className="imgProfile" />
+                            <input type="text" className="form-control ms-4" placeholder="Comenta aquí" />
                         </div>
                     </div>
                 </div>
