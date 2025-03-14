@@ -17,7 +17,7 @@ import { Navigation } from "../components/Navigation"
 import { SideColumn } from "../components/SideColumn"
 
 export const Home = () => {
-    const images = [skibidi, skibidi, skibidi, skibidi, skibidi, skibidi, skibidi];
+    const images = [skibidi, cara_feliz, skibidi, cara_feliz, skibidi, skibidi, cara_feliz];
     const images2 = [skibidi, skibidi, skibidi, cara_feliz];
     const images3 = [skibidi];
 
