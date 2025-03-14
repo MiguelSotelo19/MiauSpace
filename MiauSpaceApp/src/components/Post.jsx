@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, use } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Comment } from "./Comment";
 
 import "./css/Post.css";
@@ -16,6 +16,7 @@ import reaccion5 from "../assets/reaccion5.png";
 import reaccion6 from "../assets/reaccion6.png";
 import comment from "../assets/comentario.png";
 
+
 export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
     const [ selected, setSelected ] = useState(false);
     const [ showReactions, setShowReactions ] = useState(false);
@@ -26,21 +27,23 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
 
     let clase = "d-flex flex-wrap mt-2";
     let imgClase = "post-image";
-    let visibleImages = picsBody.slice(0, 3);
-    let hiddenImages = picsBody.slice(3);
-    let showMore = hiddenImages.length > 1;
+    if(picsBody != null){
+        let visibleImages = picsBody.slice(0, 3);
+        let hiddenImages = picsBody.slice(3);
+        let showMore = hiddenImages.length > 1;
 
-    if (picsBody.length === 4) {
-        visibleImages = picsBody.slice(0, 4);
-        hiddenImages = [];
-        showMore = false;
-    }
+        if (picsBody.length === 4) {
+            visibleImages = picsBody.slice(0, 4);
+            hiddenImages = [];
+            showMore = false;
+        }
 
-    if (picsBody.length === 1) {
-        clase += " oneImage";
-        imgClase = "post-one-image";
-    } else {
-        clase += " image-container";
+        if (picsBody.length === 1) {
+            clase += " oneImage";
+            imgClase = "post-one-image";
+        } else {
+            clase += " image-container";
+        }
     }
 
     const modalId = "modalImages" + postId;
@@ -116,7 +119,7 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                     <div className="d-flex flex-column mt-2">
                         <p>{body}</p>
 
-                        {picsBody.length > 0 && (
+                        {Array.isArray(picsBody) && picsBody.length > 0 && (
                             <div className={clase} data-bs-toggle="modal" data-bs-target={"#" + modalId}>
                                 {visibleImages.map((img, index) => (
                                     <img key={index} src={img} className={imgClase} alt={`Imagen ${index + 1}`} />
@@ -166,7 +169,7 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                         </div>
                         <div className="modal-body">
-                            {picsBody.map((img, index) => (
+                            {Array.isArray(picsBody) && picsBody.map((img, index) => (
                                 <img key={index} src={img} className="post-one-image mt-4 mb-3" alt={`Imagen ${index + 1}`} />
                             ))}
                         </div>
