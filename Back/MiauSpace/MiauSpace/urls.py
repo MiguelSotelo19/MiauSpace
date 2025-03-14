@@ -21,5 +21,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('mascotas/',include('usuario_mascota.urls')),
     path('posts/', include('post.urls')),
-    path('comentarios/', include('comentarios.urls'))
+    path('comentarios/', include('comentarios.urls')),
+    path('amistades/', include('amistades.urls')),
+    path('reacciones/', include('reacciones.urls')),
+    path('imagenes/', include('imagenes.urls'))
 ]
