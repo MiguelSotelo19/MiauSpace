@@ -124,7 +124,6 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                                 {visibleImages.map((img, index) => (
                                     <img key={index} src={img} className={imgClase} alt={`Imagen ${index + 1}`} />
                                 ))}
-
                                 {showMore && (
                                     <div className="more-images">
                                         <span>+{hiddenImages.length}</span>
@@ -135,24 +134,24 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                     </div>
                     <hr />
                     <div className="d-flex justify-content-evenly align-items-center py-2">
-                    <div className="reaction-container" onMouseEnter={() => setShowReactions(true)} onMouseLeave={() => setShowReactions(false)}>
-                        <button className={`btn d-flex align-items-center accion ${reaction ? claseReaccion : ""}`} onClick={reaccionSelect} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>
-                            <img src={reaction ? reaction : reaccion} id={`reaccion${postId}`} className="me-2 reaccion icono" alt="Reacción" />
-                            {reaction ? reactionText : "Me gusta"}
-                        </button>
-
-                        {showReactions && (
-                            <div className="reactions-popup">
-                                <button onClick={() => handleSelectReaction("1")}><img src={reaccion1} className="imgReaction" /></button>
-                                <button onClick={() => handleSelectReaction("2")}><img src={reaccion2} className="imgReaction" /></button>
-                                <button onClick={() => handleSelectReaction("3")}><img src={reaccion3} className="imgReaction" /></button>
-                                <button onClick={() => handleSelectReaction("4")}><img src={reaccion4} className="imgReaction" /></button>
-                                <button onClick={() => handleSelectReaction("5")}><img src={reaccion5} className="imgReaction" /></button>
-                                <button onClick={() => handleSelectReaction("6")}><img src={reaccion6} className="imgReaction" /></button>
-                            </div>
-                        )}
-                    </div>
-
+                        <div className="reaction-container" onMouseEnter={() => setShowReactions(true)} onMouseLeave={() => setShowReactions(false)}>
+                            <button className={`btn d-flex align-items-center accion ${reaction ? claseReaccion : ""}`} onClick={reaccionSelect} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>
+                                <img src={reaction ? reaction : reaccion} id={`reaccion${postId}`} className="me-2 reaccion icono" alt="Reacción" />
+                                {reaction ? reactionText : "Me gusta"}
+                            </button>
+    
+                            {showReactions && (
+                                <div className="reactions-popup">
+                                    <button onClick={() => handleSelectReaction("1")}><img src={reaccion1} className="imgReaction" /></button>
+                                    <button onClick={() => handleSelectReaction("2")}><img src={reaccion2} className="imgReaction" /></button>
+                                    <button onClick={() => handleSelectReaction("3")}><img src={reaccion3} className="imgReaction" /></button>
+                                    <button onClick={() => handleSelectReaction("4")}><img src={reaccion4} className="imgReaction" /></button>
+                                    <button onClick={() => handleSelectReaction("5")}><img src={reaccion5} className="imgReaction" /></button>
+                                    <button onClick={() => handleSelectReaction("6")}><img src={reaccion6} className="imgReaction" /></button>
+                                </div>
+                            )}
+                        </div>
+    
                         <button className="btn d-flex align-items-center accion" data-bs-toggle="modal" data-bs-target={`#${modalId}`}>
                             <img src={comment} className="me-2 icono" alt="Comentar" />
                             Comentar
@@ -160,18 +159,32 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                     </div>
                 </div>
             </div>
-
+    
             <div className="modal fade" id={modalId} tabIndex="-1" aria-labelledby={`${modalId}Label`} aria-hidden="true">
                 <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title" id="modalImagesLabel">Imágenes</h5>
+                            <h5 className="modal-title" id={`${modalId}Label`}>Imágenes</h5>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                         </div>
                         <div className="modal-body">
-                            {Array.isArray(picsBody) && picsBody.map((img, index) => (
-                                <img key={index} src={img} className="post-one-image mt-4 mb-3" alt={`Imagen ${index + 1}`} />
-                            ))}
+                            <div id={`carousel-${modalId}`} className="carousel carousel-fade" data-bs-ride="carousel">
+                                <div className="carousel-inner">
+                                    {Array.isArray(picsBody) && picsBody.map((img, index) => (
+                                        <div key={index} className={`carousel-item ${index === 0 ? "active" : ""}`}>
+                                            <img src={img} className="d-block w-100" alt={`Imagen ${index + 1}`} />
+                                        </div>
+                                    ))}
+                                </div>
+                                <button className="carousel-control-prev" type="button" data-bs-target={`#carousel-${modalId}`} data-bs-slide="prev">
+                                    <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span className="visually-hidden">Anterior</span>
+                                </button>
+                                <button className="carousel-control-next" type="button" data-bs-target={`#carousel-${modalId}`} data-bs-slide="next">
+                                    <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span className="visually-hidden">Siguiente</span>
+                                </button>
+                            </div>
                         </div>
                         <div className="modal-footer">
                             <div className="d-flex justify-content-start align-items-start w-100">
@@ -193,4 +206,5 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
             </div>
         </>
     );
+    
 };

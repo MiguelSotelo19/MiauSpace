@@ -126,3 +126,17 @@
 .imgReaction {
     width: 25px;
 }
+
+.carousel-inner {
+    display: flex;
+    align-items: center;
+    min-height: 40vh;
+}
+
+.carousel-item img {
+    min-width: 20vh;
+    max-width: 80vw;
+    max-height: 40vh;
+    object-fit: contain;
+    margin: auto;
+}
