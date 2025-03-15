@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Comment } from "./Comment";
+import axios from 'axios';
 
 import "./css/Post.css";
 
@@ -14,16 +15,78 @@ import reaccion3 from "../assets/reaccion3.png";
 import reaccion4 from "../assets/reaccion4.png";
 import reaccion5 from "../assets/reaccion5.png";
 import reaccion6 from "../assets/reaccion6.png";
-import comment from "../assets/comentario.png";
-
+import commentIcon from "../assets/comentario.png";
+import commentsIcon from "../assets/comentarios.png";
+import enviar from "../assets/enviar.png";
 
 export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
+    const urlComments = 'http://127.0.0.1:8000/comentarios/api/';
+    const urlMascota = 'http://127.0.0.1:8000/mascotas/api/';
+
+    const [ comentario, setComentario ] = useState("");
+    const [ comments, setComments ] = useState([]);
+    const [ mascotas, setMascotas ] = useState([]);
     const [ selected, setSelected ] = useState(false);
     const [ showReactions, setShowReactions ] = useState(false);
     const [ reactionText, setReactionText ] = useState("");
     const [ reaction, setReaction ] = useState(null);
     const [ claseReaccion, setClaseReaccion ] = useState("");
     const pressTimer = useRef(null);
+
+    useEffect(() => {
+        getData();
+    }, [])
+
+    const getData = async () => {
+        const respuestaM = await axios({
+            method: "GET",
+            url: urlMascota,
+            /*headers: {
+               Authorization: `Bearer ${token}` 
+            }*/
+        });
+
+        const respuestaC = await axios({
+            method: "GET",
+            url: urlComments,
+            /*headers: {
+               Authorization: `Bearer ${token}` 
+            }*/
+        });
+
+        setComments(respuestaC.data.filter(comment => comment.post == postId));
+        setMascotas(respuestaM.data);
+
+        console.log(respuestaC.data);
+        console.log(respuestaM.data);
+    }
+
+    const enviarComentario = async () => {
+        if(comentario.trim() == ""){
+            console.log("HOLA")
+        } else {
+            const parametros = {
+                texto: comentario,
+                fecha_comentario: new Date().toISOString(),
+                post: postId,
+                mascota: 1
+            }
+
+            enviarSolicitud("POST", parametros, urlComments)
+        }
+    }
+
+    const enviarSolicitud = async (metodo, parametros, url) =>{
+        await axios({
+            method: metodo,
+            url: url,
+            data: parametros
+        }).then(function (respuesta) {
+            console.log(respuesta);
+            getData();
+            setComentario("");
+        })
+    }
 
     let clase = "d-flex flex-wrap mt-2";
     let imgClase = "post-image";
@@ -115,6 +178,7 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                     <div className="d-flex align-items-center justify-content-start">
                         <img src={picUser} className="me-3 rounded-circle" alt="Usuario" width="40" height="40" />
                         <p className="m-0">{user}</p>
+                        <p>{postId}</p>
                     </div>
                     <div className="d-flex flex-column mt-2">
                         <p>{body}</p>
@@ -153,7 +217,7 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                         </div>
     
                         <button className="btn d-flex align-items-center accion" data-bs-toggle="modal" data-bs-target={`#${modalId}`}>
-                            <img src={comment} className="me-2 icono" alt="Comentar" />
+                            <img src={commentIcon} className="me-2 icono" alt="Comentar" />
                             Comentar
                         </button>
                     </div>
@@ -190,16 +254,24 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                             <div className="d-flex justify-content-start align-items-start w-100">
                                 <h4>Comentarios</h4>
                             </div>
-                            <div className="d-flex flex-column justify-content-center align-items-center w-100">
+                            <div className="d-flex flex-column justify-content-center w-100">
                                 <div>
-                                    <Comment usuario="El cocker" comentario="Comentario de prueba" perfil={usuario_} />
-                                    <Comment usuario="El cocker" comentario="Otro comentario de prueba Otro comentario de prueba Otro comentario de prueba" perfil={usuario_} />
+                                    {Array.isArray(comments) && comments.length > 0 ? 
+                                    (comments.map(comment => (
+                                        <Comment key={comment.id} usuario={mascotas.find(masc => masc.id == comment.mascota)?.nombre_usuario} comentario={comment.texto} perfil={mascotas.find(masc => masc.id == comment.mascota)?.foto_perfil} fecha_comentario={comment.fecha_comentario} />
+                                    ))) : (
+                                        <div className="d-flex flex-column justify-content-center align-items-center">
+                                            <img src={commentsIcon} width={'200px'} height={'200px'} />
+                                            <p>Aún no hay comentarios por mostrar</p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
                         <div className="d-flex align-items-center justify-content-between ps-4 pe-5 mb-3 mt-3 w-100">
                             <img src={usuario_} alt="perfil" className="imgProfile" />
-                            <input type="text" className="form-control ms-4" placeholder="Comenta aquí" />
+                            <input type="text" className="form-control ms-4" onInput={(e) => setComentario(e.target.value)} value={comentario} placeholder="Comenta aquí" />
+                            <button className="btn btn-light ms-4 enviar"><img src={enviar} alt="enviar" className="imgProfile" onClick={() => enviarComentario()} /></button>
                         </div>
                     </div>
                 </div>

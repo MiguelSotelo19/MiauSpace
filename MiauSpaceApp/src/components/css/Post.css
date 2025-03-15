@@ -140,3 +140,7 @@
     object-fit: contain;
     margin: auto;
 }
+
+.enviar {
+    border: 1px solid blue;
+}

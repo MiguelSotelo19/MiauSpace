@@ -19,7 +19,9 @@ import { SideColumn } from "../components/SideColumn"
 
 export const Home = () => {
     const url = 'http://127.0.0.1:8000/posts/api/';
+    const urlMascota = 'http://127.0.0.1:8000/mascotas/api/';
     const [ posts, setPosts ] = useState([]);
+    const [ mascotas, setMascotas ] = useState([]);
 
     const images = [skibidi, skibidi, skibidi, skibidi, skibidi, skibidi, skibidi];
     const images2 = [skibidi, skibidi, skibidi, cara_feliz];
@@ -27,6 +29,7 @@ export const Home = () => {
 
     useEffect(() => {
         getPosts();
+        getMascotas();
     }, [])
 
     const getPosts = async () => {
@@ -38,7 +41,17 @@ export const Home = () => {
             }*/
         });
         setPosts(respuesta.data);
-        console.log(respuesta.data)
+    }
+
+    const getMascotas = async () => {
+        const respuesta = await axios({
+            method: "GET",
+            url: urlMascota,
+            /*headers: {
+               Authorization: `Bearer ${token}` 
+            }*/
+        });
+        setMascotas(respuesta.data);
     }
 
     return(
@@ -70,7 +83,7 @@ export const Home = () => {
                         </div>
 
                         {posts.map((post, i) => (
-                            <Post key={post.id} postId={post.id} picUser={usuario_} user={"Lauro Deidad"} body={post.contenido} picsBody={post.img} />
+                            <Post key={post.id} postId={post.id} picUser={usuario_} user={mascotas.find(masc => masc.id == post.mascota)?.nombre_usuario} body={post.contenido} picsBody={post.img} />
                         ))}
 
                         

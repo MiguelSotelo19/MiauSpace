@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css?family=Fira+Sans");
+/*@import url("https://fonts.googleapis.com/css?family=Fira+Sans");*/
 /*Variables*/
 .left-section .inner-content {
   position: absolute;
@@ -13,11 +13,6 @@
 html, body {
   margin: 0;
   padding: 0;
-}
-
-body {
-  font-family: "Fira Sans", sans-serif;
-  color: #f5f6fa;
 }
 
 .background {
@@ -87,6 +82,8 @@ body {
   margin: 2rem 0 0.5rem 0;
   padding: 0;
   text-shadow: 0 0 1rem #fefefe;
+  font-family: "Fira Sans", sans-serif;
+  color: #f5f6fa;
 }
 @media (max-width: 770px) {
   .heading {
@@ -103,6 +100,8 @@ body {
   line-height: 1.15em;
   padding: 0 1rem;
   margin: 0 auto;
+  font-family: "Fira Sans", sans-serif;
+  color: #f5f6fa;
 }
 @media (max-width: 770px) {
   .subheading {
