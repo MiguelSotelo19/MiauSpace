@@ -45,24 +45,31 @@ INSTALLED_APPS = [
     'imagenes',
     'comentarios',
     'reacciones',
-    'corsheaders'
+    'corsheaders', 
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
+
+CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173"
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+]
+
+#SESSION_COOKIE_HTTPONLY = True
 ROOT_URLCONF = 'MiauSpace.urls'
 
 TEMPLATES = [
