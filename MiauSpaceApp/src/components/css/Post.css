@@ -42,7 +42,7 @@
 
 .modal-body {
     overflow-y: auto;
-    max-height: 40vh;
+    max-height: 30vh;
     padding: 10px;
     display: flex;
     flex-direction: column;

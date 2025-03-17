@@ -1,31 +1,25 @@
 import { useState, useEffect, useRef } from "react";
-import { Post } from "../components/Post"
+import { Post } from "../components/Post";
 import axios from 'axios';
 
-import usuario from '../assets/usuario.png'
-import usuario_ from '../assets/usuario_.png'
-import imagen from '../assets/imagen.png'
-import cara_feliz from '../assets/feliz.png'
-import skibidi from '../assets/skibidi.jpeg';
+import usuario from '../assets/usuario.png';
+import usuario_ from '../assets/usuario_.png';
+import imagen from '../assets/imagen.png';
+import cara_feliz from '../assets/feliz.png';
 
+import './css/Home.css';
 
-import './css/Home.css'
-
-import "bootstrap/dist/css/bootstrap.min.css"
-import "bootstrap/dist/js/bootstrap.bundle"
-import { Header } from "../components/Header"
-import { Navigation } from "../components/Navigation"
-import { SideColumn } from "../components/SideColumn"
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle";
+import { Header } from "../components/Header";
+import { Navigation } from "../components/Navigation";
+import { SideColumn } from "../components/SideColumn";
 
 export const Home = () => {
     const url = 'http://127.0.0.1:8000/posts/api/';
     const urlMascota = 'http://127.0.0.1:8000/mascotas/api/';
     const [ posts, setPosts ] = useState([]);
     const [ mascotas, setMascotas ] = useState([]);
-
-    const images = [skibidi, skibidi, skibidi, skibidi, skibidi, skibidi, skibidi];
-    const images2 = [skibidi, skibidi, skibidi, cara_feliz];
-    const images3 = [skibidi];
 
     useEffect(() => {
         getPosts();

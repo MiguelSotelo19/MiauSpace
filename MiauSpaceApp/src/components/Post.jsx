@@ -20,11 +20,18 @@ import commentsIcon from "../assets/comentarios.png";
 import enviar from "../assets/enviar.png";
 
 export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
+    const urlReacciones = 'http://127.0.0.1:8000/reacciones/api/';
     const urlComments = 'http://127.0.0.1:8000/comentarios/api/';
     const urlMascota = 'http://127.0.0.1:8000/mascotas/api/';
 
+    const [ idReaction, setIdReaction ] = useState(0);
+    const [ reacted, setReacted ] = useState(false);
+    const [ idUser, setIdUser ] = useState(0);
+    const [ reacciones, setReacciones ] = useState(0);
+    const [ cantReacciones, setCantReacciones ] = useState(0);
     const [ comentario, setComentario ] = useState("");
     const [ comments, setComments ] = useState([]);
+    const [ cantComments, setCantComments ] = useState(0);
     const [ mascotas, setMascotas ] = useState([]);
     const [ selected, setSelected ] = useState(false);
     const [ showReactions, setShowReactions ] = useState(false);
@@ -32,6 +39,8 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
     const [ reaction, setReaction ] = useState(null);
     const [ claseReaccion, setClaseReaccion ] = useState("");
     const pressTimer = useRef(null);
+
+    let username = localStorage.getItem("username");
 
     useEffect(() => {
         getData();
@@ -54,11 +63,52 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
             }*/
         });
 
-        setComments(respuestaC.data.filter(comment => comment.post == postId));
-        setMascotas(respuestaM.data);
+        const respuestaR = await axios({
+            method: "GET",
+            url: urlReacciones
+        })
 
-        console.log(respuestaC.data);
-        console.log(respuestaM.data);
+        let comentarios = respuestaC.data.filter(comment => comment.post == postId);
+        let reacciones = respuestaR.data.filter(reac => reac.post == postId);
+        let user = respuestaM.data.filter(user => user.nombre_usuario == username)[0].id;
+        let reaccionUser = respuestaR.data.filter(reac => reac.mascota == user && reac.post == postId);        
+
+        if(reaccionUser.length > 0) {
+            setReactionUser(parseInt(reaccionUser[0].tipo_reaccion));
+            setReacted(true);
+            setIdReaction(reaccionUser[0].id);
+        }
+
+        setReacciones(respuestaR.data)
+        setCantReacciones(reacciones.length)
+        setComments(comentarios);
+        setCantComments(comentarios.length);
+        setMascotas(respuestaM.data);
+        setIdUser(user);
+    }
+    
+    const registrarReaccion = (selected) => {
+        let method = "POST";
+        let url = urlReacciones;
+        if(reacted && selected != 0){
+            method = "PUT";
+            url += idReaction + "/";
+        }
+
+        if (selected == 0){
+            method = "DELETE";
+            url += idReaction + "/";
+        }
+        
+        const parametros = {
+            post: postId,
+            mascota: idUser,
+            tipo_reaccion: selected,
+            fecha_comentario: new Date().toISOString()
+        }
+
+        enviarSolicitud(method, parametros, url, "Reaction");
+        
     }
 
     const enviarComentario = async () => {
@@ -72,11 +122,11 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                 mascota: 1
             }
 
-            enviarSolicitud("POST", parametros, urlComments)
+            enviarSolicitud("POST", parametros, urlComments, "Comment")
         }
     }
 
-    const enviarSolicitud = async (metodo, parametros, url) =>{
+    const enviarSolicitud = async (metodo, parametros, url, type) =>{
         await axios({
             method: metodo,
             url: url,
@@ -84,7 +134,15 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
         }).then(function (respuesta) {
             console.log(respuesta);
             getData();
-            setComentario("");
+            if(type == "Reaction"){
+                setReacted(true);
+            } else {
+                setComentario("");
+            }
+
+            if(metodo == "DELETE"){
+                setReacted(false);
+            }
         })
     }
 
@@ -115,9 +173,9 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
         setSelected(!selected);
 
         if(!selected){
-            setReactionSelected(reaccion, "Me gusta", "");
+            handleSelectReaction(0);
         } else if(claseReaccion == "" ){
-            setReactionSelected(reaccion1, "Me gusta", "reaccion-selected1");
+            handleSelectReaction(1);
         }
     };
 
@@ -131,27 +189,35 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
         clearTimeout(pressTimer.current);
     };
 
-    const handleSelectReaction = (reactionType) => {
+    const setReactionUser = (reactionType) => {
         switch(reactionType){
-            case "1": 
+            case 0:
+                setReactionSelected(reaccion, "Me gusta", "");
+            break;
+            case 1: 
                 setReactionSelected(reaccion1, "Me gusta", "reaccion-selected1");
             break;
-            case "2": 
+            case 2: 
                 setReactionSelected(reaccion2, "Me encanta", "reaccion-selected2");
             break;
-            case "3": 
+            case 3: 
                 setReactionSelected(reaccion3, "Me divierte", "reaccion-selected3");
             break;
-            case "4": 
+            case 4: 
                 setReactionSelected(reaccion4, "Me asombra", "reaccion-selected3");
             break;
-            case "5": 
+            case 5: 
                 setReactionSelected(reaccion5, "Me entristece", "reaccion-selected3");
             break;
-            case "6": 
+            case 6: 
                 setReactionSelected(reaccion6, "Me enoja", "reaccion-selected3");
             break;
         }
+    } 
+
+    const handleSelectReaction = (reactionType) => {
+        setReactionUser(reactionType);
+        registrarReaccion(reactionType);
         setShowReactions(false);
     };
 
@@ -178,7 +244,6 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                     <div className="d-flex align-items-center justify-content-start">
                         <img src={picUser} className="me-3 rounded-circle" alt="Usuario" width="40" height="40" />
                         <p className="m-0">{user}</p>
-                        <p>{postId}</p>
                     </div>
                     <div className="d-flex flex-column mt-2">
                         <p>{body}</p>
@@ -197,6 +262,10 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                         )}
                     </div>
                     <hr />
+                    <div className="d-flex justify-content-between align-items-center">
+                        <p>{cantReacciones} reacciones</p>
+                        <p>{cantComments} comentarios</p>
+                    </div>
                     <div className="d-flex justify-content-evenly align-items-center py-2">
                         <div className="reaction-container" onMouseEnter={() => setShowReactions(true)} onMouseLeave={() => setShowReactions(false)}>
                             <button className={`btn d-flex align-items-center accion ${reaction ? claseReaccion : ""}`} onClick={reaccionSelect} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>
@@ -206,12 +275,12 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
     
                             {showReactions && (
                                 <div className="reactions-popup">
-                                    <button onClick={() => handleSelectReaction("1")}><img src={reaccion1} className="imgReaction" /></button>
-                                    <button onClick={() => handleSelectReaction("2")}><img src={reaccion2} className="imgReaction" /></button>
-                                    <button onClick={() => handleSelectReaction("3")}><img src={reaccion3} className="imgReaction" /></button>
-                                    <button onClick={() => handleSelectReaction("4")}><img src={reaccion4} className="imgReaction" /></button>
-                                    <button onClick={() => handleSelectReaction("5")}><img src={reaccion5} className="imgReaction" /></button>
-                                    <button onClick={() => handleSelectReaction("6")}><img src={reaccion6} className="imgReaction" /></button>
+                                    <button onClick={() => handleSelectReaction(1)}><img src={reaccion1} className="imgReaction" /></button>
+                                    <button onClick={() => handleSelectReaction(2)}><img src={reaccion2} className="imgReaction" /></button>
+                                    <button onClick={() => handleSelectReaction(3)}><img src={reaccion3} className="imgReaction" /></button>
+                                    <button onClick={() => handleSelectReaction(4)}><img src={reaccion4} className="imgReaction" /></button>
+                                    <button onClick={() => handleSelectReaction(5)}><img src={reaccion5} className="imgReaction" /></button>
+                                    <button onClick={() => handleSelectReaction(6)}><img src={reaccion6} className="imgReaction" /></button>
                                 </div>
                             )}
                         </div>
@@ -227,32 +296,36 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
             <div className="modal fade" id={modalId} tabIndex="-1" aria-labelledby={`${modalId}Label`} aria-hidden="true">
                 <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
                     <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title" id={`${modalId}Label`}>Imágenes</h5>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                        </div>
-                        <div className="modal-body">
-                            <div id={`carousel-${modalId}`} className="carousel carousel-fade" data-bs-ride="carousel">
-                                <div className="carousel-inner">
-                                    {Array.isArray(picsBody) && picsBody.map((img, index) => (
-                                        <div key={index} className={`carousel-item ${index === 0 ? "active" : ""}`}>
-                                            <img src={img} className="d-block w-100" alt={`Imagen ${index + 1}`} />
-                                        </div>
-                                    ))}
-                                </div>
-                                <button className="carousel-control-prev" type="button" data-bs-target={`#carousel-${modalId}`} data-bs-slide="prev">
-                                    <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span className="visually-hidden">Anterior</span>
-                                </button>
-                                <button className="carousel-control-next" type="button" data-bs-target={`#carousel-${modalId}`} data-bs-slide="next">
-                                    <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span className="visually-hidden">Siguiente</span>
-                                </button>
+                        {(Array.isArray(picsBody) && picsBody.length > 0) ? (
+                            <>
+                            <div className="modal-header">
+                                <h5 className="modal-title" id={`${modalId}Label`}>Imágenes</h5>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                             </div>
-                        </div>
+                            <div className="modal-body">
+                                <div id={`carousel-${modalId}`} className="carousel carousel-fade" data-bs-ride="carousel">
+                                    <div className="carousel-inner">
+                                        {Array.isArray(picsBody) && picsBody.map((img, index) => (
+                                            <div key={index} className={`carousel-item ${index === 0 ? "active" : ""}`}>
+                                                <img src={img} className="d-block w-100" alt={`Imagen ${index + 1}`} />
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <button className="carousel-control-prev" type="button" data-bs-target={`#carousel-${modalId}`} data-bs-slide="prev">
+                                        <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span className="visually-hidden">Anterior</span>
+                                    </button>
+                                    <button className="carousel-control-next" type="button" data-bs-target={`#carousel-${modalId}`} data-bs-slide="next">
+                                        <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span className="visually-hidden">Siguiente</span>
+                                    </button>
+                                </div>
+                            </div>
+                            </>
+                        ) : (<></>)}
                         <div className="modal-footer">
                             <div className="d-flex justify-content-start align-items-start w-100">
-                                <h4>Comentarios</h4>
+                                <h4>Comentarios ({cantComments})</h4>
                             </div>
                             <div className="d-flex flex-column justify-content-center w-100">
                                 <div>

@@ -37,13 +37,14 @@ export const Login = () => {
     
         try {
             const response = await axios.post("http://127.0.0.1:8000/mascotas/login/", {
-                nombre_usuario,
-                password,
+                "nombre_usuario": nombre_usuario,
+                "password": password,
             });
     
             if (response.status === 200) {
                 // Guardar solo el sessionid en sessionStorage
                 sessionStorage.setItem("sessionid", response.data.sessionid);
+                localStorage.setItem("username", nombre_usuario);
     
                 Swal.fire({
                     icon: "success",
