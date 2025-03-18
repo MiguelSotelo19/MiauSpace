@@ -1,5 +1,5 @@
-import React from "react";
-
+import React, { useEffect } from "react";
+import axios from "axios";
 import fotoPerfil from "../assets/skibidi.jpeg"
 import { Header } from "../components/Header"
 import { Navigation } from "../components/Navigation"
@@ -7,6 +7,21 @@ import { SideColumn } from "../components/SideColumn"
 import { Post } from "../components/Post"
 
 export const Perfil = () => {
+    let urlUser="http://127.0.0.1:8000/mascotas/api/1/";
+
+    useEffect(() =>{
+        getUser();
+    },[])
+    
+    const getUser = async () => {
+        const respuesta = (await axios({
+            method: 'GET',
+            url: urlUser 
+        })).data.data;
+
+        console.log(respuesta.data.data)
+    }
+    
     let usuario = "Sotita"
     const imgPost = [fotoPerfil];
     return (
