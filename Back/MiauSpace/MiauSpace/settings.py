@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-(2)(r7u!vt&0l41=t7ybey_$x4ij^1i(fj4msr$(t0c^*h2f%(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -44,19 +44,32 @@ INSTALLED_APPS = [
     'post',
     'imagenes',
     'comentarios',
-    'reacciones'
+    'reacciones',
+    'corsheaders', 
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173"
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+]
+
+#SESSION_COOKIE_HTTPONLY = True
 ROOT_URLCONF = 'MiauSpace.urls'
 
 TEMPLATES = [

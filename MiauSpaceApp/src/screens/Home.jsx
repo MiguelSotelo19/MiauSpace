@@ -1,25 +1,52 @@
-import { Post } from "../components/Post"
+import { useState, useEffect, useRef } from "react";
+import { Post } from "../components/Post";
+import axios from 'axios';
 
+import usuario from '../assets/usuario.png';
+import usuario_ from '../assets/usuario_.png';
+import imagen from '../assets/imagen.png';
+import cara_feliz from '../assets/feliz.png';
 
-import usuario from '../assets/usuario.png'
-import usuario_ from '../assets/usuario_.png'
-import imagen from '../assets/imagen.png'
-import cara_feliz from '../assets/feliz.png'
-import skibidi from '../assets/skibidi.jpeg';
+import './css/Home.css';
 
-
-import './css/Home.css'
-
-import "bootstrap/dist/css/bootstrap.min.css"
-import "bootstrap/dist/js/bootstrap.bundle"
-import { Header } from "../components/Header"
-import { Navigation } from "../components/Navigation"
-import { SideColumn } from "../components/SideColumn"
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle";
+import { Header } from "../components/Header";
+import { Navigation } from "../components/Navigation";
+import { SideColumn } from "../components/SideColumn";
 
 export const Home = () => {
-    const images = [skibidi, cara_feliz, skibidi, cara_feliz, skibidi, skibidi, cara_feliz];
-    const images2 = [skibidi, skibidi, skibidi, cara_feliz];
-    const images3 = [skibidi];
+    const url = 'http://127.0.0.1:8000/posts/api/';
+    const urlMascota = 'http://127.0.0.1:8000/mascotas/api/';
+    const [ posts, setPosts ] = useState([]);
+    const [ mascotas, setMascotas ] = useState([]);
+
+    useEffect(() => {
+        getPosts();
+        getMascotas();
+    }, [])
+
+    const getPosts = async () => {
+        const respuesta = await axios({
+            method: "GET",
+            url: url,
+            /*headers: {
+               Authorization: `Bearer ${token}` 
+            }*/
+        });
+        setPosts(respuesta.data);
+    }
+
+    const getMascotas = async () => {
+        const respuesta = await axios({
+            method: "GET",
+            url: urlMascota,
+            /*headers: {
+               Authorization: `Bearer ${token}` 
+            }*/
+        });
+        setMascotas(respuesta.data);
+    }
 
     return(
     <> 
@@ -49,9 +76,10 @@ export const Home = () => {
                             </div>
                         </div>
 
-                        <Post postId="1" picUser={usuario_} user={"Lauro Deidad"} body={"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae assumenda, totam accusamus iste distinctio, illum magni blanditiis eius corporis rerum a dolore numquam deserunt quisquam, asperiores ullam nobis ex consectetur ab aliquid voluptates? Quisquam voluptates in hic qui veritatis ipsa!"} picsBody={images} />
-                        <Post postId="2"  picUser={usuario_} user={"Lauro Deidad"} body={"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae assumenda, totam accusamus iste distinctio, illum magni blanditiis eius corporis rerum a dolore numquam deserunt quisquam, asperiores ullam nobis ex consectetur ab aliquid voluptates? Quisquam voluptates in hic qui veritatis ipsa!"} picsBody={images2} />
-                        <Post postId="3"  picUser={usuario_} user={"Lauro Deidad"} body={"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae assumenda, totam accusamus iste distinctio, illum magni blanditiis eius corporis rerum a dolore numquam deserunt quisquam, asperiores ullam nobis ex consectetur ab aliquid voluptates? Quisquam voluptates in hic qui veritatis ipsa!"} picsBody={images3} />
+                        {posts.map((post, i) => (
+                            <Post key={post.id} postId={post.id} picUser={usuario_} user={mascotas.find(masc => masc.id == post.mascota)?.nombre_usuario} body={post.contenido} picsBody={post.img} />
+                        ))}
+
                         
                     </div>
                 </div>
