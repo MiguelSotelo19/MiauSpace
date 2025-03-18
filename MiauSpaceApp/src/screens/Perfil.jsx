@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import fotoPerfil from "../assets/skibidi.jpeg"
 import { Header } from "../components/Header"
@@ -7,20 +7,67 @@ import { SideColumn } from "../components/SideColumn"
 import { Post } from "../components/Post"
 
 export const Perfil = () => {
-    let urlUser="http://127.0.0.1:8000/mascotas/api/1/";
+    let urlUser="http://127.0.0.1:8000/mascotas/api/";
+    let user = localStorage.getItem("username")
+
+    const [edad, setEdad] = useState(0);
+    const [esAdmin, setEsAdmin]= useState(false);
+    const [especie, setEspecie]= useState("");
+    const [fechaNac, setFechaNac] = useState("");
+    const [fotoPerf, setFotoPerf] = useState("");
+    const [id, setId] = useState("");
+    const [isActive, setIsActive] = useState("");
+    const [joinDate, setJoinDate] = useState("");
+    const [lastLogin, setLastLogin] = useState("");
+    const [nomUsuario, setNomUsuario] = useState("");
+    const [preferencias, setPreferencias] = useState("");
+    const [raza, setRaza] = useState("");
+    const [sexo, setSexo] = useState("");
+    const [ubicacion, setUbicacion] = useState("");
+    const [btnEditar, setBtnEditar] = useState(false);
 
     useEffect(() =>{
-        getUser();
+        getUsers();
+        console.log("localstorage: ",user)
+        
     },[])
     
-    const getUser = async () => {
+    const getUsers = async () => {
         const respuesta = (await axios({
             method: 'GET',
             url: urlUser 
-        })).data.data;
-
-        console.log(respuesta.data.data)
+        })).data;
+        setUser(respuesta); 
+        console.log(respuesta)
     }
+
+    const setUser = async (usuario) => {
+        for (let i = 0; i < usuario.length; i++) {  
+            const element = usuario[i];
+            if (element.nombre_usuario == user) {
+                setEdad(element.edad || 0);
+                setEsAdmin(element.esAdmin || false);
+                setEspecie(element.especie || "");
+                setFechaNac(element.fechaNac || "");
+                setFotoPerf(element.fotoPerf || "");
+                setId(element.id || "");
+                setIsActive(element.isActive || "");
+                setJoinDate(element.joinDate || "");
+                setLastLogin(element.lastLogin || "");
+                setNomUsuario(element.nomUsuario || "");
+                setPreferencias(element.preferencias || "");
+                setRaza(element.raza || "");
+                setSexo(element.sexo || "");
+                setUbicacion(element.ubicacion || "");
+                if (element.nombre_usuario == user){
+                    setBtnEditar(true)
+                }
+                break;
+            }
+        }
+        
+    };
+    
     
     let usuario = "Sotita"
     const imgPost = [fotoPerfil];
@@ -32,21 +79,23 @@ export const Perfil = () => {
                 <div className="container py-5 h-100">
                     <Navigation />
                     <div className="row justify-content-center align-items-center h-100">
-                        <div className="col-lg-9 col-xl-7">
+                        <div className="col-lg-12 col-xl-12" style={{width:"50vw"}}>
                             <div className="card">
                                 <div
                                     className="rounded-top text-white d-flex flex-row"
                                     style={{ backgroundColor: "#40007a", height: "20vh" }}
                                 >
                                     <div className="ms-4 mt-5 d-flex flex-column" style={{ width: "15%" }}>
-                                        <img src={fotoPerfil} alt="Perfil" className="mt-4 mb-2 img-thumbnail" style={{ width: "100%", zIndex: "1" }}
+                                        <img src={fotoPerf} alt="Perfil" className="mt-4 mb-2 img-thumbnail" style={{ width: "100%", zIndex: "1"}}
                                         />
+                                        {btnEditar && (
                                         <button className="btn btn-outline-light" style={{ height: "2.5rem" }}>
                                             Editar perfil
                                         </button>
+                                    )}
                                     </div>
                                     <div className="ms-3" style={{ marginTop: "15vh" }}>
-                                        <h5>{usuario}</h5>
+                                        <h5>{nomUsuario}</h5>
                                     </div>
                                 </div>
                                 <div className="p-2 pe-4 text-black" style={{ backgroundColor: "#f8f9fa" }}>
@@ -65,9 +114,9 @@ export const Perfil = () => {
                                     <div className="mb-5">
                                         <p className="lead fw-normal mb-1">Detalles</p>
                                         <div className="p-4" style={{ backgroundColor: "#f8f9fa" }}>
-                                            <p className="font-italic mb-1">Vive en Temixyork</p>
-                                            <p className="font-italic mb-1">Soltero</p>
-                                            <p className="font-italic mb-0">Cumpleaños: 01 Enero</p>
+                                            <p className="font-italic mb-1">Vive en {ubicacion}</p>
+                                            <p className="font-italic mb-1">{sexo}</p>
+                                            <p className="font-italic mb-0">Especie: {especie}</p>
                                         </div>
                                     </div>
                                     <div className="d-flex justify-content-between align-items-center mb-4">
@@ -95,9 +144,7 @@ export const Perfil = () => {
                                     </div>
                                 </div>
                             </div>
-                            <Post postId="1" picUser={fotoPerfil} user={usuario} body={"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae assumenda, totam accusamus iste distinctio, illum magni blanditiis eius corporis rerum a dolore numquam deserunt quisquam, asperiores ullam nobis ex consectetur ab aliquid voluptates? Quisquam voluptates in hic qui veritatis ipsa!"} picsBody={imgPost}/>
-                            <Post postId="1" picUser={fotoPerfil} user={usuario} body={"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae assumenda, totam accusamus iste distinctio, illum magni blanditiis eius corporis rerum a dolore numquam deserunt quisquam, asperiores ullam nobis ex consectetur ab aliquid voluptates? Quisquam voluptates in hic qui veritatis ipsa!"} picsBody={imgPost}/>
-
+                            
                         </div>
                     </div>
                 </div>
