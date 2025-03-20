@@ -1,0 +1,15 @@
+.navBar {
+    font-weight: bold;
+}
+.navBar:hover {
+    background-color: gainsboro;
+    border-radius: 20px;
+}
+
+.logout:hover {
+    border: 2px solid red;
+}
+
+.list {
+    border-right: 1px solid gray;
+}
