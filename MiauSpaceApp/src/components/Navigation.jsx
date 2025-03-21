@@ -11,7 +11,8 @@ import './css/Navigation.css';
 
 export const Navigation = () => {
     const navigate = useNavigate();
-
+    let username = localStorage.getItem("username");
+    let linkPerfil = "/MiauSpace/Perfil/"+username
     const handleLogout = async () => {
         try {
             const response = await axios.post(
@@ -50,7 +51,7 @@ export const Navigation = () => {
                         <img src={inicio} className="me-3" alt="Inicio" width="30" />
                         Inicio
                     </Nav.Link>
-                    <Nav.Link as={Link} to="/MiauSpace/Perfil" className="d-flex align-items-center py-3 navBar">
+                    <Nav.Link as={Link} to={`/MiauSpace/Perfil/${username}`} className="d-flex align-items-center py-3 navBar">
                         <img src={usuario_} className="me-3" alt="Perfil" width="30" />
                         Perfil
                     </Nav.Link>

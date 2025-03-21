@@ -5,11 +5,13 @@ import { Header } from "../components/Header"
 import { Navigation } from "../components/Navigation"
 import { SideColumn } from "../components/SideColumn"
 import { Post } from "../components/Post"
+import { useParams } from "react-router-dom";
 
-export const Perfil = () => {
+export const Perfil = ({username}) => {
     let urlUser="http://127.0.0.1:8000/mascotas/api/";
-    let user = localStorage.getItem("username")
-
+    let { username: paramUsername } = useParams();
+    const user = JSON.parse(sessionStorage.getItem("usuario"));
+    let loggeado = localStorage.getItem("username");
     const [edad, setEdad] = useState(0);
     const [esAdmin, setEsAdmin]= useState(false);
     const [especie, setEspecie]= useState("");
@@ -28,54 +30,47 @@ export const Perfil = () => {
 
     useEffect(() =>{
         getUsers();
-        console.log("localstorage: ",user)
         
-    },[])
+    },[paramUsername])
     
     const getUsers = async () => {
-        const respuesta = (await axios({
-            method: 'GET',
-            url: urlUser 
-        })).data;
-        setUser(respuesta); 
-        console.log(respuesta)
-    }
-
-    const setUser = async (usuario) => {
-        for (let i = 0; i < usuario.length; i++) {  
-            const element = usuario[i];
-            if (element.nombre_usuario == user) {
-                setEdad(element.edad || 0);
-                setEsAdmin(element.esAdmin || false);
-                setEspecie(element.especie || "");
-                setFechaNac(element.fechaNac || "");
-                setFotoPerf(element.fotoPerf || "");
-                setId(element.id || "");
-                setIsActive(element.isActive || "");
-                setJoinDate(element.joinDate || "");
-                setLastLogin(element.lastLogin || "");
-                setNomUsuario(element.nomUsuario || "");
-                setPreferencias(element.preferencias || "");
-                setRaza(element.raza || "");
-                setSexo(element.sexo || "");
-                setUbicacion(element.ubicacion || "");
-                if (element.nombre_usuario == user){
-                    setBtnEditar(true)
-                }
-                break;
+        try {
+            const respuesta = await axios.get(urlUser);
+            const usuarioEncontrado = respuesta.data.find(u => u.nombre_usuario === paramUsername);
+            if (usuarioEncontrado) {
+                console.log("Entcontrado: ",usuarioEncontrado)
+                setUser(usuarioEncontrado);
             }
+        } catch (error) {
+            console.error("Error al obtener datos del usuario", error);
         }
+    };
+
+    const setUser = async (element) => {
+        setEdad(element.edad || 0);
         
+        setEspecie(element.especie || "");
+        setFechaNac(element.fecha_nacimiento || "");
+        setFotoPerf(element.foto_perfil || "");
+        //setId(element.id || "");
+        setIsActive(element.is_active || "");
+        setJoinDate(element.join_date || "");
+        setLastLogin(element.last_login || "");
+        setNomUsuario(element.nombre_usuario || "");
+        setPreferencias(element.preferencias || "");
+        setRaza(element.raza || "");
+        setSexo(element.sexo || "");
+        setUbicacion(element.ubicacion || "");
+        if (element.nombre_usuario == loggeado){
+            setEsAdmin(element.es_admin || false);
+            setBtnEditar(true)
+        }
     };
     
-    
-    let usuario = "Sotita"
-    const imgPost = [fotoPerfil];
     return (
-
         <div className="container-fluid principal">
             <div className="gradient-custom-2">
-                <Header usuario={fotoPerfil} />
+                <Header usuario={user} />
                 <div className="container py-5 h-100">
                     <Navigation />
                     <div className="row justify-content-center align-items-center h-100">

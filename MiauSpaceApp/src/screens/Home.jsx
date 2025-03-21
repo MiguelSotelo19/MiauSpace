@@ -20,6 +20,7 @@ export const Home = () => {
     const urlMascota = 'http://127.0.0.1:8000/mascotas/api/';
     const [ posts, setPosts ] = useState([]);
     const [ mascotas, setMascotas ] = useState([]);
+    const user = JSON.parse(sessionStorage.getItem("usuario"));
 
     useEffect(() => {
         getPosts();
@@ -51,7 +52,7 @@ export const Home = () => {
     return(
     <> 
         <div className="container-fluid principal">
-            <Header usuario={usuario} />
+            <Header usuario={user} />
 
             <div className="row" style={{margin: 0}}>
                 <Navigation />

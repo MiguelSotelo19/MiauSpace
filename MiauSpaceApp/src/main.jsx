@@ -26,7 +26,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path='/' element={<RedirectIfAuthenticated element={<Login />} />} />
             <Route path='/MiauSpace/' element={<RedirectIfAuthenticated element={<Login />} />} />
             <Route path='/MiauSpace/Home' element={<ProtectedRoute element={<Home />} />} />
-            <Route path='/MiauSpace/Perfil' element={<ProtectedRoute element={<Perfil />} />} />
+            <Route path="/MiauSpace/Perfil/:username" element={<ProtectedRoute element={<Perfil />} />} />
             <Route path='/MiauSpace/Amigos' element={<ProtectedRoute element={<Amigos />} />} />
             <Route path='/404' element={<Pagina404 />} />
             <Route path='/*' element={<Pagina404 />} />
