@@ -10,6 +10,7 @@ import { useEffect } from "react";
 
 
 export const Login = () => {
+    let urlUser="http://127.0.0.1:8000/mascotas/api/";
     const navigate = useNavigate();
     const [nombre_usuario, setNombreUsuario] = useState("");
     const [password, setPassword] = useState("");
@@ -18,6 +19,20 @@ export const Login = () => {
         return !!sessionStorage.getItem("usuario_id"); 
     };
     
+    const getUsers = async (nombre_usuario) => {
+        const respuesta = (await axios({
+            method: 'GET',
+            url: urlUser 
+        })).data;
+        
+        for (let i = 0; i < respuesta.length; i++) {  
+            const element = respuesta[i];
+            if (element.nombre_usuario == nombre_usuario) {
+                console.log("Entro a if",element)
+                return element
+            }
+        }
+    }
 
     useEffect(() => {
         if (isAuthenticated()) {
@@ -44,7 +59,15 @@ export const Login = () => {
             if (response.status === 200) {
                 // Guardar solo el sessionid en sessionStorage
                 sessionStorage.setItem("sessionid", response.data.sessionid);
+                
+                const usuario = await getUsers(nombre_usuario);
+
+                if (usuario) {
+                    localStorage.setItem("usuario", JSON.stringify(usuario));
+                }
+
                 localStorage.setItem("username", nombre_usuario);
+                sessionStorage.setItem("usuario", JSON.stringify(usuario));
     
                 Swal.fire({
                     icon: "success",
