@@ -144,3 +144,14 @@
 .enviar {
     border: 1px solid blue;
 }
+
+.card-body {
+    border: 1px solid #D1C4E9;
+    border-radius: 5px;
+    box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.1);
+}
+
+.icon {
+    width: 30px;
+    height: auto;
+}

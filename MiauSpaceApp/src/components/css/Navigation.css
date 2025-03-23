@@ -2,8 +2,20 @@
     font-weight: bold;
 }
 .navBar:hover {
-    background-color: gainsboro;
     border-radius: 20px;
+}
+
+.navigation-navBar {
+    border-radius: 18px;
+    border: 2px solid #8800ff;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.navigation-navBar:hover {
+    background-color: #8800ff;
 }
 
 .logout:hover {
@@ -12,4 +24,12 @@
 
 .list {
     border-right: 1px solid gray;
+}
+
+.columnColor {
+    background-color: #42007c;
+}
+
+.link-nav {
+    color: #FFFFFF;
 }

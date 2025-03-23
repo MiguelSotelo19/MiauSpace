@@ -61,7 +61,7 @@ export const Navigation = () => {
     ];
 
     return (
-        <div className="col-lg-2 col-md-3 d-none d-md-flex flex-column justify-content-start list" style={{backgroundColor: '#FDF6E3'}}>
+        <div className="col-lg-2 col-md-3 d-none d-md-flex flex-column justify-content-start list columnColor">
             <Navbar expand="md" className="flex-column align-items-start mt-5 p-3">
                 <Nav className="flex-column w-100">
                     {navLinks.map((link, index) => (
@@ -71,7 +71,7 @@ export const Navigation = () => {
                             to={link.to}
                             className="d-flex align-items-center py-3 navigation-navBar"
                         >
-                            <img src={link.icon} className="me-3" alt={link.text} width="30" />
+                            <img src={link.icon} className="me-3 icon" alt={link.text} />
                             {link.text}
                         </Nav.Link>
                     ))}
