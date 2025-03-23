@@ -1,24 +1,24 @@
 import { Link } from 'react-router-dom';
-import logo from '../assets/logo.png'
+import logo from '../assets/logo.png';
+import './css/Header.css';
 
-export const Header  = ({ usuario }) => {
-
-    return(
-        <>
-            <header className="ps-5 pe-5" style={{ borderBottom: '1px solid gray', height: '80px' }}>
-                <div className="d-flex align-items-center justify-content-between p-2">
-                    <div className="d-flex align-items-center justify-content-center">
-                        <img src={logo} className="me-3" style={{ width: '35px', height: '35px' }} alt="logo.jpg" />
-                        <p className="logo">MiauSpace</p>
-                    </div>
-                    <Link to={`/MiauSpace/Perfil/${usuario.nombre_usuario}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <div className="d-flex align-items-center justify-content-center">
-                            <img src={usuario.foto_perfil} className="me-3" style={{ width: '35px', height: '35px' }} alt="perfil.jpg" />
-                            <p>{usuario.nombre_usuario}</p>
-                        </div>
-                    </Link>
+export const Header = ({ usuario }) => {
+    return (
+        <header className="header">
+            <div className="header-container">
+                <div className="logo-container">
+                    <img src={logo} className="logo-img" alt="logo.jpg" />
+                    <h1 className="logo-text">MiauSpace</h1>
                 </div>
-            </header>
-        </>
+
+                {/* Enlace al perfil del usuario */}
+                <Link to={`/MiauSpace/Perfil/${usuario.nombre_usuario}`} className="profile-link">
+                    <div className="profile-container">
+                        <img src={usuario.foto_perfil} className="profile-img" alt="perfil.jpg" />
+                        <p className="profile-username">{usuario.nombre_usuario}</p>
+                    </div>
+                </Link>
+            </div>
+        </header>
     );
-}
+};

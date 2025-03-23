@@ -1,9 +1,7 @@
 import React from "react";
 import fotoPerfil from "../assets/skibidi.jpeg";
-import { Header } from "../components/Header"
-import { Navigation } from "../components/Navigation"
-import { SideColumn } from "../components/SideColumn"
 import { Link } from "react-router-dom";
+import { Layout } from "../components/Layout"; // Importar Layout
 
 export const Amigos = () => {
     const user = JSON.parse(sessionStorage.getItem("usuario"));
@@ -23,11 +21,9 @@ export const Amigos = () => {
     ];
 
     return (
-        <div className="container-fluid principal">
+        <Layout>
             <div className="gradient-custom-2">
-                <Header usuario={user} />
                 <div className="container py-5 h-100">
-                    <Navigation />
                     <div className="bg-gray row justify-content-center align-items-center h-100">
                         <h1>Amigos</h1>
                         {data.map((amigo, index) => (
@@ -47,17 +43,15 @@ export const Amigos = () => {
                                             </div>
                                         </div>
                                         <div className="d-flex">
-                                            <button className="btn fw-semibold" style={{borderColor: 'purple', backgroundColor: 'rgb(71, 135, 209)'}}>Enviar solicitud</button>
+                                            <button className="btn fw-semibold" style={{ borderColor: 'purple', backgroundColor: 'rgb(71, 135, 209)' }}>Enviar solicitud</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         ))}
-
                     </div>
                 </div>
             </div>
-            <SideColumn />
-        </div>
+        </Layout>
     );
 };
