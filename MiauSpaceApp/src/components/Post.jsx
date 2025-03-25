@@ -24,6 +24,15 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
     const urlComments = 'http://127.0.0.1:8000/comentarios/api/';
     const urlMascota = 'http://127.0.0.1:8000/mascotas/api/';
 
+    const imgreacciones = {
+        "1": reaccion1,
+        "2": reaccion2,
+        "3": reaccion3,
+        "4": reaccion4,
+        "5": reaccion5,
+        "6": reaccion6
+    };
+
     const [ idReaction, setIdReaction ] = useState(0);
     const [ reacted, setReacted ] = useState(false);
     const [ idUser, setIdUser ] = useState(0);
@@ -78,8 +87,9 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
             setReacted(true);
             setIdReaction(reaccionUser[0].id);
         }
+        console.log(mascotas)
 
-        setReacciones(respuestaR.data)
+        setReacciones(reacciones)
         setCantReacciones(reacciones.length)
         setComments(comentarios);
         setCantComments(comentarios.length);
@@ -263,7 +273,7 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                     </div>
                     <hr />
                     <div className="d-flex justify-content-between align-items-center">
-                        <p>{cantReacciones} reacciones</p>
+                        <p className="reaccionesCount" data-bs-toggle="modal" data-bs-target={`#modalReacciones${modalId}`}>{cantReacciones} reacciones</p>
                         <p>{cantComments} comentarios</p>
                     </div>
                     <div className="d-flex justify-content-evenly align-items-center py-2">
@@ -289,6 +299,38 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                             <img src={commentIcon} className="me-2 icono" alt="Comentar" />
                             Comentar
                         </button>
+                    </div>
+                </div>
+            </div>
+
+            <div className="modal fade" id={`modalReacciones${modalId}`} tabIndex="-1" aria-labelledby={`modalReacciones${modalId}Label`} aria-hidden="true">
+                <div className="modal-dialog modal-dialog-centered" >
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h1 className="modal-title fs-5" id={`modalReacciones${modalId}Label`}>Reacciones</h1>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                            {(Array.isArray(reacciones) && reacciones.length > 0) ? (
+                                reacciones.map(reac => (
+                                    <div className="d-flex align-items-center gap-2 p-2 border-bottom">
+                                        <img src={mascotas.find(mas => mas.id == reac.mascota)?.foto_perfil} alt="Perfil" className="rounded-circle perfil-img"/>
+                                        
+                                        <img src={imgreacciones[reac.tipo_reaccion]} alt="Reacción" className="reaccion-icon"/>
+                                        <p className="mb-0 fw-bold nombre-usuario">{mascotas.find(mas => mas.id == reac.mascota)?.nombre_usuario}</p>
+                                        <button className="btn btn-primary btn-sm ms-auto" onClick={() => {}}>Enviar solicitud</button>
+                                    </div>
+                                ))
+                                
+                                
+                            ):(
+                                <>
+                                </>
+                            )}
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
                     </div>
                 </div>
             </div>

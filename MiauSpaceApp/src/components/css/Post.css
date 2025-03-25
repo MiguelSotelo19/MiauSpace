@@ -155,3 +155,26 @@
     width: 30px;
     height: auto;
 }
+
+.perfil-img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+}
+
+.reaccion-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.nombre-usuario {
+    min-width: 120px; 
+    max-width: 150px; 
+    white-space: nowrap;  
+    overflow: hidden;  
+    text-overflow: ellipsis;
+}
+
+.reaccionesCount:hover {
+    text-decoration: underline;
+}
