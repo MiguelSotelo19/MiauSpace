@@ -78,14 +78,14 @@ export const Perfil = () => {
         setRaza(element.raza || "No especificado");
         setSexo(element.sexo || "No especificado");
         setUbicacion(element.ubicacion || "");
-        setPassword(element.password)
         getPosts(element.id);
-        setId(element.id)
+        
         console.log(loggeado)
         console.log(element.nombre_usuario)
         if (element.nombre_usuario == loggeado) {
             setEsAdmin(element.es_admin || false);
             setPassword(element.password)
+            setId(element.id)
             setBtnEditar(true);
             console.log(btnEditar)
         }
@@ -174,12 +174,14 @@ export const Perfil = () => {
             Swal.fire("Sexo faltante","Selecciona un sexo válido", "warning");
         } else if (!ubicacion || ubicacion.trim() === "") {
             Swal.fire("Ubicación no válida","Escribe la ubicación de la mascota", "warning");
+        } else if ((nuevaContrasena !== "" || confirmarContrasena !== "") && nuevaContrasena !== confirmarContrasena ) {
+            Swal.fire("Nueva contraseña no es válida","Las contraseñas no pueden estar vacias y deben coincidir", "warning");
         } else {
             const urlActualizar= urlUser + id +"/"
             const parametros = {
                 last_login: lastLogin,
                 nombre_usuario: nomUsuario,
-                password: password,
+                password: nuevaContrasena !== "" ? nuevaContrasena : password,
                 especie: especie,
                 edad: parseInt(edad),
                 raza: raza,               
@@ -211,6 +213,15 @@ export const Perfil = () => {
         }
     };
     
+    const [mostrar, setMostrar] = useState(false);
+    const [nuevaContrasena, setNuevaContrasena] = useState("");
+    const [confirmarContrasena, setConfirmarContrasena] = useState("");
+
+    const mostrarCamposContra = () => {
+        setMostrar(!mostrar);
+        setNuevaContrasena("");
+        setConfirmarContrasena("");
+    };
 
     return (
         <Layout>
@@ -254,7 +265,7 @@ export const Perfil = () => {
                                         </div>
                                         {btnEditar && (
                                             <button className="btn btn-outline-dark" style={{ height: "2.5rem" }}
-                                            onClick={() => openActModal(id, nomUsuario, edad, especie, fechaNac,fotoPerf, preferencias,raza,sexo,ubicacion)}>
+                                                onClick={() => openActModal(id, nomUsuario, edad, especie, fechaNac, fotoPerf, preferencias, raza, sexo, ubicacion)}>
                                                 Editar perfil
                                             </button>
                                         )}
@@ -308,97 +319,128 @@ export const Perfil = () => {
                 centered
                 backdrop="static"
                 dialogClassName="modal-90w modal-90h"
-                >
+            >
                 <Modal.Header closeButton>
                     <Modal.Title id="contained-modal-title-vcenter">
                         Actualizar datos personales
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body style={{ maxHeight: '60vh' }}>
-                    <Container style={{display:'flex', flexDirection:'column'}}>
-                            <Row className="d-flex justify-content-center">
-                                <Col md={6}>
-                                    <Form>
-                                        <Form.Group className="mb-3">
-                                            <Form.Label className="ms-1">Nombre completo:</Form.Label><br/>
-                                            <Form.Label className="ms-1 mt-2"
-                                                 required readOnly>{nomUsuario}</Form.Label>
-                                        </Form.Group>
-                                    </Form>
-                                </Col>
+                    <Container style={{ display: 'flex', flexDirection: 'column' }}>
+                        <Row className="d-flex justify-content-center">
+                            <Col md={6}>
+                                <Form>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label className="ms-1">Nombre completo:</Form.Label><br />
+                                        <Form.Label className="ms-1 mt-2"
+                                            required readOnly>{nomUsuario}</Form.Label>
+                                    </Form.Group>
+                                </Form>
+                            </Col>
 
-                                <Col md={6}>
-                                    <Form>
-                                        <Form.Group className="mb-3">
-                                            <Form.Label className="ms-1">Especie:</Form.Label>
-                                            <Form.Control type="text" placeholder="Especie" 
-                                                value={especie} onChange={(e) => setEspecie(e.target.value)} maxLength="10" 
-                                                />
-                                        </Form.Group>
-                                    </Form>
-                                </Col>
-                            </Row> <br/>
+                            <Col md={6}>
+                                <Form>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label className="ms-1">Especie:</Form.Label>
+                                        <Form.Control type="text" placeholder="Especie"
+                                            value={especie} onChange={(e) => setEspecie(e.target.value)} maxLength="10"
+                                        />
+                                    </Form.Group>
+                                </Form>
+                            </Col>
+                        </Row> <br />
+                        <Row className="d-flex justify-content-center">
+                            <Col md={6}>
+                                <Form>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label className="ms-1">Sexo:</Form.Label>
+                                        <Form.Select value={sexo} onChange={(e) => setSexo(e.target.value)}>
+                                            <option value="">Selecciona tu sexo</option>
+                                            <option value="Macho">Macho</option>
+                                            <option value="Hembra">Hembra</option>
+                                            <option value="Prefiero no decirlo">Prefiero no decirlo</option>
+                                        </Form.Select>
+                                    </Form.Group>
+                                </Form>
+                            </Col>
+                            <Col md={6}>
+                                <Form>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label className="ms-1">Fecha de nacimiento:</Form.Label>
+                                        <Form.Control required type="date" value={fechaNac} onChange={(e) => setFechaNac(e.target.value)} />
+                                    </Form.Group>
+                                </Form>
+                            </Col>
+                        </Row><br />
+                        <Row className="d-flex justify-content-center">
+                            <Col md={6}>
+                                <Form>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label className="ms-1">Preferencia:</Form.Label>
+                                        <Form.Control type="text" placeholder="Preferencia" required
+                                            value={preferencias} onChange={(e) => setPreferencias(e.target.value)} />
+                                    </Form.Group>
+                                </Form>
+                            </Col>
+                            <Col md={6}>
+                                <Form>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label className="ms-1">Raza:</Form.Label>
+                                        <Form.Control required type="text" value={raza} onChange={(e) => setRaza(e.target.value)} />
+                                    </Form.Group>
+                                </Form>
+                            </Col>
+                        </Row><br />
+                        <Row className="d-flex justify-content-center">
+                            <Col md={4}>
+                                <Form>
+                                    <Form.Group>
+                                        <Form.Label className="ms-1">Ubicación:</Form.Label>
+                                        <Form.Control type="text" placeholder="Ubicacion" required
+                                            value={ubicacion} onChange={(e) => setUbicacion(e.target.value)} />
+                                    </Form.Group>
+                                </Form>
+                            </Col>
+                            <Col md={8}>
+                                <Form>
+                                    <Form.Group>
+                                        <Form.Label className="ms-1">Foto de perfil:</Form.Label>
+                                        <Form.Control required type="url" value={fotoPerf} onChange={(e) => setFotoPerf(e.target.value)} />
+                                    </Form.Group>
+                                </Form>
+                            </Col>
+                        </Row><br />
+                        <p className="ms-1"
+                            style={{ color: "black", cursor: "pointer" }}
+                            onClick={mostrarCamposContra}>
+                            Cambiar contraseña
+                        </p>
+                        {mostrar && (
                             <Row className="d-flex justify-content-center">
                                 <Col md={6}>
-                                    <Form>
-                                        <Form.Group className="mb-3">
-                                            <Form.Label className="ms-1">Sexo:</Form.Label>
-                                            <Form.Select value={sexo} onChange={(e) => setSexo(e.target.value)}>
-                                                <option value="">Selecciona tu sexo</option>
-                                                <option value="Macho">Macho</option>
-                                                <option value="Hembra">Hembra</option>
-                                                <option value="Prefiero no decirlo">Prefiero no decirlo</option>
-                                            </Form.Select>
-                                        </Form.Group>
-                                    </Form>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label className="ms-1">Nueva contraseña:</Form.Label>
+                                        <Form.Control
+                                            type="password"
+                                            placeholder="Ingrese nueva contraseña"
+                                            value={nuevaContrasena}
+                                            onChange={(e) => setNuevaContrasena(e.target.value)}
+                                        />
+                                    </Form.Group>
                                 </Col>
                                 <Col md={6}>
-                                    <Form>
-                                        <Form.Group className="mb-3">
-                                            <Form.Label className="ms-1">Fecha de nacimiento:</Form.Label>
-                                            <Form.Control required type="date" value={fechaNac} onChange={(e) => setFechaNac(e.target.value)} />
-                                        </Form.Group>
-                                    </Form>
-                                </Col>
-                            </Row><br/>
-                            <Row className="d-flex justify-content-center">
-                                <Col md={6}>
-                                    <Form>
-                                        <Form.Group className="mb-3">
-                                            <Form.Label className="ms-1">Preferencia:</Form.Label>
-                                            <Form.Control type="text" placeholder="Preferencia" required 
-                                                value={preferencias} onChange={(e) => setPreferencias(e.target.value)}/>
-                                        </Form.Group>
-                                    </Form>
-                                </Col>
-                                <Col md={6}>
-                                    <Form>
-                                        <Form.Group className="mb-3">
-                                            <Form.Label className="ms-1">Raza:</Form.Label>
-                                            <Form.Control required type="text" value={raza} onChange={(e) => setRaza(e.target.value)} />
-                                        </Form.Group>
-                                    </Form>
-                                </Col>
-                            </Row><br/>
-                            <Row className="d-flex justify-content-center">
-                                <Col md={4}>
-                                    <Form>
-                                        <Form.Group>
-                                            <Form.Label className="ms-1">Ubicación:</Form.Label>
-                                            <Form.Control type="text" placeholder="Ubicacion" required 
-                                                value={ubicacion} onChange={(e) => setUbicacion(e.target.value)}/>
-                                        </Form.Group>
-                                    </Form>
-                                </Col>
-                                <Col md={8}>
-                                    <Form>
-                                        <Form.Group>
-                                            <Form.Label className="ms-1">Foto de perfil:</Form.Label>
-                                            <Form.Control required type="url" value={fotoPerf} onChange={(e) => setFotoPerf(e.target.value)} />
-                                        </Form.Group>
-                                    </Form>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label className="ms-1">Confirmar contraseña:</Form.Label>
+                                        <Form.Control
+                                            type="password"
+                                            placeholder="Confirme nueva contraseña"
+                                            value={confirmarContrasena}
+                                            onChange={(e) => setConfirmarContrasena(e.target.value)}
+                                        />
+                                    </Form.Group>
                                 </Col>
                             </Row>
+                        )}
                     </Container>
                 </Modal.Body>
                 <Modal.Footer>
