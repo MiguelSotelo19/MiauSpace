@@ -40,6 +40,7 @@ export const Reactions = ({ mascotas, reacciones }) => {
             }*/
         });
 
+        console.log()
         
     }, [])
 
