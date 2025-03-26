@@ -5,10 +5,7 @@ class MascotaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mascota
         fields = '__all__'
-        extra_kwargs = {
-            'password': {'write_only': True}  # Asegúrate de que la contraseña no se devuelva en las respuestas
-        }
-
+        
     def create(self, validated_data):
         password = validated_data.pop('password', None)
         instance = self.Meta.model(**validated_data)
