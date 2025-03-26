@@ -18,6 +18,7 @@ import reaccion6 from "../assets/reaccion6.png";
 import commentIcon from "../assets/comentario.png";
 import commentsIcon from "../assets/comentarios.png";
 import enviar from "../assets/enviar.png";
+import { Reactions } from "./Reactions";
 
 export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
     const urlReacciones = 'http://127.0.0.1:8000/reacciones/api/';
@@ -87,7 +88,6 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
             setReacted(true);
             setIdReaction(reaccionUser[0].id);
         }
-        console.log(mascotas)
 
         setReacciones(reacciones)
         setCantReacciones(reacciones.length)
@@ -304,7 +304,7 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
             </div>
 
             <div className="modal fade" id={`modalReacciones${modalId}`} tabIndex="-1" aria-labelledby={`modalReacciones${modalId}Label`} aria-hidden="true">
-                <div className="modal-dialog modal-dialog-centered" >
+                <div className="modal-dialog modal-dialog-centered custom-modal">
                     <div className="modal-content">
                         <div className="modal-header">
                             <h1 className="modal-title fs-5" id={`modalReacciones${modalId}Label`}>Reacciones</h1>
@@ -312,24 +312,11 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                         </div>
                         <div className="modal-body">
                             {(Array.isArray(reacciones) && reacciones.length > 0) ? (
-                                reacciones.map(reac => (
-                                    <div className="d-flex align-items-center gap-2 p-2 border-bottom">
-                                        <img src={mascotas.find(mas => mas.id == reac.mascota)?.foto_perfil} alt="Perfil" className="rounded-circle perfil-img"/>
-                                        
-                                        <img src={imgreacciones[reac.tipo_reaccion]} alt="Reacción" className="reaccion-icon"/>
-                                        <p className="mb-0 fw-bold nombre-usuario">{mascotas.find(mas => mas.id == reac.mascota)?.nombre_usuario}</p>
-                                        <button className="btn btn-primary btn-sm ms-auto" onClick={() => {}}>Enviar solicitud</button>
-                                    </div>
-                                ))
-                                
-                                
+                                <Reactions mascotas={mascotas} reacciones={reacciones} />
                             ):(
                                 <>
                                 </>
                             )}
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>

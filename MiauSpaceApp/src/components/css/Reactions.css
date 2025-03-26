@@ -1,0 +1,12 @@
+.icon-reaction {
+    width: 20px;
+    height: 20px;
+}
+
+.nombre-usuario {
+    min-width: 120px; 
+    max-width: 200px; 
+    white-space: nowrap;  
+    overflow: hidden;  
+    text-overflow: ellipsis;
+}
