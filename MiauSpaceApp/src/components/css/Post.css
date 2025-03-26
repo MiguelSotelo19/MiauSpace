@@ -167,14 +167,12 @@
     height: 20px;
 }
 
-.nombre-usuario {
-    min-width: 120px; 
-    max-width: 150px; 
-    white-space: nowrap;  
-    overflow: hidden;  
-    text-overflow: ellipsis;
+
+.accionesCount:hover {
+    text-decoration: underline;
 }
 
-.reaccionesCount:hover {
-    text-decoration: underline;
+.custom-modal {
+    max-width: 30%;
+    width: 30%;
 }
