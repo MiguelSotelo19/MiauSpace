@@ -228,7 +228,7 @@ export const Perfil = () => {
             <div className="gradient-custom-2">
                 <div className="container py-5 h-100">
                     <div className="row justify-content-center align-items-center h-100">
-                        <div className="col-lg-12 col-xl-12" style={{ width: "50vw" }}>
+                        <div className="col-lg-12 col-xl-12" style={{ width: "45vw" }}>
                             <div className="card">
                                 <div
                                     className="rounded-top text-white d-flex flex-row"
