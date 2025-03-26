@@ -1,20 +1,24 @@
-import logo from '../assets/logo.png'
+import { Link } from 'react-router-dom';
+import logo from '../assets/logo.png';
+import './css/Header.css';
 
-export const Header  = ({ usuario }) => {
-    return(
-        <>
-        <header className="ps-5 pe-5" style={{borderBottom: '1px solid gray'}}>
-            <div className="d-flex align-items-center justify-content-between mt-2 mb-2 p-2">
-                <div className="d-flex align-items-center justify-content-center">
-                    <img src={logo} className="me-3 w-25" alt="logo.jpg"/>
-                    <p className="logo">MiauSpace</p>
+export const Header = ({ usuario }) => {
+    return (
+        <header className="header">
+            <div className="header-container">
+                <div className="logo-container">
+                    <img src={logo} className="logo-img" alt="logo.jpg" />
+                    <h1 className="logo-text">MiauSpace</h1>
                 </div>
-                <div className="d-flex align-items-center justify-content-center">
-                    <img src={usuario} className="me-3 w-25" alt="logo.jpg"/>
-                    <p>Nombre de Perfil</p>
-                </div>
+
+                {/* Enlace al perfil del usuario */}
+                <Link to={`/MiauSpace/Perfil/${usuario.nombre_usuario}`} className="profile-link">
+                    <div className="profile-container">
+                        <img src={usuario.foto_perfil} className="profile-img" alt="perfil.jpg" />
+                        <p className="profile-username">{usuario.nombre_usuario}</p>
+                    </div>
+                </Link>
             </div>
         </header>
-        </>
     );
-}
+};

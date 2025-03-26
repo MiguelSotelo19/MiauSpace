@@ -1,65 +1,100 @@
-import { Post } from "../components/Post"
+import { useState, useEffect } from "react";
+import { Post } from "../components/Post";
+import axios from 'axios';
 
+import usuario_ from '../assets/usuario_.png';
+import imagen from '../assets/imagen.png';
+import cara_feliz from '../assets/feliz.png';
 
-import usuario from '../assets/usuario.png'
-import usuario_ from '../assets/usuario_.png'
-import imagen from '../assets/imagen.png'
-import cara_feliz from '../assets/feliz.png'
-import skibidi from '../assets/skibidi.jpeg';
+import './css/Home.css';
 
-
-import './css/Home.css'
-
-import "bootstrap/dist/css/bootstrap.min.css"
-import "bootstrap/dist/js/bootstrap.bundle"
-import { Header } from "../components/Header"
-import { Navigation } from "../components/Navigation"
-import { SideColumn } from "../components/SideColumn"
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle";
+import { Layout } from "../components/Layout"; 
 
 export const Home = () => {
-    const images = [skibidi, skibidi, skibidi, skibidi, skibidi, skibidi, skibidi];
-    const images2 = [skibidi, skibidi, skibidi, cara_feliz];
-    const images3 = [skibidi];
+    const url = 'http://127.0.0.1:8000/posts/api/';
+    const urlMascota = 'http://127.0.0.1:8000/mascotas/api/';
+    const [posts, setPosts] = useState([]);
+    const [mascotas, setMascotas] = useState([]);
+    const [page, setPage] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const user = JSON.parse(sessionStorage.getItem("usuario"));
 
-    return(
-    <> 
-        <div className="container-fluid principal">
-            <Header usuario={usuario} />
+    useEffect(() => {
+        getPosts();
+        getMascotas();
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
 
-            <div className="row" style={{margin: 0}}>
-                <Navigation />
+    const getPosts = async () => {
+        if (loading) return;
+        setLoading(true);
 
-                <div className="col-lg-7 col-md-8 col-12 offset-lg-2 offset-md-3" style={{paddingTop: '20px'}}>
-                    <div className="post">
-                        <div className="card mb-4">
-                            <div className="card-body">
-                                <div className="d-flex align-items-center justify-content-evenly">
-                                    <img src={usuario_} className="me-3" alt="logo.jpg"/>
-                                    <input type="text" className="form-control ms-2" placeholder="¿En qué estás pensando?"/>
+        try {
+            const respuesta = await axios.get(`${url}?page=${page}`);
+            let nuevosPosts = respuesta.data;
+
+            nuevosPosts = nuevosPosts.sort(() => Math.random() - 0.5);
+
+            setPosts(prevPosts => [...prevPosts, ...nuevosPosts]);
+            setPage(prevPage => prevPage + 1);
+        } catch (error) {
+            console.error("Error al obtener publicaciones:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getMascotas = async () => {
+        const respuesta = await axios.get(urlMascota);
+        setMascotas(respuesta.data);
+    };
+
+    const handleScroll = () => {
+        if (
+            window.innerHeight + document.documentElement.scrollTop >=
+            document.documentElement.offsetHeight - 100
+        ) {
+            getPosts();
+        }
+    };
+
+    return (
+        <Layout> 
+            <div className="col-lg-7 col-md-8 col-12 offset-lg-2 offset-md-3" style={{ paddingTop: '20px' }}>
+                <div className="post">
+                    <div className="card mb-4">
+                        <div className="card-body">
+                            <div className="d-flex align-items-center justify-content-evenly">
+                                <img src={user.foto_perfil} className="me-3 rounded-circle" width="45" height="40" alt="logo.jpg" />                                
+                                <input type="text" className="form-control ms-2" placeholder="¿En qué estás pensando?" />
+                            </div>
+                            <div className="d-flex mt-4 justify-content-between">
+                                <div>
+                                    <img src={imagen} alt="Imagen" />
+                                    <img src={cara_feliz} className="ms-3" alt="Cara feliz" />
                                 </div>
-                                <div className="d-flex mt-4 justify-content-between">
-                                    <div className="">
-                                        <img src={imagen} />
-                                        <img src={cara_feliz} className="ms-3" />
-                                    </div>
-                                    <div className="">
-                                        <button className="btn btn-secondary">Publicar</button>
-                                    </div>
+                                <div>
+                                    <button className="btn" style={{backgroundColor: '#7B1FA2', color: 'white'}}>Publicar</button>
                                 </div>
                             </div>
                         </div>
-
-                        <Post postId="1" picUser={usuario_} user={"Lauro Deidad"} body={"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae assumenda, totam accusamus iste distinctio, illum magni blanditiis eius corporis rerum a dolore numquam deserunt quisquam, asperiores ullam nobis ex consectetur ab aliquid voluptates? Quisquam voluptates in hic qui veritatis ipsa!"} picsBody={images} />
-                        <Post postId="2"  picUser={usuario_} user={"Lauro Deidad"} body={"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae assumenda, totam accusamus iste distinctio, illum magni blanditiis eius corporis rerum a dolore numquam deserunt quisquam, asperiores ullam nobis ex consectetur ab aliquid voluptates? Quisquam voluptates in hic qui veritatis ipsa!"} picsBody={images2} />
-                        <Post postId="3"  picUser={usuario_} user={"Lauro Deidad"} body={"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae assumenda, totam accusamus iste distinctio, illum magni blanditiis eius corporis rerum a dolore numquam deserunt quisquam, asperiores ullam nobis ex consectetur ab aliquid voluptates? Quisquam voluptates in hic qui veritatis ipsa!"} picsBody={images3} />
-                        
                     </div>
+                    {posts.map((post) => (
+                        <Post
+                            key={post.id}
+                            postId={post.id}
+                            picUser={mascotas.find(masc => masc.id == post.mascota)?.foto_perfil}
+                            user={mascotas.find(masc => masc.id == post.mascota)?.nombre_usuario}
+                            body={post.contenido}
+                            picsBody={post.img}
+                        />
+                    ))}
+                    {loading && <p className="text-center">Cargando más publicaciones...</p>}
                 </div>
-
-                <SideColumn />
-
             </div>
-        </div>
-    </>
+        </Layout>
     );
-}
+};

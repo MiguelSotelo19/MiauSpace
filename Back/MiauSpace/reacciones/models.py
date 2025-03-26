@@ -13,7 +13,7 @@ class Reaccion(models.Model):
     mascota = models.ForeignKey(
         Mascota,
         on_delete = models.SET_NULL,
-        null=True,
+        null=True, 
         blank=True
         )
     tipo_reaccion = models.CharField(max_length=50)

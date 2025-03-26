@@ -1,40 +1,249 @@
-import React from "react";
-
-import fotoPerfil from "../assets/skibidi.jpeg"
-import { Header } from "../components/Header"
-import { Navigation } from "../components/Navigation"
-import { SideColumn } from "../components/SideColumn"
-import { Post } from "../components/Post"
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import fotoPerfil from "../assets/skibidi.jpeg";
+import perfilGenerico from "../assets/perfilGenerico.jpg";
+import { useParams } from "react-router-dom";
+import { Layout } from "../components/Layout";
+import { Post } from "../components/Post";
+import Modal from 'react-bootstrap/Modal';
+import Form from 'react-bootstrap/Form';
+import { Col, Container, Row } from "react-bootstrap";
+import Button from 'react-bootstrap/Button';
+import Swal from "sweetalert2";
 
 export const Perfil = () => {
-    let usuario = "Sotita"
-    const imgPost = [fotoPerfil];
-    return (
+    let urlUser = "http://127.0.0.1:8000/mascotas/api/";
+    const urlPost = 'http://127.0.0.1:8000/posts/api/';
 
-        <div className="container-fluid principal">
+    let { username: paramUsername } = useParams();
+    const user = JSON.parse(sessionStorage.getItem("usuario"));
+    let loggeado = localStorage.getItem("username");
+    const [edad, setEdad] = useState(0);
+    const [esAdmin, setEsAdmin] = useState(false);
+    const [especie, setEspecie] = useState("");
+    const [password, setPassword] = useState("");
+    const [fechaNac, setFechaNac] = useState("");
+    const [fotoPerf, setFotoPerf] = useState(null);
+    const [id, setId] = useState("");
+    const [isActive, setIsActive] = useState("");
+    const [joinDate, setJoinDate] = useState("");
+    const [lastLogin, setLastLogin] = useState("");
+    const [nomUsuario, setNomUsuario] = useState("");
+    const [preferencias, setPreferencias] = useState("");
+    const [raza, setRaza] = useState("");
+    const [sexo, setSexo] = useState("");
+    const [ubicacion, setUbicacion] = useState("");
+    const [btnEditar, setBtnEditar] = useState(false);
+
+    const [posts, setPosts] = useState([]);
+    const [page, setPage] = useState(1);
+    const [loading, setLoading] = useState(false);
+
+    const [numAmigos, setNumAmigos] = useState(0);
+
+    const [modalActIsOpen, setActIsOpen] = React.useState(false);
+
+    useEffect(() => {
+        getUsers();
+        
+    }, [paramUsername]);
+
+    const getUsers = async () => {
+        try {
+            const respuesta = await axios.get(urlUser);
+            const usuarioEncontrado = respuesta.data.find(u => u.nombre_usuario === paramUsername);
+            if (usuarioEncontrado) {
+                console.log("Encontrado: ", usuarioEncontrado);
+                setUser(usuarioEncontrado);
+
+            } else {
+                setFotoPerf(perfilGenerico);
+                setNomUsuario( "Perfil no encontrado");
+            }
+        } catch (error) {
+            console.error("Error al obtener datos del usuario", error);
+        }
+    };
+
+    const setUser = async (element) => {
+        setEdad(element.edad || 0);
+        setEspecie(element.especie || "No especificada");
+        setFechaNac(element.fecha_nacimiento || "----");
+        setFotoPerf(element.foto_perfil);
+        setIsActive(element.is_active || "");
+        setJoinDate(element.join_date || "----");
+        setLastLogin(element.last_login || "----");
+        setNomUsuario(element.nombre_usuario || "Nombre no encontrado");
+        setPreferencias(element.preferencias || "No especificado");
+        setRaza(element.raza || "No especificado");
+        setSexo(element.sexo || "No especificado");
+        setUbicacion(element.ubicacion || "");
+        getPosts(element.id);
+        
+        console.log(loggeado)
+        console.log(element.nombre_usuario)
+        if (element.nombre_usuario == loggeado) {
+            setEsAdmin(element.es_admin || false);
+            setPassword(element.password)
+            setId(element.id)
+            setBtnEditar(true);
+            console.log(btnEditar)
+        }
+    };
+
+    const getPosts = async (idUser) => {
+        if (loading) return;
+        setLoading(true);
+
+        try {
+            const respuesta = await axios.get(urlPost);
+            console.log("respuesta.data: ", respuesta.data);
+            console.log("id",id)
+            const publicaciones = respuesta.data.filter(post => post.mascota === idUser);
+
+            setPosts(publicaciones);
+            console.log("publicaciones filtradas: ",publicaciones);
+            /*
+            let nuevosPosts = publicaciones;
+            
+            nuevosPosts = nuevosPosts.sort(() => Math.random() - 0.5);
+
+            setPosts(prevPosts => [...prevPosts, ...nuevosPosts]);
+            setPage(prevPage => prevPage + 1);*/
+        } catch (error) {
+            console.error("Error al obtener publicaciones:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getAmigos = async () => {
+        try {
+            const respuesta = await axios.get(urlUser);
+            const usuarioEncontrado = respuesta.data.find(u => u.nombre_usuario === paramUsername);
+            if (usuarioEncontrado) {
+                console.log("Encontrado: ", usuarioEncontrado);
+                setUser(usuarioEncontrado);
+
+            } else {
+                setFotoPerf(perfilGenerico);
+                setNomUsuario( "Perfil no encontrado");
+            }
+        } catch (error) {
+            console.error("Error al obtener datos del usuario", error);
+        }
+    };
+
+    function openActModal(id_, nombre_, edad_, especie_, fecha_nac_, foto_per_, preferencias_,raza_,sexo_,ubicacion_) {
+        setEdad(edad_);
+        setId(id_)
+        setEspecie(especie_);
+        setFechaNac(fecha_nac_);
+        setFotoPerf(foto_per_);
+        setNomUsuario(nombre_);
+        setPreferencias(preferencias_);
+        setRaza(raza_);
+        setSexo(sexo_);
+        setUbicacion(ubicacion_);
+
+        setActIsOpen(true);
+    }
+
+    function closeModalAct() {
+        setActIsOpen(false);
+    }
+
+    const actualizarMascota = async (event) => {
+        event.preventDefault();
+
+        if (!nomUsuario || nomUsuario.trim() === "") {
+            Swal.fire("Nombre faltante","Escribe el nombre de la mascota", "warning");
+        } else if (!edad || isNaN(edad) || edad <= 0) {
+            Swal.fire("Edad faltante","Escribe una edad válida para la mascota", "warning");
+        } else if (!especie || especie.trim() === "") {
+            Swal.fire("Especie faltante","Escribe la especie de la mascota", "warning");
+        } else if (!fechaNac || fechaNac.trim() === "") {
+            Swal.fire("Fecha de nacimiento faltante","Selecciona una fecha de nacimiento válida", "warning");
+        } else if (!fotoPerf || fotoPerf.trim() === "" || !fotoPerf.startsWith("http")) {
+            Swal.fire("Foto de perfil no válida","Proporciona una URL válida para la foto de perfil", "warning");
+        } else if (!preferencias || preferencias.trim() === "") {
+            Swal.fire("Preferencia faltante","Escribe las preferencias de la mascota", "warning");
+        } else if (!raza || raza.trim() === "") {
+            Swal.fire("Raza faltante","Escribe la raza de la mascota", "warning");
+        } else if (!sexo || sexo.trim() === "" || !["Macho", "Hembra","Prefiero no decirlo"].includes(sexo)) {
+            Swal.fire("Sexo faltante","Selecciona un sexo válido", "warning");
+        } else if (!ubicacion || ubicacion.trim() === "") {
+            Swal.fire("Ubicación no válida","Escribe la ubicación de la mascota", "warning");
+        } else if ((nuevaContrasena !== "" || confirmarContrasena !== "") && nuevaContrasena !== confirmarContrasena ) {
+            Swal.fire("Nueva contraseña no es válida","Las contraseñas no pueden estar vacias y deben coincidir", "warning");
+        } else {
+            const urlActualizar= urlUser + id +"/"
+            const parametros = {
+                last_login: lastLogin,
+                nombre_usuario: nomUsuario,
+                password: nuevaContrasena !== "" ? nuevaContrasena : password,
+                especie: especie,
+                edad: parseInt(edad),
+                raza: raza,               
+                fecha_nacimiento: fechaNac,
+                sexo: sexo,
+                ubicacion: ubicacion,
+                foto_perfil: fotoPerf,
+                preferencias: preferencias,
+                is_active: isActive,
+                es_admin: esAdmin,
+                join_date: joinDate
+            };
+
+            console.log(parametros)
+            await axios({
+                method: 'PUT',
+                url: urlActualizar,
+                data: parametros
+            }).then(function (result) {
+                if(result.data.status == "OK" && metodo=="PUT"){
+                    Swal.fire("Perfil actualizado","El perfil se ha actualizado correctamente", "success");         
+                }
+                closeModalAct();
+                getUsers();
+            })
+            .catch(function (error) {
+                Swal.fire("Ha ocurrido un error","Algo ha ocurrido", "error");         
+            });
+        }
+    };
+    
+    const [mostrar, setMostrar] = useState(false);
+    const [nuevaContrasena, setNuevaContrasena] = useState("");
+    const [confirmarContrasena, setConfirmarContrasena] = useState("");
+
+    const mostrarCamposContra = () => {
+        setMostrar(!mostrar);
+        setNuevaContrasena("");
+        setConfirmarContrasena("");
+    };
+
+    return (
+        <Layout>
             <div className="gradient-custom-2">
-                <Header usuario={fotoPerfil} />
                 <div className="container py-5 h-100">
-                    <Navigation />
                     <div className="row justify-content-center align-items-center h-100">
-                        <div className="col-lg-9 col-xl-7">
+                        <div className="col-lg-12 col-xl-12" style={{ width: "50vw" }}>
                             <div className="card">
                                 <div
                                     className="rounded-top text-white d-flex flex-row"
                                     style={{ backgroundColor: "#40007a", height: "20vh" }}
                                 >
                                     <div className="ms-4 mt-5 d-flex flex-column" style={{ width: "15%" }}>
-                                        <img src={fotoPerfil} alt="Perfil" className="mt-4 mb-2 img-thumbnail" style={{ width: "100%", zIndex: "1" }}
-                                        />
-                                        <button className="btn btn-outline-light" style={{ height: "2.5rem" }}>
-                                            Editar perfil
-                                        </button>
+                                        <img src={fotoPerf} alt="Perfil" className="mt-4 mb-2 img-thumbnail" style={{ width: "100%", zIndex: "1" }} />
                                     </div>
                                     <div className="ms-3" style={{ marginTop: "15vh" }}>
-                                        <h5>{usuario}</h5>
+                                        <h5>{nomUsuario}</h5>
                                     </div>
+
                                 </div>
                                 <div className="p-2 pe-4 text-black" style={{ backgroundColor: "#f8f9fa" }}>
+
                                     <div className="d-flex justify-content-end text-center py-1">
                                         <div>
                                             <h5 className="mb-1">23</h5>
@@ -50,45 +259,196 @@ export const Perfil = () => {
                                     <div className="mb-5">
                                         <p className="lead fw-normal mb-1">Detalles</p>
                                         <div className="p-4" style={{ backgroundColor: "#f8f9fa" }}>
-                                            <p className="font-italic mb-1">Vive en Temixyork</p>
-                                            <p className="font-italic mb-1">Soltero</p>
-                                            <p className="font-italic mb-0">Cumpleaños: 01 Enero</p>
+                                            <p className="font-italic mb-1">Vive en: {ubicacion}</p>
+                                            <p className="font-italic mb-1">Sexo: {sexo}</p>
+                                            <p className="font-italic mb-0">Especie: {especie}</p>
                                         </div>
+                                        {btnEditar && (
+                                            <button className="btn btn-outline-dark" style={{ height: "2.5rem" }}
+                                                onClick={() => openActModal(id, nomUsuario, edad, especie, fechaNac, fotoPerf, preferencias, raza, sexo, ubicacion)}>
+                                                Editar perfil
+                                            </button>
+                                        )}
                                     </div>
+                                </div>
+                                <div className="card-body text-black p-4">
                                     <div className="d-flex justify-content-between align-items-center mb-4">
                                         <p className="lead fw-normal mb-0">Fotos recientes</p>
                                     </div>
-                                    <div className="row  g-2">
+                                    <div className="row g-2">
                                         <div className="col mb-2">
-                                            <img src={fotoPerfil} className="w-100 rounded-3"
-                                            />
+                                            <img src={fotoPerfil} className="w-100 rounded-3" alt="Foto 1" />
                                         </div>
                                         <div className="col mb-2">
-                                            <img src={fotoPerfil} className="w-100 rounded-3"
-                                            />
+                                            <img src={fotoPerfil} className="w-100 rounded-3" alt="Foto 2" />
                                         </div>
                                     </div>
                                     <div className="row g-2">
                                         <div className="col mb-2">
-                                            <img src={fotoPerfil} className="w-100 rounded-3"
-                                            />
+                                            <img src={fotoPerfil} className="w-100 rounded-3" alt="Foto 3" />
                                         </div>
                                         <div className="col mb-2">
-                                            <img src={fotoPerfil} className="w-100 rounded-3"
-                                            />
+                                            <img src={fotoPerfil} className="w-100 rounded-3" alt="Foto 4" />
                                         </div>
                                     </div>
+                                    <div className="d-flex justify-content-between align-items-center mt-5 mb-4">
+                                        <p className="lead fw-normal mb-0">Publicaciones</p>
+                                    </div>
+                                    {posts.map((post) => (
+                                        <Post
+                                            key={post.id}
+                                            postId={post.id}
+                                            picUser={fotoPerf}
+                                            user={nomUsuario}
+                                            body={post.contenido}
+                                            picsBody={post.img}
+                                        />
+                                    ))}
+
                                 </div>
                             </div>
-                            <Post postId="1" picUser={fotoPerfil} user={usuario} body={"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae assumenda, totam accusamus iste distinctio, illum magni blanditiis eius corporis rerum a dolore numquam deserunt quisquam, asperiores ullam nobis ex consectetur ab aliquid voluptates? Quisquam voluptates in hic qui veritatis ipsa!"} picsBody={imgPost}/>
-                            <Post postId="1" picUser={fotoPerfil} user={usuario} body={"Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae assumenda, totam accusamus iste distinctio, illum magni blanditiis eius corporis rerum a dolore numquam deserunt quisquam, asperiores ullam nobis ex consectetur ab aliquid voluptates? Quisquam voluptates in hic qui veritatis ipsa!"} picsBody={imgPost}/>
-
                         </div>
                     </div>
                 </div>
             </div>
-            <SideColumn />
-        </div>
+            <Modal
+                show={modalActIsOpen}
+                onHide={closeModalAct}
+                size="lg"
+                aria-labelledby="contained-modal-title-vcenter example-custom-modal-styling-title"
+                centered
+                backdrop="static"
+                dialogClassName="modal-90w modal-90h"
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title id="contained-modal-title-vcenter">
+                        Actualizar datos personales
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body style={{ maxHeight: '60vh' }}>
+                    <Container style={{ display: 'flex', flexDirection: 'column' }}>
+                        <Row className="d-flex justify-content-center">
+                            <Col md={6}>
+                                <Form>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label className="ms-1">Nombre completo:</Form.Label><br />
+                                        <Form.Label className="ms-1 mt-2"
+                                            required readOnly>{nomUsuario}</Form.Label>
+                                    </Form.Group>
+                                </Form>
+                            </Col>
 
+                            <Col md={6}>
+                                <Form>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label className="ms-1">Especie:</Form.Label>
+                                        <Form.Control type="text" placeholder="Especie"
+                                            value={especie} onChange={(e) => setEspecie(e.target.value)} maxLength="10"
+                                        />
+                                    </Form.Group>
+                                </Form>
+                            </Col>
+                        </Row> <br />
+                        <Row className="d-flex justify-content-center">
+                            <Col md={6}>
+                                <Form>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label className="ms-1">Sexo:</Form.Label>
+                                        <Form.Select value={sexo} onChange={(e) => setSexo(e.target.value)}>
+                                            <option value="">Selecciona tu sexo</option>
+                                            <option value="Macho">Macho</option>
+                                            <option value="Hembra">Hembra</option>
+                                            <option value="Prefiero no decirlo">Prefiero no decirlo</option>
+                                        </Form.Select>
+                                    </Form.Group>
+                                </Form>
+                            </Col>
+                            <Col md={6}>
+                                <Form>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label className="ms-1">Fecha de nacimiento:</Form.Label>
+                                        <Form.Control required type="date" value={fechaNac} onChange={(e) => setFechaNac(e.target.value)} />
+                                    </Form.Group>
+                                </Form>
+                            </Col>
+                        </Row><br />
+                        <Row className="d-flex justify-content-center">
+                            <Col md={6}>
+                                <Form>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label className="ms-1">Preferencia:</Form.Label>
+                                        <Form.Control type="text" placeholder="Preferencia" required
+                                            value={preferencias} onChange={(e) => setPreferencias(e.target.value)} />
+                                    </Form.Group>
+                                </Form>
+                            </Col>
+                            <Col md={6}>
+                                <Form>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label className="ms-1">Raza:</Form.Label>
+                                        <Form.Control required type="text" value={raza} onChange={(e) => setRaza(e.target.value)} />
+                                    </Form.Group>
+                                </Form>
+                            </Col>
+                        </Row><br />
+                        <Row className="d-flex justify-content-center">
+                            <Col md={4}>
+                                <Form>
+                                    <Form.Group>
+                                        <Form.Label className="ms-1">Ubicación:</Form.Label>
+                                        <Form.Control type="text" placeholder="Ubicacion" required
+                                            value={ubicacion} onChange={(e) => setUbicacion(e.target.value)} />
+                                    </Form.Group>
+                                </Form>
+                            </Col>
+                            <Col md={8}>
+                                <Form>
+                                    <Form.Group>
+                                        <Form.Label className="ms-1">Foto de perfil:</Form.Label>
+                                        <Form.Control required type="url" value={fotoPerf} onChange={(e) => setFotoPerf(e.target.value)} />
+                                    </Form.Group>
+                                </Form>
+                            </Col>
+                        </Row><br />
+                        <p className="ms-1"
+                            style={{ color: "black", cursor: "pointer" }}
+                            onClick={mostrarCamposContra}>
+                            Cambiar contraseña
+                        </p>
+                        {mostrar && (
+                            <Row className="d-flex justify-content-center">
+                                <Col md={6}>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label className="ms-1">Nueva contraseña:</Form.Label>
+                                        <Form.Control
+                                            type="password"
+                                            placeholder="Ingrese nueva contraseña"
+                                            value={nuevaContrasena}
+                                            onChange={(e) => setNuevaContrasena(e.target.value)}
+                                        />
+                                    </Form.Group>
+                                </Col>
+                                <Col md={6}>
+                                    <Form.Group className="mb-3">
+                                        <Form.Label className="ms-1">Confirmar contraseña:</Form.Label>
+                                        <Form.Control
+                                            type="password"
+                                            placeholder="Confirme nueva contraseña"
+                                            value={confirmarContrasena}
+                                            onChange={(e) => setConfirmarContrasena(e.target.value)}
+                                        />
+                                    </Form.Group>
+                                </Col>
+                            </Row>
+                        )}
+                    </Container>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button className="" variant="danger" onClick={closeModalAct}>Cancelar</Button>{' '}
+                    <Button className="fw-bold " variant="warning" onClick={(e) => actualizarMascota(e)}>Actualizar</Button>{' '}
+                </Modal.Footer>
+            </Modal>
+        </Layout>
+        
     );
 };
