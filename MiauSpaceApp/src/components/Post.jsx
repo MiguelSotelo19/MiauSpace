@@ -18,21 +18,13 @@ import reaccion6 from "../assets/reaccion6.png";
 import commentIcon from "../assets/comentario.png";
 import commentsIcon from "../assets/comentarios.png";
 import enviar from "../assets/enviar.png";
+import reaccionesImg from "../assets/reacciones.png";
 import { Reactions } from "./Reactions";
 
 export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
     const urlReacciones = 'http://127.0.0.1:8000/reacciones/api/';
     const urlComments = 'http://127.0.0.1:8000/comentarios/api/';
     const urlMascota = 'http://127.0.0.1:8000/mascotas/api/';
-
-    const imgreacciones = {
-        "1": reaccion1,
-        "2": reaccion2,
-        "3": reaccion3,
-        "4": reaccion4,
-        "5": reaccion5,
-        "6": reaccion6
-    };
 
     const [ idReaction, setIdReaction ] = useState(0);
     const [ reacted, setReacted ] = useState(false);
@@ -80,7 +72,7 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
 
         let comentarios = respuestaC.data.filter(comment => comment.post == postId);
         let reacciones = respuestaR.data.filter(reac => reac.post == postId);
-        let user = respuestaM.data.filter(user => user.nombre_usuario == username)[0].id;
+        let user = respuestaM.data.filter(user => user.nombre_usuario == username)[0];
         let reaccionUser = respuestaR.data.filter(reac => reac.mascota == user && reac.post == postId);        
 
         if(reaccionUser.length > 0) {
@@ -273,8 +265,8 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                     </div>
                     <hr />
                     <div className="d-flex justify-content-between align-items-center">
-                        <p className="reaccionesCount" data-bs-toggle="modal" data-bs-target={`#modalReacciones${modalId}`}>{cantReacciones} reacciones</p>
-                        <p>{cantComments} comentarios</p>
+                        <p className="accionesCount" data-bs-toggle="modal" data-bs-target={`#modalReacciones${modalId}`}>{cantReacciones} reacciones</p>
+                        <p className="accionesCount" data-bs-toggle="modal" data-bs-target={`#${modalId}`}>{cantComments} comentarios</p>
                     </div>
                     <div className="d-flex justify-content-evenly align-items-center py-2">
                         <div className="reaction-container" onMouseEnter={() => setShowReactions(true)} onMouseLeave={() => setShowReactions(false)}>
@@ -315,6 +307,10 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                                 <Reactions mascotas={mascotas} reacciones={reacciones} />
                             ):(
                                 <>
+                                <div className="d-flex flex-column justify-content-center align-items-center">
+                                    <img src={reaccionesImg} width={'200px'} height={'200px'} />
+                                    <p>Sé el primero en reaccionar</p>
+                                </div>
                                 </>
                             )}
                         </div>

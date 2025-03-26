@@ -7,8 +7,13 @@ import reaccion5 from "../assets/reaccion5.png";
 import reaccion6 from "../assets/reaccion6.png";
 
 import "./css/Reactions.css";
+import axios from "axios";
 
 export const Reactions = ({ mascotas, reacciones }) => {
+    const urlAmistades = "http://127.0.0.1:8000/amistades/api/"
+    let user = JSON.parse(sessionStorage.getItem("usuario"));
+    console.log(user);
+    
     const [ allReactions, setAllReactions ] = useState(reacciones);
     const imgreacciones = {
         "1": reaccion1,
@@ -25,10 +30,18 @@ export const Reactions = ({ mascotas, reacciones }) => {
     const react4 = reacciones.filter(r => r.tipo_reaccion == '4');
     const react5 = reacciones.filter(r => r.tipo_reaccion == '5');
     const react6 = reacciones.filter(r => r.tipo_reaccion == '6');
+    
+    useEffect(async () => {
+        const respuesta = await axios({
+            method: "GET",
+            url: urlAmistades,
+            /*headers: {
+               Authorization: `Bearer ${token}` 
+            }*/
+        });
 
-    const refreshReactions = (react) => {
-        setAllReactions(react)
-    }
+        
+    }, [])
 
     return(
         <>
@@ -36,13 +49,13 @@ export const Reactions = ({ mascotas, reacciones }) => {
             <div className="menu-reacciones mb-4">
                 {reacciones.length > 0 ? (
                     <>
-                    <button className="btn" onClick={() => setAllReactions(reacciones)}>Todos</button>
-                    {react1.length > 0 ? (<button className="btn" onClick={() => setAllReactions(react1)}><img src={reaccion1} className="icon-reaction" alt="Me gusta"/>{react1.length}</button>) : (<></>)}
-                    {react2.length > 0 ? (<button className="btn" onClick={() => setAllReactions(react2)}><img src={reaccion2} className="icon-reaction" alt="Me gusta"/>{react2.length}</button>) : (<></>)}
-                    {react3.length > 0 ? (<button className="btn" onClick={() => setAllReactions(react3)}><img src={reaccion3} className="icon-reaction" alt="Me gusta"/>{react3.length}</button>) : (<></>)}
-                    {react4.length > 0 ? (<button className="btn" onClick={() => setAllReactions(react4)}><img src={reaccion4} className="icon-reaction" alt="Me gusta"/>{react4.length}</button>) : (<></>)}
-                    {react5.length > 0 ? (<button className="btn" onClick={() => setAllReactions(react5)}><img src={reaccion5} className="icon-reaction" alt="Me gusta"/>{react5.length}</button>) : (<></>)}
-                    {react6.length > 0 ? (<button className="btn" onClick={() => setAllReactions(react6)}><img src={reaccion6} className="icon-reaction" alt="Me gusta"/>{react6.length}</button>) : (<></>)}
+                    <button className="btn btn-reaction" onClick={() => setAllReactions(reacciones)}>Todos</button>
+                    {react1.length > 0 ? (<button className="btn btn-reaction" onClick={() => setAllReactions(react1)}><img src={reaccion1} className="icon-reaction" alt="Me gusta"/>{react1.length}</button>) : (<></>)}
+                    {react2.length > 0 ? (<button className="btn btn-reaction" onClick={() => setAllReactions(react2)}><img src={reaccion2} className="icon-reaction" alt="Me gusta"/>{react2.length}</button>) : (<></>)}
+                    {react3.length > 0 ? (<button className="btn btn-reaction" onClick={() => setAllReactions(react3)}><img src={reaccion3} className="icon-reaction" alt="Me gusta"/>{react3.length}</button>) : (<></>)}
+                    {react4.length > 0 ? (<button className="btn btn-reaction" onClick={() => setAllReactions(react4)}><img src={reaccion4} className="icon-reaction" alt="Me gusta"/>{react4.length}</button>) : (<></>)}
+                    {react5.length > 0 ? (<button className="btn btn-reaction" onClick={() => setAllReactions(react5)}><img src={reaccion5} className="icon-reaction" alt="Me gusta"/>{react5.length}</button>) : (<></>)}
+                    {react6.length > 0 ? (<button className="btn btn-reaction" onClick={() => setAllReactions(react6)}><img src={reaccion6} className="icon-reaction" alt="Me gusta"/>{react6.length}</button>) : (<></>)}
                     </>
                 ) : (<></>)}
             </div>
