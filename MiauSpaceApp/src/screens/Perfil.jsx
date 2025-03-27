@@ -508,17 +508,19 @@ export const Perfil = () => {
                                             </div>
                                         </Nav.Link>
                                     </Nav>
-                                    
-                                    {esAmigo(amigo.id) ? (
-                                        <span>Amigos</span>
-                                    ) : (
-                                        <button
-                                            className="btn"
-                                            style={{ backgroundColor: '#7B1FA2', color: 'white' }}
-                                            onClick={() => { }}
-                                        >
-                                            Enviar solicitud
-                                        </button>
+
+                                    {amigo.nombre === loggeado ? null : (
+                                        esAmigo(amigo.id) ? (
+                                            <span>Amigos</span>
+                                        ) : (
+                                            <button
+                                                className="btn"
+                                                style={{ backgroundColor: '#7B1FA2', color: 'white' }}
+                                                onClick={() => { }}
+                                            >
+                                                Enviar solicitud
+                                            </button>
+                                        )
                                     )}
                                 </div>
                             ))}
