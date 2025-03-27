@@ -12,9 +12,9 @@ import axios from "axios";
 export const Reactions = ({ mascotas, reacciones }) => {
     const urlAmistades = "http://127.0.0.1:8000/amistades/api/"
     let user = JSON.parse(sessionStorage.getItem("usuario"));
-    console.log(user);
     
     const [ allReactions, setAllReactions ] = useState(reacciones);
+    const [ amistades, setAmistades ] = useState([]);
     const imgreacciones = {
         "1": reaccion1,
         "2": reaccion2,
@@ -31,7 +31,11 @@ export const Reactions = ({ mascotas, reacciones }) => {
     const react5 = reacciones.filter(r => r.tipo_reaccion == '5');
     const react6 = reacciones.filter(r => r.tipo_reaccion == '6');
     
-    useEffect(async () => {
+    useEffect(() => {
+        getAmistades();        
+    }, []);
+
+    const getAmistades = async () => {
         const respuesta = await axios({
             method: "GET",
             url: urlAmistades,
@@ -40,9 +44,9 @@ export const Reactions = ({ mascotas, reacciones }) => {
             }*/
         });
 
-        console.log()
-        
-    }, [])
+        console.log(respuesta.data)
+        setAmistades(respuesta.data);
+    }
 
     return(
         <>
