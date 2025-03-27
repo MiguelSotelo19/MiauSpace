@@ -7,9 +7,10 @@ import { Layout } from "../components/Layout";
 import { Post } from "../components/Post";
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
-import { Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Nav, Row } from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
 import Swal from "sweetalert2";
+import { Link } from "react-router";
 
 export const Perfil = () => {
     const urlUser = "http://127.0.0.1:8000/mascotas/api/";
@@ -39,9 +40,12 @@ export const Perfil = () => {
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
 
+    const [amigos, setAmigos] = useState([]);
+    const [misAmigos, setMisAmigos] = useState([]);
     const [numAmigos, setNumAmigos] = useState(0);
 
     const [modalActIsOpen, setActIsOpen] = React.useState(false);
+    const [modalAmigos, setModalAmigos] = React.useState(false);
 
     useEffect(() => {
         getUsers();
@@ -81,17 +85,22 @@ export const Perfil = () => {
         
         getPosts(element.id);
         getAmigos(element.id)
-        
+        getAmigosPropio(user.id)
+
         console.log(loggeado)
         console.log(element.nombre_usuario)
         if (element.nombre_usuario == loggeado) {
             setEsAdmin(element.es_admin || false);
             setPassword(element.password)
             setId(element.id)
+            
             setBtnEditar(true);
             console.log(btnEditar)
         }
     };
+
+
+    
 
     const getPosts = async (idUser) => {
         if (loading) return;
@@ -122,10 +131,25 @@ export const Perfil = () => {
     const getAmigos = async (idPerfil) => {
         try {
             const respuesta = await axios.get(urlAmigos+idPerfil+'/obtener_amigos/');
-            console.log("Amigos: ",respuesta)
+            setAmigos(respuesta.data)
+            console.log("amigos: ",amigos)
+            setNumAmigos(respuesta.data.length)
         } catch (error) {
             console.error("Error al obtener datos del usuario", error);
         }
+    };
+
+    const getAmigosPropio = async (idLoggeado) => {
+        try {
+            const respuesta = await axios.get(urlAmigos+idLoggeado+'/obtener_amigos/');
+            setMisAmigos(respuesta.data)
+        } catch (error) {
+            console.error("Error al obtener datos del usuario", error);
+        }
+    };
+
+    const esAmigo = (amigoId) => {
+        return misAmigos.some(amigo => amigo.id === amigoId);
     };
 
     function openActModal(id_, nombre_, edad_, especie_, fecha_nac_, foto_per_, preferencias_,raza_,sexo_,ubicacion_) {
@@ -145,6 +169,15 @@ export const Perfil = () => {
 
     function closeModalAct() {
         setActIsOpen(false);
+    }
+
+    function openModalAmigos(amigos) {
+        setAmigos(amigos)
+        setModalAmigos(true);
+    }
+    
+    function closeModalAmigos() {
+        setModalAmigos(false);
     }
 
     const actualizarMascota = async (event) => {
@@ -229,7 +262,7 @@ export const Perfil = () => {
                                     style={{ backgroundColor: "#40007a", height: "20vh" }}
                                 >
                                     <div className="ms-4 mt-5 d-flex flex-column" style={{ width: "15%" }}>
-                                        <img src={fotoPerf} alt="Perfil" className="mt-4 mb-2 img-thumbnail" style={{  zIndex: "1", maxWidth:"10vw", maxHeight:"13vh" }} />
+                                        <img src={fotoPerf} alt="Perfil" className="mt-4 mb-2 img-thumbnail" style={{ zIndex: "1", maxWidth: "10vw", maxHeight: "13vh" }} />
                                     </div>
                                     <div className="ms-3" style={{ marginTop: "15vh" }}>
                                         <h5>{nomUsuario}</h5>
@@ -243,8 +276,8 @@ export const Perfil = () => {
                                             <h5 className="mb-1">23</h5>
                                             <p className="small text-muted">Fotos</p>
                                         </div>
-                                        <div className="px-3">
-                                            <h5 className="mb-1">2</h5>
+                                        <div className="px-3" onClick={() => openModalAmigos(amigos)}>
+                                            <h5 className="mb-1">{numAmigos}</h5>
                                             <p className="small text-muted">Amigos</p>
                                         </div>
                                     </div>
@@ -290,23 +323,23 @@ export const Perfil = () => {
                                     </div>
 
                                     {posts
-                                    .sort((a, b) => b.id - a.id) //Con este se hace de manera descendente
-                                    .map((post) => {
-                                        const images = post.imagenes
-                                            ? post.imagenes.map(img => img.imagen_base64)
-                                            : (post.img || []);
+                                        .sort((a, b) => b.id - a.id) //Con este se hace de manera descendente
+                                        .map((post) => {
+                                            const images = post.imagenes
+                                                ? post.imagenes.map(img => img.imagen_base64)
+                                                : (post.img || []);
 
-                                        return (
-                                            <Post
-                                                key={post.id}
-                                                postId={post.id}
-                                                picUser={fotoPerf}
-                                                user={nomUsuario}
-                                                body={post.contenido}
-                                                picsBody={images}
-                                            />
-                                        );
-                                    })}
+                                            return (
+                                                <Post
+                                                    key={post.id}
+                                                    postId={post.id}
+                                                    picUser={fotoPerf}
+                                                    user={nomUsuario}
+                                                    body={post.contenido}
+                                                    picsBody={images}
+                                                />
+                                            );
+                                        })}
                                 </div>
                             </div>
                         </div>
@@ -320,7 +353,6 @@ export const Perfil = () => {
                 aria-labelledby="contained-modal-title-vcenter example-custom-modal-styling-title"
                 centered
                 backdrop="static"
-                dialogClassName="modal-90w modal-90h"
             >
                 <Modal.Header closeButton>
                     <Modal.Title id="contained-modal-title-vcenter">
@@ -449,6 +481,50 @@ export const Perfil = () => {
                     <Button className="" variant="danger" onClick={closeModalAct}>Cancelar</Button>{' '}
                     <Button className="fw-bold " variant="warning" onClick={(e) => actualizarMascota(e)}>Actualizar</Button>{' '}
                 </Modal.Footer>
+            </Modal>
+
+            <Modal
+                show={modalAmigos}
+                onHide={closeModalAmigos}
+                size="md"
+                aria-labelledby="contained-modal-title-vcenter "
+                centered
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title id="contained-modal-title-vcenter">
+                        {nomUsuario === loggeado ? 'Tus amigos' : `Amigos de ${nomUsuario}`}
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body style={{ maxHeight: '60vh' }}>
+                    <Container style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div className="container d-flex flex-column w-100 justify-content-center">
+                            {amigos.map(amigo => (
+                                <div key={amigo.id} className="d-flex justify-content-between align-items-center border-bottom">
+                                    <Nav>
+                                        <Nav.Link to={`/MiauSpace/Perfil/${amigo.nombre}`} as={Link} onClick={()=> closeModalAmigos()}>
+                                            <div className="d-flex align-items-center">
+                                                <img src={amigo.foto_perfil} alt="Perfil" className="rounded-circle perfil-img ms-1" />
+                                                <p className="mb-0 fw-bold nombre-usuario ms-2">{amigo.nombre}</p>
+                                            </div>
+                                        </Nav.Link>
+                                    </Nav>
+                                    
+                                    {esAmigo(amigo.id) ? (
+                                        <span>Amigos</span>
+                                    ) : (
+                                        <button
+                                            className="btn"
+                                            style={{ backgroundColor: '#7B1FA2', color: 'white' }}
+                                            onClick={() => { }}
+                                        >
+                                            Enviar solicitud
+                                        </button>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </Container>
+                </Modal.Body>
             </Modal>
         </Layout>
         
