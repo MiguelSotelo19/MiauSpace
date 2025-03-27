@@ -12,9 +12,9 @@ import Button from 'react-bootstrap/Button';
 import Swal from "sweetalert2";
 
 export const Perfil = () => {
-    let urlUser = "http://127.0.0.1:8000/mascotas/api/";
+    const urlUser = "http://127.0.0.1:8000/mascotas/api/";
     const urlPost = 'http://127.0.0.1:8000/posts/api/';
-
+    const urlAmigos= 'http://127.0.0.1:8000/amistades/api/';
     let { username: paramUsername } = useParams();
     const user = JSON.parse(sessionStorage.getItem("usuario"));
     let loggeado = localStorage.getItem("username");
@@ -78,7 +78,9 @@ export const Perfil = () => {
         setRaza(element.raza || "No especificado");
         setSexo(element.sexo || "No especificado");
         setUbicacion(element.ubicacion || "");
+        
         getPosts(element.id);
+        getAmigos(element.id)
         
         console.log(loggeado)
         console.log(element.nombre_usuario)
@@ -117,18 +119,10 @@ export const Perfil = () => {
         }
     };
 
-    const getAmigos = async () => {
+    const getAmigos = async (idPerfil) => {
         try {
-            const respuesta = await axios.get(urlUser);
-            const usuarioEncontrado = respuesta.data.find(u => u.nombre_usuario === paramUsername);
-            if (usuarioEncontrado) {
-                console.log("Encontrado: ", usuarioEncontrado);
-                setUser(usuarioEncontrado);
-
-            } else {
-                setFotoPerf(perfilGenerico);
-                setNomUsuario( "Perfil no encontrado");
-            }
+            const respuesta = await axios.get(urlAmigos+idPerfil+'/obtener_amigos/');
+            console.log("Amigos: ",respuesta)
         } catch (error) {
             console.error("Error al obtener datos del usuario", error);
         }
@@ -235,7 +229,7 @@ export const Perfil = () => {
                                     style={{ backgroundColor: "#40007a", height: "20vh" }}
                                 >
                                     <div className="ms-4 mt-5 d-flex flex-column" style={{ width: "15%" }}>
-                                        <img src={fotoPerf} alt="Perfil" className="mt-4 mb-2 img-thumbnail" style={{ width: "100%", zIndex: "1" }} />
+                                        <img src={fotoPerf} alt="Perfil" className="mt-4 mb-2 img-thumbnail" style={{  zIndex: "1", maxWidth:"10vw", maxHeight:"13vh" }} />
                                     </div>
                                     <div className="ms-3" style={{ marginTop: "15vh" }}>
                                         <h5>{nomUsuario}</h5>
@@ -294,17 +288,25 @@ export const Perfil = () => {
                                     <div className="d-flex justify-content-between align-items-center mt-5 mb-4">
                                         <p className="lead fw-normal mb-0">Publicaciones</p>
                                     </div>
-                                    {posts.map((post) => (
-                                        <Post
-                                            key={post.id}
-                                            postId={post.id}
-                                            picUser={fotoPerf}
-                                            user={nomUsuario}
-                                            body={post.contenido}
-                                            picsBody={post.img}
-                                        />
-                                    ))}
 
+                                    {posts
+                                    .sort((a, b) => b.id - a.id) //Con este se hace de manera descendente
+                                    .map((post) => {
+                                        const images = post.imagenes
+                                            ? post.imagenes.map(img => img.imagen_base64)
+                                            : (post.img || []);
+
+                                        return (
+                                            <Post
+                                                key={post.id}
+                                                postId={post.id}
+                                                picUser={fotoPerf}
+                                                user={nomUsuario}
+                                                body={post.contenido}
+                                                picsBody={images}
+                                            />
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>
