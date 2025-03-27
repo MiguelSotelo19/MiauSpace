@@ -1,6 +1,7 @@
-from rest_framework import viewsets, status, Imagenes
+from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.renderers import JSONRenderer
 from .models import Posts, Imagenes
 from .serializers import PostsSerializer, ImagenesSerializer, PostImagenSerializer
 class PostsViewset(viewsets.ModelViewSet):
