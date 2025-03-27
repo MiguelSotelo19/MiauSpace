@@ -98,7 +98,7 @@ const [showMore, setShowMore] = useState(false);
         let comentarios = respuestaC.data.filter(comment => comment.post == postId);
         let reacciones = respuestaR.data.filter(reac => reac.post == postId);
         let user = respuestaM.data.filter(user => user.nombre_usuario == username)[0];
-        let reaccionUser = respuestaR.data.filter(reac => reac.mascota == user && reac.post == postId);        
+        let reaccionUser = respuestaR.data.filter(reac => reac.mascota == user.id && reac.post == postId);        
 
         if(reaccionUser.length > 0) {
             setReactionUser(parseInt(reaccionUser[0].tipo_reaccion));
@@ -129,7 +129,7 @@ const [showMore, setShowMore] = useState(false);
         
         const parametros = {
             post: postId,
-            mascota: idUser,
+            mascota: idUser.id,
             tipo_reaccion: selected,
             fecha_comentario: new Date().toISOString()
         }
@@ -331,64 +331,59 @@ const [showMore, setShowMore] = useState(false);
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-body">
-                        {reacciones.length > 0 ? (
-                            reacciones.map(reac => (
-                                <div key={reac.id} className="d-flex align-items-center gap-2 p-2 border-bottom">
-                                    <img src={mascotas.find(mas => mas.id == reac.mascota)?.foto_perfil} 
-                                        alt="Perfil" className="rounded-circle perfil-img"/>
-                                    <img src={imgreacciones[reac.tipo_reaccion]} alt="Reacción" className="reaccion-icon"/>
-                                    <p className="mb-0 fw-bold nombre-usuario">
-                                        {mascotas.find(mas => mas.id == reac.mascota)?.nombre_usuario}
-                                    </p>
-                                </div>
-                            ))
-                        ) : (
-                            <p>No hay reacciones aún</p>
+                        {(Array.isArray(reacciones) && reacciones.length > 0) ? (
+                            <Reactions mascotas={mascotas} reacciones={reacciones} />
+                        ):(
+                            <>
+                            <div className="d-flex flex-column justify-content-center align-items-center">
+                                <img src={reaccionesImg} width={'200px'} height={'200px'} />
+                                <p>Sé el primero en reaccionar</p>
+                            </div>
+                            </>
                         )}
                     </div>
                 </div>
             </div>
         </div>
 
-{/* Modal solo para Imágenes */}
-<div className="modal fade" id={`imageModal${postId}`} tabIndex="-1" aria-hidden="true">
-    <div className="modal-dialog modal-dialog-centered modal-lg" style={{ maxWidth: "100%", width: "500px" }}>
-        <div className="modal-content" style={{ width: "100%", maxHeight: "90vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-            {picsBody.length > 0 && (
-                <div className="modal-body p-0 d-flex justify-content-center align-items-center">
-                    <div id={`carousel-${postId}`} className="carousel slide">
-                        <div className="carousel-inner">
-                            {picsBody.map((img, index) => (
-                                <div key={index} className={`carousel-item ${index === 0 ? "active" : ""}`}>
-                                    <img 
-                                        src={img} 
-                                        className="d-block mx-auto" 
-                                        alt={`Imagen ${index + 1}`} 
-                                        style={{
-                                            width: "auto",
-                                            maxWidth: "100%",
-                                            height: "auto",
-                                            maxHeight: "80vh", 
-                                            objectFit: "contain", 
-                                            display: "block",
-                                            margin: "0 auto"
-                                        }} 
-                                    />
+        <div className="modal fade" id={`imageModal${postId}`} tabIndex="-1" aria-hidden="true">
+            <div className="modal-dialog modal-dialog-centered modal-lg" style={{ maxWidth: "100%", width: "500px" }}>
+                <div className="modal-content" style={{ width: "100%", maxHeight: "90vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    {picsBody.length > 0 && (
+                        <div className="modal-body p-0 d-flex justify-content-center align-items-center">
+                            <div id={`carousel-${postId}`} className="carousel slide">
+                                <div className="carousel-inner">
+                                    {picsBody.map((img, index) => (
+                                        <div key={index} className={`carousel-item ${index === 0 ? "active" : ""}`}>
+                                            <img 
+                                                src={img} 
+                                                className="d-block mx-auto" 
+                                                alt={`Imagen ${index + 1}`} 
+                                                style={{
+                                                    width: "auto",
+                                                    maxWidth: "100%",
+                                                    height: "auto",
+                                                    maxHeight: "80vh", 
+                                                    objectFit: "contain", 
+                                                    display: "block",
+                                                    margin: "0 auto"
+                                                }} 
+                                            />
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
+                                <button className="carousel-control-prev" type="button" data-bs-target={`#carousel-${postId}`} data-bs-slide="prev">
+                                    <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                                </button>
+                                <button className="carousel-control-next" type="button" data-bs-target={`#carousel-${postId}`} data-bs-slide="next">
+                                    <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                                </button>
+                            </div>
                         </div>
-                        <button className="carousel-control-prev" type="button" data-bs-target={`#carousel-${postId}`} data-bs-slide="prev">
-                            <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                        </button>
-                        <button className="carousel-control-next" type="button" data-bs-target={`#carousel-${postId}`} data-bs-slide="next">
-                            <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                        </button>
-                    </div>
+                    )}
                 </div>
-            )}
+            </div>
         </div>
-    </div>
-</div>
 
 
 
