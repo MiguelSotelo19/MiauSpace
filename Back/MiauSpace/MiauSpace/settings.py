@@ -62,7 +62,9 @@ MIDDLEWARE = [
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "http://127.0.0.1:5500",  # Tu servidor de desarrollo HTML
+    "http://localhost:5500",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
