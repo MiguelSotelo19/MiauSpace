@@ -26,6 +26,19 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
     const urlComments = 'http://127.0.0.1:8000/comentarios/api/';
     const urlMascota = 'http://127.0.0.1:8000/mascotas/api/';
 
+    const imgreacciones = {
+        "1": reaccion1,
+        "2": reaccion2,
+        "3": reaccion3,
+        "4": reaccion4,
+        "5": reaccion5,
+        "6": reaccion6
+    };
+
+    const [visibleImages, setVisibleImages] = useState([]);
+const [hiddenImages, setHiddenImages] = useState([]);
+const [showMore, setShowMore] = useState(false);
+
     const [ idReaction, setIdReaction ] = useState(0);
     const [ reacted, setReacted ] = useState(false);
     const [ idUser, setIdUser ] = useState(0);
@@ -48,6 +61,18 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
         getData();
     }, [])
 
+
+    useEffect(() => {
+        if (Array.isArray(picsBody) && picsBody.length > 0) {
+            setVisibleImages(picsBody.slice(0, 3));
+            if (picsBody.length > 3) {
+                setHiddenImages(picsBody.slice(3));
+                setShowMore(true);
+            }
+        }
+    }, [picsBody]);
+
+    
     const getData = async () => {
         const respuestaM = await axios({
             method: "GET",
@@ -240,141 +265,179 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
     }, [showReactions]);
 
     return (
-        <>
-            <div className="card mt-4">
-                <div className="card-body">
-                    <div className="d-flex align-items-center justify-content-start">
-                        <img src={picUser} className="me-3 rounded-circle" alt="Usuario" width="40" height="40" />
-                        <p className="m-0">{user}</p>
-                    </div>
-                    <div className="d-flex flex-column mt-2">
-                        <p>{body}</p>
+    <>
+        <div className="card mt-4">
+            <div className="card-body">
+                <div className="d-flex align-items-center justify-content-start">
+                    <img src={picUser} className="me-3 rounded-circle" alt="Usuario" width="40" height="40" />
+                    <p className="m-0">{user}</p>
+                </div>
+                <div className="d-flex flex-column mt-2">
+                    <p>{body}</p>
 
-                        {Array.isArray(picsBody) && picsBody.length > 0 && (
-                            <div className={clase} data-bs-toggle="modal" data-bs-target={"#" + modalId}>
-                                {visibleImages.map((img, index) => (
-                                    <img key={index} src={img} className={imgClase} alt={`Imagen ${index + 1}`} />
+                    {Array.isArray(picsBody) && picsBody.length > 0 && (
+                        <div className={clase} data-bs-toggle="modal" data-bs-target={`#imageModal${postId}`}>
+                            {visibleImages.map((img, index) => (
+                                <img key={index} src={img} className={imgClase} alt={`Imagen ${index + 1}`} />
+                            ))}
+                            {showMore && (
+                                <div className="more-images">
+                                    <span>+{hiddenImages.length}</span>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+                <hr />
+                <div className="d-flex justify-content-between align-items-center">
+                    <p className="accionesCount" data-bs-toggle="modal" data-bs-target={`#modalReacciones${postId}`}>
+                        {cantReacciones} reacciones
+                    </p>
+                    <p className="accionesCount" data-bs-toggle="modal" data-bs-target={`#${modalId}`}>{cantComments} comentarios</p>
+                </div>
+                <div className="d-flex justify-content-evenly align-items-center py-2">
+                    <div className="reaction-container" onMouseEnter={() => setShowReactions(true)} onMouseLeave={() => setShowReactions(false)}>
+                        <button className={`btn d-flex align-items-center accion ${reaction ? claseReaccion : ""}`} 
+                            onClick={reaccionSelect} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>
+                            <img src={reaction ? reaction : reaccion} className="me-2 reaccion icono" alt="Reacción" />
+                            {reaction ? reactionText : "Me gusta"}
+                        </button>
+
+                        {showReactions && (
+                            <div className="reactions-popup">
+                                {[1, 2, 3, 4, 5, 6].map((type) => (
+                                    <button key={type} onClick={() => handleSelectReaction(type)}>
+                                        <img src={imgreacciones[type]} className="imgReaction" alt={`Reacción ${type}`} />
+                                    </button>
                                 ))}
-                                {showMore && (
-                                    <div className="more-images">
-                                        <span>+{hiddenImages.length}</span>
-                                    </div>
-                                )}
                             </div>
                         )}
                     </div>
-                    <hr />
-                    <div className="d-flex justify-content-between align-items-center">
-                        <p className="accionesCount" data-bs-toggle="modal" data-bs-target={`#modalReacciones${modalId}`}>{cantReacciones} reacciones</p>
-                        <p className="accionesCount" data-bs-toggle="modal" data-bs-target={`#${modalId}`}>{cantComments} comentarios</p>
+
+                    <button className="btn d-flex align-items-center accion" data-bs-toggle="modal" data-bs-target={`#commentModal${postId}`}>
+                        <img src={commentIcon} className="me-2 icono" alt="Comentar" />
+                        Comentar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        {/* Modal solo para Reacciones */}
+        <div className="modal fade" id={`modalReacciones${postId}`} tabIndex="-1" aria-hidden="true">
+            <div className="modal-dialog modal-dialog-centered">
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title">Reacciones</h5>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div className="d-flex justify-content-evenly align-items-center py-2">
-                        <div className="reaction-container" onMouseEnter={() => setShowReactions(true)} onMouseLeave={() => setShowReactions(false)}>
-                            <button className={`btn d-flex align-items-center accion ${reaction ? claseReaccion : ""}`} onClick={reaccionSelect} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>
-                                <img src={reaction ? reaction : reaccion} id={`reaccion${postId}`} className="me-2 reaccion icono" alt="Reacción" />
-                                {reaction ? reactionText : "Me gusta"}
-                            </button>
-    
-                            {showReactions && (
-                                <div className="reactions-popup">
-                                    <button onClick={() => handleSelectReaction(1)}><img src={reaccion1} className="imgReaction" /></button>
-                                    <button onClick={() => handleSelectReaction(2)}><img src={reaccion2} className="imgReaction" /></button>
-                                    <button onClick={() => handleSelectReaction(3)}><img src={reaccion3} className="imgReaction" /></button>
-                                    <button onClick={() => handleSelectReaction(4)}><img src={reaccion4} className="imgReaction" /></button>
-                                    <button onClick={() => handleSelectReaction(5)}><img src={reaccion5} className="imgReaction" /></button>
-                                    <button onClick={() => handleSelectReaction(6)}><img src={reaccion6} className="imgReaction" /></button>
+                    <div className="modal-body">
+                        {reacciones.length > 0 ? (
+                            reacciones.map(reac => (
+                                <div key={reac.id} className="d-flex align-items-center gap-2 p-2 border-bottom">
+                                    <img src={mascotas.find(mas => mas.id == reac.mascota)?.foto_perfil} 
+                                        alt="Perfil" className="rounded-circle perfil-img"/>
+                                    <img src={imgreacciones[reac.tipo_reaccion]} alt="Reacción" className="reaccion-icon"/>
+                                    <p className="mb-0 fw-bold nombre-usuario">
+                                        {mascotas.find(mas => mas.id == reac.mascota)?.nombre_usuario}
+                                    </p>
                                 </div>
-                            )}
+                            ))
+                        ) : (
+                            <p>No hay reacciones aún</p>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{/* Modal solo para Imágenes */}
+<div className="modal fade" id={`imageModal${postId}`} tabIndex="-1" aria-hidden="true">
+    <div className="modal-dialog modal-dialog-centered modal-lg" style={{ maxWidth: "100%", width: "500px" }}>
+        <div className="modal-content" style={{ width: "100%", maxHeight: "90vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+            {picsBody.length > 0 && (
+                <div className="modal-body p-0 d-flex justify-content-center align-items-center">
+                    <div id={`carousel-${postId}`} className="carousel slide">
+                        <div className="carousel-inner">
+                            {picsBody.map((img, index) => (
+                                <div key={index} className={`carousel-item ${index === 0 ? "active" : ""}`}>
+                                    <img 
+                                        src={img} 
+                                        className="d-block mx-auto" 
+                                        alt={`Imagen ${index + 1}`} 
+                                        style={{
+                                            width: "auto",
+                                            maxWidth: "100%",
+                                            height: "auto",
+                                            maxHeight: "80vh", 
+                                            objectFit: "contain", 
+                                            display: "block",
+                                            margin: "0 auto"
+                                        }} 
+                                    />
+                                </div>
+                            ))}
                         </div>
-    
-                        <button className="btn d-flex align-items-center accion" data-bs-toggle="modal" data-bs-target={`#${modalId}`}>
-                            <img src={commentIcon} className="me-2 icono" alt="Comentar" />
-                            Comentar
+                        <button className="carousel-control-prev" type="button" data-bs-target={`#carousel-${postId}`} data-bs-slide="prev">
+                            <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                        </button>
+                        <button className="carousel-control-next" type="button" data-bs-target={`#carousel-${postId}`} data-bs-slide="next">
+                            <span className="carousel-control-next-icon" aria-hidden="true"></span>
                         </button>
                     </div>
                 </div>
-            </div>
+            )}
+        </div>
+    </div>
+</div>
 
-            <div className="modal fade" id={`modalReacciones${modalId}`} tabIndex="-1" aria-labelledby={`modalReacciones${modalId}Label`} aria-hidden="true">
-                <div className="modal-dialog modal-dialog-centered custom-modal">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h1 className="modal-title fs-5" id={`modalReacciones${modalId}Label`}>Reacciones</h1>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div className="modal-body">
-                            {(Array.isArray(reacciones) && reacciones.length > 0) ? (
-                                <Reactions mascotas={mascotas} reacciones={reacciones} />
-                            ):(
-                                <>
-                                <div className="d-flex flex-column justify-content-center align-items-center">
-                                    <img src={reaccionesImg} width={'200px'} height={'200px'} />
-                                    <p>Sé el primero en reaccionar</p>
-                                </div>
-                                </>
-                            )}
-                        </div>
+
+
+
+
+        {/* Modal solo para Comentarios */}
+        <div className="modal fade" id={`commentModal${postId}`} tabIndex="-1" aria-hidden="true">
+            <div className="modal-dialog modal-dialog-centered">
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title">Comentarios ({cantComments})</h5>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                </div>
-            </div>
-    
-            <div className="modal fade" id={modalId} tabIndex="-1" aria-labelledby={`${modalId}Label`} aria-hidden="true">
-                <div className="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
-                    <div className="modal-content">
-                        {(Array.isArray(picsBody) && picsBody.length > 0) ? (
-                            <>
-                            <div className="modal-header">
-                                <h5 className="modal-title" id={`${modalId}Label`}>Imágenes</h5>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    <div className="modal-body">
+                        {comments.length > 0 ? (
+                            comments.map(comment => (
+                                <Comment 
+                                    key={comment.id} 
+                                    usuario={mascotas.find(masc => masc.id == comment.mascota)?.nombre_usuario} 
+                                    comentario={comment.texto} 
+                                    perfil={mascotas.find(masc => masc.id == comment.mascota)?.foto_perfil} 
+                                    fecha_comentario={comment.fecha_comentario} 
+                                />
+                            ))
+                        ) : (
+                            <div className="d-flex flex-column justify-content-center align-items-center">
+                                <img src={commentsIcon} width={'200px'} height={'200px'} alt="Sin comentarios" />
+                                <p>Aún no hay comentarios por mostrar</p>
                             </div>
-                            <div className="modal-body">
-                                <div id={`carousel-${modalId}`} className="carousel carousel-fade" data-bs-ride="carousel">
-                                    <div className="carousel-inner">
-                                        {Array.isArray(picsBody) && picsBody.map((img, index) => (
-                                            <div key={index} className={`carousel-item ${index === 0 ? "active" : ""}`}>
-                                                <img src={img} className="d-block w-100" alt={`Imagen ${index + 1}`} />
-                                            </div>
-                                        ))}
-                                    </div>
-                                    <button className="carousel-control-prev" type="button" data-bs-target={`#carousel-${modalId}`} data-bs-slide="prev">
-                                        <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                                        <span className="visually-hidden">Anterior</span>
-                                    </button>
-                                    <button className="carousel-control-next" type="button" data-bs-target={`#carousel-${modalId}`} data-bs-slide="next">
-                                        <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                                        <span className="visually-hidden">Siguiente</span>
-                                    </button>
-                                </div>
-                            </div>
-                            </>
-                        ) : (<></>)}
-                        <div className="modal-footer">
-                            <div className="d-flex justify-content-start align-items-start w-100">
-                                <h4>Comentarios ({cantComments})</h4>
-                            </div>
-                            <div className="d-flex flex-column justify-content-center w-100">
-                                <div>
-                                    {Array.isArray(comments) && comments.length > 0 ? 
-                                    (comments.map(comment => (
-                                        <Comment key={comment.id} usuario={mascotas.find(masc => masc.id == comment.mascota)?.nombre_usuario} comentario={comment.texto} perfil={mascotas.find(masc => masc.id == comment.mascota)?.foto_perfil} fecha_comentario={comment.fecha_comentario} />
-                                    ))) : (
-                                        <div className="d-flex flex-column justify-content-center align-items-center">
-                                            <img src={commentsIcon} width={'200px'} height={'200px'} />
-                                            <p>Aún no hay comentarios por mostrar</p>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                        <div className="d-flex align-items-center justify-content-between ps-4 pe-5 mb-3 mt-3 w-100">
+                        )}
+                    </div>
+                    <div className="modal-footer">
+                        <div className="d-flex align-items-center w-100 gap-2">
                             <img src={usuario_} alt="perfil" className="imgProfile" />
-                            <input type="text" className="form-control ms-4" onInput={(e) => setComentario(e.target.value)} value={comentario} placeholder="Comenta aquí" />
-                            <button className="btn btn-light ms-4 enviar"><img src={enviar} alt="enviar" className="imgProfile" onClick={() => enviarComentario()} /></button>
+                            <input 
+                                type="text" 
+                                className="form-control" 
+                                value={comentario} 
+                                onChange={(e) => setComentario(e.target.value)} 
+                                placeholder="Comenta aquí" 
+                            />
+                            <button className="btn btn-light" onClick={enviarComentario}>
+                                <img src={enviar} alt="enviar" className="imgProfile" />
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-        </>
-    );
-    
+        </div>
+    </>
+);
 };
