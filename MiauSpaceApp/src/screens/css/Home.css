@@ -16,6 +16,10 @@ header {
 }
 
 .principal {
+    padding-top: 80px;
+}
+
+.principalDos {
     background-color: #f0f0f0;
     padding-top: 80px;
 }
@@ -26,13 +30,13 @@ header {
 }
 
 .list {
-    position: fixed; 
+    position: fixed;
     top: 80px;
-    left: 0; 
-    height: calc(99vh - 80px);  
-    background-color: white; 
-    z-index: 9998; 
-    padding-top: 20px; 
+    left: 0;
+    height: calc(99vh - 80px);
+    background-color: white;
+    z-index: 9998;
+    padding-top: 20px;
     padding-right: 0;
 }
 
@@ -47,7 +51,18 @@ header {
 }
 
 .post {
-    overflow-y: auto; 
+    overflow-y: auto;
     max-height: calc(97vh - 80px);
     padding: 1rem;
+}
+
+.btn-morado {
+    background-color: #7B1FA2;
+    color: white;
+    border-color: #7B1FA2;
+}
+
+.btn-morado:hover {
+    background-color: #6a1b8a;
+    border-color: #6a1b8a;
 }

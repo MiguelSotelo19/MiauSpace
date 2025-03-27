@@ -97,6 +97,28 @@ class AmistadesViewset(viewsets.ModelViewSet):
                 amigos.append(amistad.mascota_receptora)
 
         # Devuelve los amigos como un formato adecuado
-        amigos_data = [{"id": amigo.id, "nombre": amigo.nombre_usuario} for amigo in amigos]
+        amigos_data = [{"id": amigo.id, "nombre": amigo.nombre_usuario, "foto_perfil": amigo.foto_perfil} for amigo in amigos]
 
         return Response(amigos_data, status=status.HTTP_200_OK)
+    
+    # Acción personalizada para obtener solicitudes de amistad pendientes
+    @action(detail=True, methods=['get'])
+    def obtener_solicitudes_pendientes(self, request, pk=None):
+        try:
+            mascota = Mascota.objects.get(id=pk)
+        except Mascota.DoesNotExist:
+            return Response({'error': 'Mascota no encontrada'}, status=status.HTTP_404_NOT_FOUND)
+
+        solicitudes_pendientes = Amistades.objects.filter(
+            mascota_receptora=mascota,
+            estado='pendiente'
+        )
+
+        solicitudes_data = [{
+            "id": solicitud.id,
+            "mascota_solicitante_id": solicitud.mascota_solicitante.id,
+            "mascota_solicitante_nombre": solicitud.mascota_solicitante.nombre_usuario,
+            "mascota_solicitante_foto": solicitud.mascota_solicitante.foto_perfil
+        } for solicitud in solicitudes_pendientes]
+
+        return Response(solicitudes_data, status=status.HTTP_200_OK)

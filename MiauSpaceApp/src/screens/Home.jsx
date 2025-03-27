@@ -10,7 +10,7 @@ import './css/Home.css';
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle";
-import { Layout } from "../components/Layout"; 
+import { Layout } from "../components/LayoutHome"; 
 
 export const Home = () => {
     const url = 'http://127.0.0.1:8000/posts/api/';
