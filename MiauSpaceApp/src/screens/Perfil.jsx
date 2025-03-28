@@ -90,7 +90,7 @@ export const Perfil = () => {
             const usuarioEncontrado = respuesta.data.find(u => u.nombre_usuario === paramUsername);
             if (usuarioEncontrado) {
                 setUser(usuarioEncontrado);
-
+                console.log(usuarioEncontrado)
             } else {
                 setFotoPerf(perfilGenerico);
                 setNomUsuario("Perfil no encontrado");
