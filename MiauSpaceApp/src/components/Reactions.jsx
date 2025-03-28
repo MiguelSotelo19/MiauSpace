@@ -1,10 +1,11 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import reaccion1 from "../assets/reaccion1.png";
 import reaccion2 from "../assets/reaccion2.png";
 import reaccion3 from "../assets/reaccion3.png";
 import reaccion4 from "../assets/reaccion4.png";
 import reaccion5 from "../assets/reaccion5.png";
 import reaccion6 from "../assets/reaccion6.png";
+import { Bounce, ToastContainer, toast } from 'react-toastify';
 
 import "./css/Reactions.css";
 import axios from "axios";
@@ -12,9 +13,14 @@ import { useNavigate } from "react-router-dom";
 
 export const Reactions = ({ mascotas, reacciones }) => {
     const urlAmistades = "http://127.0.0.1:8000/amistades/api/"
-    
+    let loggeado = localStorage.getItem("username");
+    console.log("mascotas: ",mascotas)
     const [ allReactions, setAllReactions ] = useState(reacciones);
     const [ amistades, setAmistades ] = useState([]);
+    const [idLoggeado, setIdLoggeado] = useState(null);
+    const [misAmigos, setMisAmigos] = useState([]);
+    const [solicPendiente, setSolicPendiente] = useState([]);
+        const [solicPendientePropia, setSolicPendientePropia] = useState([]);
     const imgreacciones = {
         "1": reaccion1,
         "2": reaccion2,
@@ -33,7 +39,8 @@ export const Reactions = ({ mascotas, reacciones }) => {
     const navigate = useNavigate();
     
     useEffect(() => {
-        getAmistades();        
+        getAmistades(); 
+        
     }, []);
 
     const getAmistades = async () => {
@@ -47,10 +54,108 @@ export const Reactions = ({ mascotas, reacciones }) => {
 
         console.log(respuesta.data)
         setAmistades(respuesta.data);
+        const usuarioLoggeado = mascotas.find(u => u.nombre_usuario === loggeado);
+        if (usuarioLoggeado) {
+            setIdLoggeado(usuarioLoggeado.id);
+            getAmigosPropio(usuarioLoggeado.id);
+        }
+        console.log(usuarioLoggeado)
     }
+
+    const getAmigosPropio = async (idLoggeado) => {
+        try {
+            const respuesta = await axios.get(urlAmistades+idLoggeado+'/obtener_amigos/');
+            
+            setMisAmigos(respuesta.data)
+        } catch (error) {
+            console.error("Error al obtener datos del usuario", error);
+        }
+    };
+
+    const getSolicitudesPendientes = async (idLoggeado, idReceptor) => {
+            try {
+                const respuesta = await axios.get(urlAmistades + idReceptor + "/obtener_solicitudes_pendientes/");
+        
+                const solicitudes = respuesta.data.filter(solicitud =>
+                    solicitud.mascota_solicitante_id === idLoggeado &&
+                    solicitud.mascota_receptora_id === idReceptor
+                );
+                console.log(solicitudes)
+                setSolicPendiente(prev => [...prev, ...solicitudes]); 
+        
+            } catch (error) {
+                console.error("Error al obtener solicitudes pendientes", error);
+            }
+        };
+    
+        const getSolicitudesPendientesPropias = async (idLoggeado, idReceptor) => {
+            try {
+                const respuesta = await axios.get(urlAmistades + idLoggeado + "/obtener_solicitudes_pendientes/");
+        
+                const solicitudes = respuesta.data.filter(solicitud =>
+                    solicitud.mascota_solicitante_id === idReceptor &&
+                    solicitud.mascota_receptora_id === idLoggeado
+                );
+        
+                setSolicPendientePropia(prev => [...prev, ...solicitudes]); 
+        
+            } catch (error) {
+                console.error("Error al obtener solicitudes pendientes", error);
+            }
+        };
+    
+        const enviarSolicitud = async (idLoggeado, idReceptor) => {
+            try {
+                const parametros = { mascota_receptora: idReceptor };
+                console.log("enviarSolicitud: ", parametros);
+        
+                const resp = await axios.post(urlAmistades + idLoggeado + "/enviar_solicitud/", parametros);
+                console.log(resp);
+        
+                if (resp.data.mensaje === "Solicitud de amistad enviada con éxito") {
+                    await getSolicitudesPendientes(idLoggeado, idReceptor);
+                    toast.success("Solicitud enviada con éxito", {
+                        position: "top-center",
+                        autoClose: 3000,
+                        hideProgressBar: true,
+                        closeOnClick: false,
+                        pauseOnHover: true,
+                        draggable: true,
+                        theme: "light",
+                        transition: Bounce,
+                    });
+                }
+            } catch (e) {
+                toast.error("Ha ocurrido un error", {
+                    position: "top-center",
+                    autoClose: 5000,
+                    hideProgressBar: true,
+                    closeOnClick: false,
+                    pauseOnHover: true,
+                    draggable: true,
+                    theme: "dark",
+                    transition: Bounce,
+                });
+            }
+        };
+    
+        const esAmigo = (amigoId) => {
+            return misAmigos.some(amigo => amigo.id === amigoId);
+        };
+
+        
+        useEffect(() => {
+            if (idLoggeado) {
+                mascotas.forEach(mascota => {
+                    getSolicitudesPendientes(idLoggeado, mascota.id);
+                    getSolicitudesPendientesPropias(idLoggeado, mascota.id);
+                });
+            }
+        }, [idLoggeado]);
 
     return(
         <>
+        <ToastContainer />
         <div className="container d-flex flex-column w-100 justify-content-center">
             <div className="menu-reacciones mb-4">
                 {reacciones.length > 0 ? (
@@ -62,8 +167,9 @@ export const Reactions = ({ mascotas, reacciones }) => {
                     {react4.length > 0 ? (<button className="btn btn-reaction" onClick={() => setAllReactions(react4)}><img src={reaccion4} className="icon-reaction" alt="Me gusta"/>{react4.length}</button>) : (<></>)}
                     {react5.length > 0 ? (<button className="btn btn-reaction" onClick={() => setAllReactions(react5)}><img src={reaccion5} className="icon-reaction" alt="Me gusta"/>{react5.length}</button>) : (<></>)}
                     {react6.length > 0 ? (<button className="btn btn-reaction" onClick={() => setAllReactions(react6)}><img src={reaccion6} className="icon-reaction" alt="Me gusta"/>{react6.length}</button>) : (<></>)}
-                    </>
+                    </> 
                 ) : (<></>)}
+                {console.log("allreactions: ",allReactions)}
             </div>
 
             {allReactions.map(reac => (
@@ -74,7 +180,20 @@ export const Reactions = ({ mascotas, reacciones }) => {
                         <img src={imgreacciones[reac.tipo_reaccion]} alt="Reacción" className="reaccion-icon ms-1"/>
                         <p className="mb-0 nombre-usuario ms-2 pointer" data-bs-dismiss="modal" onClick={() => navigate(`/MiauSpace/Perfil/${mascotas.find(mas => mas.id == reac.mascota)?.nombre_usuario}`)}>{mascotas.find(mas => mas.id == reac.mascota)?.nombre_usuario}</p>
                     </div>
-                    <button className="btn" style={{backgroundColor: '#7B1FA2', color: 'white'}} onClick={() => {}}>Enviar solicitud</button>
+                    {mascotas.find(mas => mas.id == reac.mascota)?.id == idLoggeado ? null : (
+                        esAmigo(mascotas.find(mas => mas.id == reac.mascota)?.id) ? (
+                            <span>Amigo</span>
+                        ) : solicPendiente.some(solicitud => solicitud.mascota_receptora_id === reac.mascota) ? (
+                            <span>Solicitud enviada</span>
+                        ) : solicPendientePropia.some(solicitud => solicitud.mascota_solicitante_id === reac.mascota) ? (
+                            <span>Solicitud pendiente</span>
+                        ) : (
+                            <button className="btn" style={{ backgroundColor: '#7B1FA2', color: 'white' }} onClick={() => enviarSolicitud(idLoggeado, reac.mascota)}>
+                                Enviar solicitud
+                            </button>
+                        )
+                    )}
+                    
                 </div>
             ))}
         </div>
