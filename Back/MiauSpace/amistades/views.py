@@ -121,8 +121,10 @@ class AmistadesViewset(viewsets.ModelViewSet):
         solicitudes_data = [{
             "id": solicitud.id,
             "mascota_solicitante_id": solicitud.mascota_solicitante.id,
+            "mascota_receptora_id": solicitud.mascota_receptora.id,
             "mascota_solicitante_nombre": solicitud.mascota_solicitante.nombre_usuario,
             "mascota_solicitante_foto": solicitud.mascota_solicitante.foto_perfil
+            
         } for solicitud in solicitudes_pendientes]
 
         return Response(solicitudes_data, status=status.HTTP_200_OK)
