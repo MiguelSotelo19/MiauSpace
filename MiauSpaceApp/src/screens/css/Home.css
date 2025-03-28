@@ -66,3 +66,48 @@ header {
     background-color: #6a1b8a;
     border-color: #6a1b8a;
 }
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+.progress {
+    height: 5px;
+}
+
+.progress-bar {
+    background-color: #7B1FA2;
+}
+
+
+.small-image-wrapper {
+    position: relative;
+    width: 200px;
+    height: 100px;
+    border: 2px solid gray;
+    border-radius: 5px;
+    overflow: hidden;
+    filter: grayscale(80%);
+}
+
+.small-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-count {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 2px 5px;
+    border-radius: 10px;
+}
