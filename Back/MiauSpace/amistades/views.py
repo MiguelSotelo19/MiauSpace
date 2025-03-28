@@ -147,7 +147,7 @@ class AmistadesViewset(viewsets.ModelViewSet):
             mascotas_excluidas.add(amistad.mascota_receptora.id)
 
         # Obtener mascotas aleatorias que no estén en la lista de excluidas
-        sugerencias = Mascota.objects.exclude(id__in=mascotas_excluidas).order_by('?')[:5]
+        sugerencias = Mascota.objects.exclude(id__in=mascotas_excluidas).order_by('?')[:6]
         sugerencias_data = [{"id": sug.id, "nombre": sug.nombre_usuario, "foto_perfil": sug.foto_perfil} for sug in sugerencias]
 
         return Response(sugerencias_data, status=status.HTTP_200_OK)
