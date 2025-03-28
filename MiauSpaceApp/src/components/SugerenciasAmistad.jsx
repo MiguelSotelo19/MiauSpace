@@ -1,54 +1,75 @@
-import React from "react";
-import img from "../assets/skibidi.jpeg"
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Swal from "sweetalert2";
+import img from "../assets/skibidi.jpeg";
 
 const Sugerencias = () => {
-    const amigos = [
-        {
-            id: 1,
-            nombre: "Juan Pérez",
-            imagen: img,
-            mutuales: 5
-        },
-        {
-            id: 2,
-            nombre: "María García",
-            imagen: img,
-            mutuales: 12
-        },
-        {
-            id: 3,
-            nombre: "Carlos López",
-            imagen: img,
-            mutuales: 8
+    const [sugerencias, setSugerencias] = useState([]);
+    const usuario = JSON.parse(sessionStorage.getItem("usuario"));
+    const usuarioId = usuario?.id;
+
+    useEffect(() => {
+        fetchSugerencias();
+    }, [usuarioId]);
+
+    const fetchSugerencias = async () => {
+        if (!usuarioId) return;
+        try {
+            const response = await axios.get(`http://127.0.0.1:8000/amistades/api/${usuarioId}/sugerencias_amigos/`);
+            setSugerencias(response.data);
+        } catch (error) {
+            console.error("Error al obtener sugerencias:", error);
         }
-    ];
+    };
+
+    const enviarSolicitud = async (mascotaReceptoraId) => {
+        try {
+            await axios.post(`http://127.0.0.1:8000/amistades/api/${usuarioId}/enviar_solicitud/`, {
+                mascota_receptora: mascotaReceptoraId
+            });
+
+            Swal.fire({
+                icon: "success",
+                title: "Solicitud enviada",
+                text: "Tu solicitud de amistad fue enviada con éxito.",
+                confirmButtonColor: "#3085d6",
+            });
+
+            fetchSugerencias();
+        } catch (error) {
+            console.error("Error al enviar solicitud:", error);
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "Hubo un problema al enviar la solicitud.",
+                confirmButtonColor: "#d33",
+            });
+        }
+    };
 
     return (
         <div className="container-fluid min-vh-100 p-0" style={{ backgroundColor: 'white', width: '100%', margin: 0, marginTop: '20px' }}>
             <div className="row">
-                {amigos.map(amigo => (
+                {sugerencias.length > 0 ? sugerencias.map(amigo => (
                     <div key={amigo.id} className="col-md-4 mb-4">
                         <div className="card h-100">
                             <img
-                                src={amigo.imagen}
+                                src={amigo.foto_perfil || img}
                                 className="card-img-top"
                                 alt={`Foto de ${amigo.nombre}`}
                                 style={{ height: "200px", objectFit: "cover" }}
                             />
                             <div className="card-body d-flex flex-column">
                                 <h5 className="card-title">{amigo.nombre}</h5>
-                                <small className="text-muted mb-3">
-                                    {amigo.mutuales} amigos en común
-                                </small>
                                 <div className="mt-auto d-grid gap-2">
-                                    <button className="btn btn-outline-primary">
-                                        Envíar solicitud
+                                    <button className="btn btn-outline-primary" onClick={() => enviarSolicitud(amigo.id)}>
+                                        Enviar solicitud
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                ))}
+                )) : <p className="text-center">No hay sugerencias de amigos.</p>}
             </div>
         </div>
     );
