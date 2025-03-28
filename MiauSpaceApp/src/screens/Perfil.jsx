@@ -262,7 +262,7 @@ export const Perfil = () => {
                                     style={{ backgroundColor: "#40007a", height: "20vh" }}
                                 >
                                     <div className="ms-4 mt-5 d-flex flex-column" style={{ width: "15%" }}>
-                                        <img src={fotoPerf} alt="Perfil" className="mt-4 mb-2 img-thumbnail" style={{ zIndex: "1", maxWidth: "10vw", maxHeight: "13vh" }} />
+                                        <img src={fotoPerf} alt="Perfil" className="mt-4 mb-2 img-thumbnail" draggable="false" style={{ zIndex: "1", maxWidth: "10vw", maxHeight: "13vh", minHeight:"13vh"}} />
                                     </div>
                                     <div className="ms-3" style={{ marginTop: "15vh" }}>
                                         <h5>{nomUsuario}</h5>
