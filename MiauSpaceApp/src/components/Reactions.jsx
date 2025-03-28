@@ -8,10 +8,10 @@ import reaccion6 from "../assets/reaccion6.png";
 
 import "./css/Reactions.css";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export const Reactions = ({ mascotas, reacciones }) => {
     const urlAmistades = "http://127.0.0.1:8000/amistades/api/"
-    let user = JSON.parse(sessionStorage.getItem("usuario"));
     
     const [ allReactions, setAllReactions ] = useState(reacciones);
     const [ amistades, setAmistades ] = useState([]);
@@ -30,6 +30,7 @@ export const Reactions = ({ mascotas, reacciones }) => {
     const react4 = reacciones.filter(r => r.tipo_reaccion == '4');
     const react5 = reacciones.filter(r => r.tipo_reaccion == '5');
     const react6 = reacciones.filter(r => r.tipo_reaccion == '6');
+    const navigate = useNavigate();
     
     useEffect(() => {
         getAmistades();        
@@ -71,7 +72,7 @@ export const Reactions = ({ mascotas, reacciones }) => {
                         <img src={mascotas.find(mas => mas.id == reac.mascota)?.foto_perfil} alt="Perfil" className="rounded-circle perfil-img ms-1"/>
                         
                         <img src={imgreacciones[reac.tipo_reaccion]} alt="Reacción" className="reaccion-icon ms-1"/>
-                        <p className="mb-0 fw-bold nombre-usuario ms-2">{mascotas.find(mas => mas.id == reac.mascota)?.nombre_usuario}</p>
+                        <p className="mb-0 nombre-usuario ms-2 pointer" data-bs-dismiss="modal" onClick={() => navigate(`/MiauSpace/Perfil/${mascotas.find(mas => mas.id == reac.mascota)?.nombre_usuario}`)}>{mascotas.find(mas => mas.id == reac.mascota)?.nombre_usuario}</p>
                     </div>
                     <button className="btn" style={{backgroundColor: '#7B1FA2', color: 'white'}} onClick={() => {}}>Enviar solicitud</button>
                 </div>
