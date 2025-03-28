@@ -39,9 +39,10 @@ export const Perfil = () => {
     const [ubicacion, setUbicacion] = useState("");
     const [btnEditar, setBtnEditar] = useState(false);
     let idPerfil=0;
+
     const [posts, setPosts] = useState([]);
     const [imgPost, setImgPost] = useState(0);
-    const [numImgs, setNumImgs] = useState([]);
+    const [numImgs, setNumImgs] = useState(0);
     const [numPost, setnumPost] = useState(0);
 
     const [page, setPage] = useState(1);
@@ -50,6 +51,8 @@ export const Perfil = () => {
     const [amigos, setAmigos] = useState([]);
     const [misAmigos, setMisAmigos] = useState([]);
     const [numAmigos, setNumAmigos] = useState(0);
+    const [solicPendiente, setSolicPendiente] = useState([]);
+    const [solicPendientePropia, setSolicPendientePropia] = useState([]);
 
     const [modalActIsOpen, setActIsOpen] = React.useState(false);
     const [modalAmigos, setModalAmigos] = React.useState(false);
@@ -158,47 +161,77 @@ export const Perfil = () => {
         }
     };
 
-    const enviarSolicitud = async (idLoggeado, idReceptor,idAmigo) =>{
-        try{
-            const parametros={
-                mascota_receptora: idReceptor
+    const getSolicitudesPendientes = async (idLoggeado, idReceptor) => {
+        try {
+            const respuesta = await axios.get(urlAmigos + idReceptor + "/obtener_solicitudes_pendientes/");
+            console.log("Se envió solicitud: ", respuesta);
+    
+            // Filtrar solicitudes pendientes para el usuario loggeado
+            const solicitudes = respuesta.data.filter(solicitud =>
+                solicitud.mascota_solicitante_id === idLoggeado &&
+                solicitud.mascota_receptora_id === idReceptor
+            );
+    
+            console.log("Solicitudes encontradas: ", solicitudes);
+            setSolicPendiente(prev => [...prev, ...solicitudes]);  // Acumulamos las solicitudes
+    
+        } catch (error) {
+            console.error("Error al obtener solicitudes pendientes", error);
+        }
+    };
+
+    const getSolicitudesPendientesPropias = async (idLoggeado, idReceptor) => {
+        try {
+            const respuesta = await axios.get(urlAmigos + idLoggeado + "/obtener_solicitudes_pendientes/");
+            console.log("Se envió solicitud: ", respuesta);
+    
+            const solicitudes = respuesta.data.filter(solicitud =>
+                solicitud.mascota_solicitante_id === idReceptor &&
+                solicitud.mascota_receptora_id === idLoggeado
+            );
+    
+            console.log("Solicitudes encontradas: ", solicitudes);
+            setSolicPendientePropia(prev => [...prev, ...solicitudes]); 
+    
+        } catch (error) {
+            console.error("Error al obtener solicitudes pendientes", error);
+        }
+    };
+
+    const enviarSolicitud = async (idLoggeado, idReceptor) => {
+        try {
+            const parametros = { mascota_receptora: idReceptor };
+            console.log("enviarSolicitud: ", parametros);
+    
+            const resp = await axios.post(urlAmigos + idLoggeado + "/enviar_solicitud/", parametros);
+            console.log(resp);
+    
+            if (resp.data.mensaje === "Solicitud de amistad enviada con éxito") {
+                await getSolicitudesPendientes(idLoggeado, idReceptor);
+                toast.success("Solicitud enviada con éxito", {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: true,
+                    closeOnClick: false,
+                    pauseOnHover: true,
+                    draggable: true,
+                    theme: "light",
+                    transition: Bounce,
+                });
             }
-            console.log("enviarSolicitud: ",parametros);
-            await axios({
-                method: 'POST',
-                url: urlAmigos+idLoggeado+'/enviar_solicitud/',
-                data: parametros
-            }).then( function (resp){
-                const mensaje = resp.data.mensaje;
-                if(mensaje == "Solicitud de amistad enviada con éxito"){
-                    getAmigos(idAmigo)
-                }
-            }).then(
-                toast.success('Solicitud enviada con éxito', {
-                position: "top-center",
-                autoClose: 3000,
-                hideProgressBar: true,
-                closeOnClick: false,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-                transition: Bounce,
-                }))
-        }catch(e){
-            toast.error('Ha ocurrido un error', {
+        } catch (e) {
+            toast.error("Ha ocurrido un error", {
                 position: "top-center",
                 autoClose: 5000,
                 hideProgressBar: true,
                 closeOnClick: false,
                 pauseOnHover: true,
                 draggable: true,
-                progress: undefined,
                 theme: "dark",
                 transition: Bounce,
-                });
+            });
         }
-    }
+    };
 
     const esAmigo = (amigoId) => {
         return misAmigos.some(amigo => amigo.id === amigoId);
@@ -224,8 +257,13 @@ export const Perfil = () => {
     }
 
     function openModalAmigos(amigos) {
-        setAmigos(amigos)
+        setAmigos(amigos);
         setModalAmigos(true);
+        
+        amigos.forEach(amigo => {
+            getSolicitudesPendientes(user.id, amigo.id);
+            getSolicitudesPendientesPropias(user.id, amigo.id);
+        });
     }
     
     function closeModalAmigos() {
@@ -302,6 +340,14 @@ export const Perfil = () => {
         setConfirmarContrasena("");
     };
 
+    useEffect(() => {
+        if (modalAmigos) {
+            amigos.forEach(amigo => {
+                getSolicitudesPendientes(user.id, amigo.id);
+            });
+        }
+    }, [modalAmigos]); 
+
     return (
         <Layout>
             <ToastContainer />
@@ -356,21 +402,7 @@ export const Perfil = () => {
                                             <button
                                                 className="btn btn-outline-dark"
                                                 style={{ height: "2.5rem" }}
-                                                onClick={() =>
-                                                    openActModal(
-                                                        id,
-                                                        nomUsuario,
-                                                        edad,
-                                                        especie,
-                                                        fechaNac,
-                                                        fotoPerf,
-                                                        preferencias,
-                                                        raza,
-                                                        sexo,
-                                                        ubicacion
-                                                    )
-                                                }
-                                            >
+                                                onClick={() => openActModal(id,nomUsuario,edad,especie,fechaNac,fotoPerf,preferencias,raza,sexo,ubicacion)}>
                                                 Editar perfil
                                             </button>
                                         )}
@@ -385,40 +417,24 @@ export const Perfil = () => {
                                             <div className="row g-2">
                                                 <div className="col mb-2">
                                                     {imgPost[0] && (
-                                                        <img
-                                                            src={imgPost[0].imagen_base64}
-                                                            className="w-100 rounded-3"
-                                                            alt="Foto 1"
-                                                        />
+                                                        <img src={imgPost[0].imagen_base64} className="w-100 rounded-3" alt="Foto 1" />
                                                     )}
                                                 </div>
                                                 <div className="col mb-2">
                                                     {imgPost[1] && (
-                                                        <img
-                                                            src={imgPost[1].imagen_base64}
-                                                            className="w-100 rounded-3"
-                                                            alt="Foto 2"
-                                                        />
+                                                        <img src={imgPost[1].imagen_base64} className="w-100 rounded-3" alt="Foto 2" />
                                                     )}
                                                 </div>
                                             </div>
                                             <div className="row g-2">
                                                 <div className="col mb-2">
                                                     {imgPost[2] && (
-                                                        <img
-                                                            src={imgPost[2].imagen_base64}
-                                                            className="w-100 rounded-3"
-                                                            alt="Foto 3"
-                                                        />
+                                                        <img src={imgPost[2].imagen_base64} className="w-100 rounded-3" alt="Foto 3" />
                                                     )}
                                                 </div>
                                                 <div className="col mb-2">
                                                     {imgPost[3] && (
-                                                        <img
-                                                            src={imgPost[3].imagen_base64}
-                                                            className="w-100 rounded-3"
-                                                            alt="Foto 4"
-                                                        />
+                                                        <img src={imgPost[3].imagen_base64} className="w-100 rounded-3" alt="Foto 4" />
                                                     )}
                                                 </div>
                                             </div>
@@ -432,9 +448,7 @@ export const Perfil = () => {
                                             {posts
                                                 .sort((a, b) => b.id - a.id) // Orden descendente
                                                 .map((post) => {
-                                                    const images = post.imagenes
-                                                        ? post.imagenes.map((img) => img.imagen_base64)
-                                                        : (post.img || []);
+                                                    const images = post.imagenes ? post.imagenes.map((img) => img.imagen_base64) : (post.img || []);
                                                     return (
                                                         <Post
                                                             key={post.id}
@@ -455,14 +469,7 @@ export const Perfil = () => {
                 </div>
             </div>
 
-            <Modal
-                show={modalActIsOpen}
-                onHide={closeModalAct}
-                size="lg"
-                aria-labelledby="contained-modal-title-vcenter example-custom-modal-styling-title"
-                centered
-                backdrop="static"
-            >
+            <Modal show={modalActIsOpen} onHide={closeModalAct} size="lg" aria-labelledby="contained-modal-title-vcenter example-custom-modal-styling-title" centered backdrop="static">
                 <Modal.Header closeButton>
                     <Modal.Title id="contained-modal-title-vcenter">
                         Actualizar datos personales
@@ -475,8 +482,7 @@ export const Perfil = () => {
                                 <Form>
                                     <Form.Group className="mb-3">
                                         <Form.Label className="ms-1">Nombre completo:</Form.Label><br />
-                                        <Form.Label className="ms-1 mt-2"
-                                            required readOnly>{nomUsuario}</Form.Label>
+                                        <Form.Label className="ms-1 mt-2" required readOnly>{nomUsuario}</Form.Label>
                                     </Form.Group>
                                 </Form>
                             </Col>
@@ -486,8 +492,7 @@ export const Perfil = () => {
                                     <Form.Group className="mb-3">
                                         <Form.Label className="ms-1">Especie:</Form.Label>
                                         <Form.Control type="text" placeholder="Especie"
-                                            value={especie} onChange={(e) => setEspecie(e.target.value)} maxLength="10"
-                                        />
+                                            value={especie} onChange={(e) => setEspecie(e.target.value)} maxLength="10" />
                                     </Form.Group>
                                 </Form>
                             </Col>
@@ -520,8 +525,7 @@ export const Perfil = () => {
                                 <Form>
                                     <Form.Group className="mb-3">
                                         <Form.Label className="ms-1">Preferencia:</Form.Label>
-                                        <Form.Control type="text" placeholder="Preferencia" required
-                                            value={preferencias} onChange={(e) => setPreferencias(e.target.value)} />
+                                        <Form.Control type="text" placeholder="Preferencia" required value={preferencias} onChange={(e) => setPreferencias(e.target.value)} />
                                     </Form.Group>
                                 </Form>
                             </Col>
@@ -553,9 +557,7 @@ export const Perfil = () => {
                                 </Form>
                             </Col>
                         </Row><br />
-                        <p className="ms-1"
-                            style={{ color: "black", cursor: "pointer" }}
-                            onClick={mostrarCamposContra}>
+                        <p className="ms-1" style={{ color: "black", cursor: "pointer" }} onClick={mostrarCamposContra}>
                             Cambiar contraseña
                         </p>
                         {mostrar && (
@@ -563,23 +565,13 @@ export const Perfil = () => {
                                 <Col md={6}>
                                     <Form.Group className="mb-3">
                                         <Form.Label className="ms-1">Nueva contraseña:</Form.Label>
-                                        <Form.Control
-                                            type="password"
-                                            placeholder="Ingrese nueva contraseña"
-                                            value={nuevaContrasena}
-                                            onChange={(e) => setNuevaContrasena(e.target.value)}
-                                        />
+                                        <Form.Control type="password" placeholder="Ingrese nueva contraseña" value={nuevaContrasena} onChange={(e) => setNuevaContrasena(e.target.value)}/>
                                     </Form.Group>
                                 </Col>
                                 <Col md={6}>
                                     <Form.Group className="mb-3">
                                         <Form.Label className="ms-1">Confirmar contraseña:</Form.Label>
-                                        <Form.Control
-                                            type="password"
-                                            placeholder="Confirme nueva contraseña"
-                                            value={confirmarContrasena}
-                                            onChange={(e) => setConfirmarContrasena(e.target.value)}
-                                        />
+                                        <Form.Control type="password" placeholder="Confirme nueva contraseña" value={confirmarContrasena} onChange={(e) => setConfirmarContrasena(e.target.value)}/>
                                     </Form.Group>
                                 </Col>
                             </Row>
@@ -621,12 +613,12 @@ export const Perfil = () => {
                                     {amigo.nombre === loggeado ? null : (
                                         esAmigo(amigo.id) ? (
                                             <span>Amigo</span>
-                                        ) : (
-                                            <button
-                                                className="btn"
-                                                style={{ backgroundColor: '#7B1FA2', color: 'white' }}
-                                                onClick={() => enviarSolicitud(user.id,amigo.id,idPerfil)}
-                                            >
+                                        ) : solicPendiente.some(solicitud => solicitud.mascota_receptora_id === amigo.id) ? (
+                                            <span>Solicitud enviada</span>
+                                        ) : solicPendientePropia.some(solicitud => solicitud.mascota_solicitante_id === amigo.id) ? (
+                                            <span>Solicitud pendiente</span>
+                                        ): (
+                                            <button className="btn" style={{ backgroundColor: '#7B1FA2', color: 'white' }} onClick={() => enviarSolicitud(user.id, amigo.id, idPerfil)}>
                                                 Enviar solicitud
                                             </button>
                                         )
