@@ -14,7 +14,7 @@ class AmistadesViewset(viewsets.ModelViewSet):
     serializer_class = AmistadesSerializer
     renderer_classes = [JSONRenderer]
     
-    # Acción personalizada para enviar solicitud de amistad
+    # Acción personalizada para enviar solicitud
     @action(detail=True, methods=['post'])
     def enviar_solicitud(self, request, pk=None):
         try:
@@ -22,14 +22,19 @@ class AmistadesViewset(viewsets.ModelViewSet):
         except Mascota.DoesNotExist:
             return Response({'error': 'Mascota solicitante no encontrada'}, status=status.HTTP_404_NOT_FOUND)
         
-        # Obtener el ID de la mascota receptora desde el cuerpo de la solicitud
         mascota_receptora_id = request.data.get('mascota_receptora')
+
+        if not mascota_receptora_id:
+            return Response({'error': 'Debe proporcionar una mascota receptora'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if int(mascota_receptora_id) == mascota_solicitante.id:
+            return Response({'error': 'No puedes enviarte una solicitud de amistad a ti mismo'}, status=status.HTTP_400_BAD_REQUEST)
+
         try:
             mascota_receptora = Mascota.objects.get(id=mascota_receptora_id)
         except Mascota.DoesNotExist:
             return Response({'error': 'Mascota receptora no encontrada'}, status=status.HTTP_404_NOT_FOUND)
 
-        # Verificar si ya existe una solicitud pendiente entre estas dos mascotas
         solicitud_existente = Amistades.objects.filter(
             Q(mascota_solicitante=mascota_solicitante, mascota_receptora=mascota_receptora) |
             Q(mascota_solicitante=mascota_receptora, mascota_receptora=mascota_solicitante),
@@ -39,7 +44,6 @@ class AmistadesViewset(viewsets.ModelViewSet):
         if solicitud_existente:
             return Response({'error': 'Ya existe una solicitud pendiente entre estas dos mascotas'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Crear la nueva solicitud de amistad
         nueva_solicitud = Amistades.objects.create(
             mascota_solicitante=mascota_solicitante,
             mascota_receptora=mascota_receptora,
@@ -122,3 +126,27 @@ class AmistadesViewset(viewsets.ModelViewSet):
         } for solicitud in solicitudes_pendientes]
 
         return Response(solicitudes_data, status=status.HTTP_200_OK)
+    
+    # Acción personalizada para obtener sugerencias de amigos
+    @action(detail=True, methods=['get'])
+    def sugerencias_amigos(self, request, pk=None):
+        try:
+            mascota = Mascota.objects.get(id=pk)
+        except Mascota.DoesNotExist:
+            return Response({'error': 'Mascota no encontrada'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Obtener IDs de mascotas que ya son amigos o tienen solicitud pendiente
+        amistades = Amistades.objects.filter(
+            Q(mascota_solicitante=mascota) | Q(mascota_receptora=mascota)
+        )
+        mascotas_excluidas = {mascota.id}
+        for amistad in amistades:
+            mascotas_excluidas.add(amistad.mascota_solicitante.id)
+            mascotas_excluidas.add(amistad.mascota_receptora.id)
+
+        # Obtener mascotas aleatorias que no estén en la lista de excluidas
+        sugerencias = Mascota.objects.exclude(id__in=mascotas_excluidas).order_by('?')[:5]
+        sugerencias_data = [{"id": sug.id, "nombre": sug.nombre_usuario, "foto_perfil": sug.foto_perfil} for sug in sugerencias]
+
+        return Response(sugerencias_data, status=status.HTTP_200_OK)
+    
