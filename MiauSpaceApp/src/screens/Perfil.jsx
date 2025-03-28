@@ -38,7 +38,8 @@ export const Perfil = () => {
     const [sexo, setSexo] = useState("");
     const [ubicacion, setUbicacion] = useState("");
     const [btnEditar, setBtnEditar] = useState(false);
-    let idPerfil=0;
+    const [idPerfil, setIdPerfil] = useState(null);
+
 
     const [posts, setPosts] = useState([]);
     const [imgPost, setImgPost] = useState(0);
@@ -62,13 +63,34 @@ export const Perfil = () => {
         
     }, [paramUsername]);
 
+    const limpiar = () =>{
+        setEdad(0);
+        setEspecie("");
+        setFechaNac("");
+        setIsActive("");
+        setJoinDate("");
+        setLastLogin("");
+        setNomUsuario("");
+        setPreferencias("");
+        setRaza("");
+        setSexo("");
+        setUbicacion("");
+        setIdPerfil([]);
+        getPosts([]);
+        getAmigos([])
+        getAmigosPropio(0)
+        setEsAdmin(false);
+        setPassword("")
+        setId(0)
+        setBtnEditar(false);
+    }
     const getUsers = async () => {
         try {
             const respuesta = await axios.get(urlUser);
             const usuarioEncontrado = respuesta.data.find(u => u.nombre_usuario === paramUsername);
             if (usuarioEncontrado) {
                 setUser(usuarioEncontrado);
-
+                console.log(usuarioEncontrado)
             } else {
                 setFotoPerf(perfilGenerico);
                 setNomUsuario("Perfil no encontrado");
@@ -91,11 +113,12 @@ export const Perfil = () => {
         setRaza(element.raza || "No especificado");
         setSexo(element.sexo || "No especificado");
         setUbicacion(element.ubicacion || "");
-        idPerfil=element.id;
+        setIdPerfil(element.id);
         getPosts(element.id);
         getAmigos(element.id)
         getAmigosPropio(user.id)
 
+        await getSolicitudesPendientesPropias(user.id, element.id) 
         if (element.nombre_usuario == loggeado) {
             setEsAdmin(element.es_admin || false);
             setPassword(element.password)
@@ -111,8 +134,7 @@ export const Perfil = () => {
 
         try {
             const respuesta = await axios.get(urlPost);
-            console.log("respuesta.data: ", respuesta.data);
-            console.log("id",id)
+
             const publicaciones = respuesta.data.filter(post => post.mascota === idUser);
 
             setPosts(publicaciones);
@@ -164,16 +186,13 @@ export const Perfil = () => {
     const getSolicitudesPendientes = async (idLoggeado, idReceptor) => {
         try {
             const respuesta = await axios.get(urlAmigos + idReceptor + "/obtener_solicitudes_pendientes/");
-            console.log("Se envió solicitud: ", respuesta);
     
-            // Filtrar solicitudes pendientes para el usuario loggeado
             const solicitudes = respuesta.data.filter(solicitud =>
                 solicitud.mascota_solicitante_id === idLoggeado &&
                 solicitud.mascota_receptora_id === idReceptor
             );
-    
-            console.log("Solicitudes encontradas: ", solicitudes);
-            setSolicPendiente(prev => [...prev, ...solicitudes]);  // Acumulamos las solicitudes
+            console.log(solicitudes)
+            setSolicPendiente(prev => [...prev, ...solicitudes]); 
     
         } catch (error) {
             console.error("Error al obtener solicitudes pendientes", error);
@@ -183,14 +202,12 @@ export const Perfil = () => {
     const getSolicitudesPendientesPropias = async (idLoggeado, idReceptor) => {
         try {
             const respuesta = await axios.get(urlAmigos + idLoggeado + "/obtener_solicitudes_pendientes/");
-            console.log("Se envió solicitud: ", respuesta);
     
             const solicitudes = respuesta.data.filter(solicitud =>
                 solicitud.mascota_solicitante_id === idReceptor &&
                 solicitud.mascota_receptora_id === idLoggeado
             );
     
-            console.log("Solicitudes encontradas: ", solicitudes);
             setSolicPendientePropia(prev => [...prev, ...solicitudes]); 
     
         } catch (error) {
@@ -348,6 +365,14 @@ export const Perfil = () => {
         }
     }, [modalAmigos]); 
 
+    useEffect(() => {
+        if (idPerfil) {
+            getSolicitudesPendientes(user.id, idPerfil);
+            getSolicitudesPendientesPropias(user.id, idPerfil);
+        }
+    }, [idPerfil]);
+
+
     return (
         <Layout>
             <ToastContainer />
@@ -377,8 +402,22 @@ export const Perfil = () => {
                                     <div className="ms-3" style={{ marginTop: "15vh" }}>
                                         <h5>{nomUsuario}</h5>
                                     </div>
+                                    {user.id === idPerfil ? (
+                                            <span></span>
+                                        ) :esAmigo(idPerfil) ? (
+                                            <span>Amigo</span>
+                                        ) : solicPendiente.some(solicitud => solicitud.mascota_receptora_id === idPerfil) ? (
+                                            <span>Solicitud enviada</span>
+                                        ) : solicPendientePropia.some(solicitud => solicitud.mascota_solicitante_id === idPerfil) ? (
+                                            <span>Solicitud pendiente</span>
+                                        ): (
+                                            <button className="btn btn-outline-light ms-5 mt-5 " style={{ backgroundColor: '#7B1FA2', color: 'white' }} onClick={() => enviarSolicitud(user.id, idPerfil)}>
+                                                Enviar solicitud
+                                            </button>
+                                        )}
                                 </div>
                                 <div className="p-2 pe-4 text-black" style={{ backgroundColor: "#f8f9fa" }}>
+                                    
                                     <div className="d-flex justify-content-end text-center py-1">
                                         <div>
                                             <h5 className="mb-1">{numImgs}</h5>
@@ -602,7 +641,7 @@ export const Perfil = () => {
                             {amigos.map(amigo => (
                                 <div key={amigo.id} className="d-flex justify-content-between align-items-center border-bottom">
                                     <Nav>
-                                        <Nav.Link to={`/MiauSpace/Perfil/${amigo.nombre}`} as={Link} onClick={()=> closeModalAmigos()}>
+                                        <Nav.Link to={`/MiauSpace/Perfil/${amigo.nombre}`} as={Link} onClick={() => { closeModalAmigos(); limpiar(); }}>
                                             <div className="d-flex align-items-center">
                                                 <img src={amigo.foto_perfil} alt="Perfil" className="rounded-circle perfil-img ms-1" />
                                                 <p className="mb-0 fw-bold nombre-usuario ms-2">{amigo.nombre}</p>
@@ -618,7 +657,7 @@ export const Perfil = () => {
                                         ) : solicPendientePropia.some(solicitud => solicitud.mascota_solicitante_id === amigo.id) ? (
                                             <span>Solicitud pendiente</span>
                                         ): (
-                                            <button className="btn" style={{ backgroundColor: '#7B1FA2', color: 'white' }} onClick={() => enviarSolicitud(user.id, amigo.id, idPerfil)}>
+                                            <button className="btn" style={{ backgroundColor: '#7B1FA2', color: 'white' }} onClick={() => enviarSolicitud(user.id, amigo.id)}>
                                                 Enviar solicitud
                                             </button>
                                         )
