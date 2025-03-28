@@ -11,14 +11,17 @@ import { Col, Container, Nav, Row } from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
 import Swal from "sweetalert2";
 import { Link } from "react-router";
+import { Bounce, ToastContainer, toast } from 'react-toastify';
 
 export const Perfil = () => {
     const urlUser = "http://127.0.0.1:8000/mascotas/api/";
     const urlPost = 'http://127.0.0.1:8000/posts/api/';
     const urlAmigos= 'http://127.0.0.1:8000/amistades/api/';
+
     let { username: paramUsername } = useParams();
     const user = JSON.parse(sessionStorage.getItem("usuario"));
     let loggeado = localStorage.getItem("username");
+
     const [edad, setEdad] = useState(0);
     const [esAdmin, setEsAdmin] = useState(false);
     const [especie, setEspecie] = useState("");
@@ -35,8 +38,12 @@ export const Perfil = () => {
     const [sexo, setSexo] = useState("");
     const [ubicacion, setUbicacion] = useState("");
     const [btnEditar, setBtnEditar] = useState(false);
-
+    const idPerfil=0;
     const [posts, setPosts] = useState([]);
+    const [imgPost, setImgPost] = useState(0);
+    const [numImgs, setNumImgs] = useState([]);
+    const [numPost, setnumPost] = useState(0);
+
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
 
@@ -57,12 +64,11 @@ export const Perfil = () => {
             const respuesta = await axios.get(urlUser);
             const usuarioEncontrado = respuesta.data.find(u => u.nombre_usuario === paramUsername);
             if (usuarioEncontrado) {
-                console.log("Encontrado: ", usuarioEncontrado);
                 setUser(usuarioEncontrado);
 
             } else {
                 setFotoPerf(perfilGenerico);
-                setNomUsuario( "Perfil no encontrado");
+                setNomUsuario("Perfil no encontrado");
             }
         } catch (error) {
             console.error("Error al obtener datos del usuario", error);
@@ -82,25 +88,19 @@ export const Perfil = () => {
         setRaza(element.raza || "No especificado");
         setSexo(element.sexo || "No especificado");
         setUbicacion(element.ubicacion || "");
-        
+        idPerfil=element.id;
         getPosts(element.id);
         getAmigos(element.id)
         getAmigosPropio(user.id)
 
-        console.log(loggeado)
-        console.log(element.nombre_usuario)
         if (element.nombre_usuario == loggeado) {
             setEsAdmin(element.es_admin || false);
             setPassword(element.password)
             setId(element.id)
             
             setBtnEditar(true);
-            console.log(btnEditar)
         }
     };
-
-
-    
 
     const getPosts = async (idUser) => {
         if (loading) return;
@@ -113,7 +113,17 @@ export const Perfil = () => {
             const publicaciones = respuesta.data.filter(post => post.mascota === idUser);
 
             setPosts(publicaciones);
-            console.log("publicaciones filtradas: ",publicaciones);
+            setnumPost(publicaciones.length)
+            
+            const postFiltradoDescendente = publicaciones.sort((a, b) => b.id - a.id);
+            const imagenesRecientes = postFiltradoDescendente.flatMap(post => post.imagenes)
+                                              .slice(0, 4);
+
+            setImgPost(imagenesRecientes);
+
+            const totalImagenes = publicaciones.reduce((acc, post) => acc + post.imagenes.length, 0);
+
+            setNumImgs(totalImagenes);
             /*
             let nuevosPosts = publicaciones;
             
@@ -132,7 +142,6 @@ export const Perfil = () => {
         try {
             const respuesta = await axios.get(urlAmigos+idPerfil+'/obtener_amigos/');
             setAmigos(respuesta.data)
-            console.log("amigos: ",amigos)
             setNumAmigos(respuesta.data.length)
         } catch (error) {
             console.error("Error al obtener datos del usuario", error);
@@ -142,11 +151,54 @@ export const Perfil = () => {
     const getAmigosPropio = async (idLoggeado) => {
         try {
             const respuesta = await axios.get(urlAmigos+idLoggeado+'/obtener_amigos/');
+            
             setMisAmigos(respuesta.data)
         } catch (error) {
             console.error("Error al obtener datos del usuario", error);
         }
     };
+
+    const enviarSolicitud = async (idLoggeado, idReceptor,idAmigo) =>{
+        try{
+            const parametros={
+                mascota_receptora: idReceptor
+            }
+            console.log("enviarSolicitud: ",parametros);
+            await axios({
+                method: 'POST',
+                url: urlAmigos+idLoggeado+'/enviar_solicitud/',
+                data: parametros
+            }).then( function (resp){
+                const mensaje = resp.data.mensaje;
+                if(mensaje == "Solicitud de amistad enviada con éxito"){
+                    getAmigos(idAmigo)
+                }
+            }).then(
+                toast.success('Solicitud enviada con éxito', {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: true,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                transition: Bounce,
+                }))
+        }catch(e){
+            toast.error('Ha ocurrido un error', {
+                position: "top-center",
+                autoClose: 5000,
+                hideProgressBar: true,
+                closeOnClick: false,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                transition: Bounce,
+                });
+        }
+    }
 
     const esAmigo = (amigoId) => {
         return misAmigos.some(amigo => amigo.id === amigoId);
@@ -252,6 +304,7 @@ export const Perfil = () => {
 
     return (
         <Layout>
+            <ToastContainer />
             <div className="gradient-custom-2">
                 <div className="container py-5 h-100">
                     <div className="row justify-content-center align-items-center h-100">
@@ -262,18 +315,27 @@ export const Perfil = () => {
                                     style={{ backgroundColor: "#40007a", height: "20vh" }}
                                 >
                                     <div className="ms-4 mt-5 d-flex flex-column" style={{ width: "15%" }}>
-                                        <img src={fotoPerf} alt="Perfil" className="mt-4 mb-2 img-thumbnail" draggable="false" style={{ zIndex: "1", maxWidth: "10vw", maxHeight: "13vh", minHeight:"13vh"}} />
+                                        <img
+                                            src={fotoPerf}
+                                            alt="Perfil"
+                                            className="mt-4 mb-2 img-thumbnail"
+                                            draggable="false"
+                                            style={{
+                                                zIndex: "1",
+                                                maxWidth: "10vw",
+                                                maxHeight: "13vh",
+                                                minHeight: "13vh"
+                                            }}
+                                        />
                                     </div>
                                     <div className="ms-3" style={{ marginTop: "15vh" }}>
                                         <h5>{nomUsuario}</h5>
                                     </div>
-
                                 </div>
                                 <div className="p-2 pe-4 text-black" style={{ backgroundColor: "#f8f9fa" }}>
-
                                     <div className="d-flex justify-content-end text-center py-1">
                                         <div>
-                                            <h5 className="mb-1">23</h5>
+                                            <h5 className="mb-1">{numImgs}</h5>
                                             <p className="small text-muted">Fotos</p>
                                         </div>
                                         <div className="px-3" onClick={() => openModalAmigos(amigos)}>
@@ -291,61 +353,108 @@ export const Perfil = () => {
                                             <p className="font-italic mb-0">Especie: {especie}</p>
                                         </div>
                                         {btnEditar && (
-                                            <button className="btn btn-outline-dark" style={{ height: "2.5rem" }}
-                                                onClick={() => openActModal(id, nomUsuario, edad, especie, fechaNac, fotoPerf, preferencias, raza, sexo, ubicacion)}>
+                                            <button
+                                                className="btn btn-outline-dark"
+                                                style={{ height: "2.5rem" }}
+                                                onClick={() =>
+                                                    openActModal(
+                                                        id,
+                                                        nomUsuario,
+                                                        edad,
+                                                        especie,
+                                                        fechaNac,
+                                                        fotoPerf,
+                                                        preferencias,
+                                                        raza,
+                                                        sexo,
+                                                        ubicacion
+                                                    )
+                                                }
+                                            >
                                                 Editar perfil
                                             </button>
                                         )}
                                     </div>
                                 </div>
                                 <div className="card-body text-black p-4">
-                                    <div className="d-flex justify-content-between align-items-center mb-4">
-                                        <p className="lead fw-normal mb-0">Fotos recientes</p>
-                                    </div>
-                                    <div className="row g-2">
-                                        <div className="col mb-2">
-                                            <img src={fotoPerfil} className="w-100 rounded-3" alt="Foto 1" />
-                                        </div>
-                                        <div className="col mb-2">
-                                            <img src={fotoPerfil} className="w-100 rounded-3" alt="Foto 2" />
-                                        </div>
-                                    </div>
-                                    <div className="row g-2">
-                                        <div className="col mb-2">
-                                            <img src={fotoPerfil} className="w-100 rounded-3" alt="Foto 3" />
-                                        </div>
-                                        <div className="col mb-2">
-                                            <img src={fotoPerfil} className="w-100 rounded-3" alt="Foto 4" />
-                                        </div>
-                                    </div>
-                                    <div className="d-flex justify-content-between align-items-center mt-5 mb-4">
-                                        <p className="lead fw-normal mb-0">Publicaciones</p>
-                                    </div>
-
-                                    {posts
-                                        .sort((a, b) => b.id - a.id) //Con este se hace de manera descendente
-                                        .map((post) => {
-                                            const images = post.imagenes
-                                                ? post.imagenes.map(img => img.imagen_base64)
-                                                : (post.img || []);
-
-                                            return (
-                                                <Post
-                                                    key={post.id}
-                                                    postId={post.id}
-                                                    picUser={fotoPerf}
-                                                    user={nomUsuario}
-                                                    body={post.contenido}
-                                                    picsBody={images}
-                                                />
-                                            );
-                                        })}
+                                    {imgPost.length > 0 && (
+                                        <>
+                                            <div className="d-flex justify-content-between align-items-center mb-4">
+                                                <p className="lead fw-normal mb-0">Fotos recientes</p>
+                                            </div>
+                                            <div className="row g-2">
+                                                <div className="col mb-2">
+                                                    {imgPost[0] && (
+                                                        <img
+                                                            src={imgPost[0].imagen_base64}
+                                                            className="w-100 rounded-3"
+                                                            alt="Foto 1"
+                                                        />
+                                                    )}
+                                                </div>
+                                                <div className="col mb-2">
+                                                    {imgPost[1] && (
+                                                        <img
+                                                            src={imgPost[1].imagen_base64}
+                                                            className="w-100 rounded-3"
+                                                            alt="Foto 2"
+                                                        />
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <div className="row g-2">
+                                                <div className="col mb-2">
+                                                    {imgPost[2] && (
+                                                        <img
+                                                            src={imgPost[2].imagen_base64}
+                                                            className="w-100 rounded-3"
+                                                            alt="Foto 3"
+                                                        />
+                                                    )}
+                                                </div>
+                                                <div className="col mb-2">
+                                                    {imgPost[3] && (
+                                                        <img
+                                                            src={imgPost[3].imagen_base64}
+                                                            className="w-100 rounded-3"
+                                                            alt="Foto 4"
+                                                        />
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
+                                    {numPost > 0 && (
+                                        <>
+                                            <div className="d-flex justify-content-between align-items-center mt-5 mb-4">
+                                                <p className="lead fw-normal mb-0">Publicaciones</p>
+                                            </div>
+                                            {posts
+                                                .sort((a, b) => b.id - a.id) // Orden descendente
+                                                .map((post) => {
+                                                    const images = post.imagenes
+                                                        ? post.imagenes.map((img) => img.imagen_base64)
+                                                        : (post.img || []);
+                                                    return (
+                                                        <Post
+                                                            key={post.id}
+                                                            postId={post.id}
+                                                            picUser={fotoPerf}
+                                                            user={nomUsuario}
+                                                            body={post.contenido}
+                                                            picsBody={images}
+                                                        />
+                                                    );
+                                                })}
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
             <Modal
                 show={modalActIsOpen}
                 onHide={closeModalAct}
@@ -511,12 +620,12 @@ export const Perfil = () => {
 
                                     {amigo.nombre === loggeado ? null : (
                                         esAmigo(amigo.id) ? (
-                                            <span>Amigos</span>
+                                            <span>Amigo</span>
                                         ) : (
                                             <button
                                                 className="btn"
                                                 style={{ backgroundColor: '#7B1FA2', color: 'white' }}
-                                                onClick={() => { }}
+                                                onClick={() => enviarSolicitud(user.id,amigo.id,idPerfil)}
                                             >
                                                 Enviar solicitud
                                             </button>
