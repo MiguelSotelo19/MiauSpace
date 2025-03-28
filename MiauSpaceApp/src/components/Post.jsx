@@ -57,7 +57,7 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
     const pressTimer = useRef(null);
     const navigate = useNavigate();
 
-    let username = localStorage.getItem("username");
+    let userStorage = JSON.parse(sessionStorage.getItem("usuario"));
 
     useEffect(() => {
         getData();
@@ -99,7 +99,7 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
 
         let comentarios = respuestaC.data.filter(comment => comment.post == postId);
         let reacciones = respuestaR.data.filter(reac => reac.post == postId);
-        let user = respuestaM.data.filter(user => user.nombre_usuario == username)[0];
+        let user = respuestaM.data.filter(user => user.nombre_usuario == userStorage.nombre_usuario)[0];
         let reaccionUser = respuestaR.data.filter(reac => reac.mascota == user.id && reac.post == postId);        
 
         if(reaccionUser.length > 0) {
@@ -141,17 +141,15 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
     }
 
     const enviarComentario = async () => {
-        if(comentario.trim() == ""){
-            console.log("HOLA")
-        } else {
+        if(comentario.trim() != ""){
             const parametros = {
                 texto: comentario,
                 fecha_comentario: new Date().toISOString(),
                 post: postId,
-                mascota: 1
+                mascota: userStorage.id
             }
 
-            enviarSolicitud("POST", parametros, urlComments, "Comment")
+            enviarSolicitud("POST", parametros, urlComments, "Comment");
         }
     }
 

@@ -12,7 +12,6 @@ import { useNavigate } from "react-router-dom";
 
 export const Reactions = ({ mascotas, reacciones }) => {
     const urlAmistades = "http://127.0.0.1:8000/amistades/api/"
-    let user = JSON.parse(sessionStorage.getItem("usuario"));
     
     const [ allReactions, setAllReactions ] = useState(reacciones);
     const [ amistades, setAmistades ] = useState([]);
