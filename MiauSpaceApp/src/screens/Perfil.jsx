@@ -38,7 +38,7 @@ export const Perfil = () => {
     const [sexo, setSexo] = useState("");
     const [ubicacion, setUbicacion] = useState("");
     const [btnEditar, setBtnEditar] = useState(false);
-    const idPerfil=0;
+    let idPerfil=0;
     const [posts, setPosts] = useState([]);
     const [imgPost, setImgPost] = useState(0);
     const [numImgs, setNumImgs] = useState([]);

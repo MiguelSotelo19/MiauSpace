@@ -20,6 +20,7 @@ import commentsIcon from "../assets/comentarios.png";
 import enviar from "../assets/enviar.png";
 import reaccionesImg from "../assets/reacciones.png";
 import { Reactions } from "./Reactions";
+import { useNavigate } from "react-router-dom";
 
 export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
     const urlReacciones = 'http://127.0.0.1:8000/reacciones/api/';
@@ -36,8 +37,8 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
     };
 
     const [visibleImages, setVisibleImages] = useState([]);
-const [hiddenImages, setHiddenImages] = useState([]);
-const [showMore, setShowMore] = useState(false);
+    const [hiddenImages, setHiddenImages] = useState([]);
+    const [showMore, setShowMore] = useState(false);
 
     const [ idReaction, setIdReaction ] = useState(0);
     const [ reacted, setReacted ] = useState(false);
@@ -54,6 +55,7 @@ const [showMore, setShowMore] = useState(false);
     const [ reaction, setReaction ] = useState(null);
     const [ claseReaccion, setClaseReaccion ] = useState("");
     const pressTimer = useRef(null);
+    const navigate = useNavigate();
 
     let username = localStorage.getItem("username");
 
@@ -270,7 +272,7 @@ const [showMore, setShowMore] = useState(false);
             <div className="card-body">
                 <div className="d-flex align-items-center justify-content-start">
                     <img src={picUser} className="me-3 rounded-circle" alt="Usuario" width="40" height="40" />
-                    <p className="m-0">{user}</p>
+                    <p className="m-0 pointer" onClick={() => navigate(`/MiauSpace/Perfil/${user}`)}>{user}</p>
                 </div>
                 <div className="d-flex flex-column mt-2">
                     <p>{body}</p>
@@ -293,7 +295,7 @@ const [showMore, setShowMore] = useState(false);
                     <p className="accionesCount" data-bs-toggle="modal" data-bs-target={`#modalReacciones${postId}`}>
                         {cantReacciones} reacciones
                     </p>
-                    <p className="accionesCount" data-bs-toggle="modal" data-bs-target={`#${modalId}`}>{cantComments} comentarios</p>
+                    <p className="accionesCount" data-bs-toggle="modal" data-bs-target={`#commentModal${postId}`}>{cantComments} comentarios</p>
                 </div>
                 <div className="d-flex justify-content-evenly align-items-center py-2">
                     <div className="reaction-container" onMouseEnter={() => setShowReactions(true)} onMouseLeave={() => setShowReactions(false)}>

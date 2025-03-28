@@ -176,3 +176,13 @@
     max-width: 30%;
     width: 30%;
 }
+
+.pointer {
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.pointer:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
