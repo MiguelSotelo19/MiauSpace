@@ -3,11 +3,13 @@ import { Post } from "../components/Post";
 import axios from 'axios';
 import imagen from '../assets/imagen.png';
 import cara_feliz from '../assets/feliz.png';
-import sonidoExito from '../assets/success.mp3';  
+import sonidoLadrido from '../assets/wao1.mp3';
 import './css/Home.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle";
-import { Layout } from "../components/LayoutHome"; 
+import { Layout } from "../components/LayoutHome";
+import perro from '../assets/perro.png';
+
 
 export const Home = () => {
     const url = 'http://127.0.0.1:8000/posts/api/';
@@ -18,9 +20,11 @@ export const Home = () => {
     const [loading, setLoading] = useState(false);
     const [contenido, setContenido] = useState('');
     const [imagenes, setImagenes] = useState([]);
-    const [uploadProgress, setUploadProgress] = useState(0);  
+    const [uploadProgress, setUploadProgress] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const user = JSON.parse(sessionStorage.getItem("usuario"));
+    const [showDog, setShowDog] = useState(false);
+
 
     useEffect(() => {
         getPosts();
@@ -79,9 +83,9 @@ export const Home = () => {
 
     const handleSubmit = async () => {
         const fechaActual = new Date().toISOString();
-        setIsSubmitting(true);  
-        setUploadProgress(0);  
-    
+        setIsSubmitting(true);
+        setUploadProgress(0);
+
         try {
             const responsePost = await axios.post(
                 `${url}create_post_with_images/`,
@@ -99,45 +103,66 @@ export const Home = () => {
                     }
                 }
             );
-    
+
             console.log("Publicación y imágenes creadas:", responsePost.data);
-    
+
             const newPost = {
                 ...responsePost.data,
                 imagenes: imagenes.map((img) => ({ imagen_base64: img })),
             };
-    
+
             setPosts([newPost, ...posts]);
             setContenido('');
             setImagenes([]);
-            setUploadProgress(0);  
-            reproducirSonidoExito();  
-    
+            setUploadProgress(0);
+            reproducirLadrido();
+
             try {
                 const response = await axios.get(`${url}?page=1`);
-                const actualizedPosts = response.data.sort(() => Math.random() - 0.5);  
-                setPosts(actualizedPosts);  
+                const actualizedPosts = response.data.sort(() => Math.random() - 0.5);
+                setPosts(actualizedPosts);
             } catch (error) {
                 console.error("Error al obtener publicaciones actualizadas:", error);
             }
-    
+
         } catch (error) {
             console.error("Error al crear publicación e imágenes:", error.response?.data || error);
         } finally {
-            setTimeout(() => setIsSubmitting(false), 1000);  
+            setTimeout(() => setIsSubmitting(false), 1000);
         }
     };
-    
-    const reproducirSonidoExito = () => {
-        const audio = new Audio(sonidoExito);
-        audio.play();
+
+   
+
+    const reproducirLadrido = () => {
+        const wao = new Audio(sonidoLadrido);
+        wao.play();
+        showDogAnimation();
+    };
+
+    const showDogAnimation = () => {
+        setShowDog(true);
+        setTimeout(() => {
+            setShowDog(false);
+        }, 8000);
     };
 
     return (
-        <Layout>
-            {isSubmitting && <div className="overlay"></div>}  
 
-            <div className="col-lg-7 col-md-8 col-12 offset-lg-2 offset-md-3" style={{ paddingTop: '20px' }}>
+        <Layout>
+            {isSubmitting && <div className="overlay"></div>}
+
+
+
+            <div className="col-lg-12 col-md-8 col-12 offset-lg-2 offset-md-3" style={{ paddingTop: '20px', marginLeft: '8px' }}>
+                {showDog && (
+                    <img
+                        src={perro}
+                        alt="Perro"
+                        className="dog-image"
+                    />
+
+                )}
                 <div className="post">
                     <div className="card mb-4">
                         <div className="card-body">
@@ -178,7 +203,8 @@ export const Home = () => {
                                 </div>
                             </div>
 
-                      
+
+
                             {imagenes.length > 0 && (
                                 <div className="preview mt-3">
                                     <div className="small-image-wrapper">

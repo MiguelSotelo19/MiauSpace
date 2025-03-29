@@ -346,8 +346,9 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
             </div>
         </div>
 
+{/* Modal solo para Imagenes */}
         <div className="modal fade" id={`imageModal${postId}`} tabIndex="-1" aria-hidden="true">
-            <div className="modal-dialog modal-dialog-centered modal-lg" style={{ maxWidth: "100%", width: "500px" }}>
+            <div className="modal-dialog modal-dialog-centered modal-lg" style={{ maxWidth: "100%", width: "700px", marginRight:'480px' }}>
                 <div className="modal-content" style={{ width: "100%", maxHeight: "90vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
                     {picsBody.length > 0 && (
                         <div className="modal-body p-0 d-flex justify-content-center align-items-center">
@@ -362,8 +363,8 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                                                 style={{
                                                     width: "auto",
                                                     maxWidth: "100%",
-                                                    height: "auto",
-                                                    maxHeight: "80vh", 
+                                                    height: "500px",
+                                                    maxHeight: "200vh", 
                                                     objectFit: "contain", 
                                                     display: "block",
                                                     margin: "0 auto"
@@ -384,10 +385,6 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                 </div>
             </div>
         </div>
-
-
-
-
 
         {/* Modal solo para Comentarios */}
         <div className="modal fade" id={`commentModal${postId}`} tabIndex="-1" aria-hidden="true">

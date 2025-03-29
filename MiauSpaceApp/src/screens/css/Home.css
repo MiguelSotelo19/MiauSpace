@@ -122,3 +122,34 @@ header {
     padding: 2px 5px;
     border-radius: 10px;
 }
+
+
+.dog-image {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 250px;
+    height: auto;
+    z-index: 9999;
+    opacity: 0;
+    animation: dogAnimation 8s ease-in-out forwards;
+}
+
+@keyframes dogAnimation {
+    0% {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    15% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    50% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
