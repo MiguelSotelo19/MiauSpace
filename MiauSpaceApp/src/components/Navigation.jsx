@@ -65,20 +65,20 @@ export const Navigation = () => {
             <Navbar expand="md" className="flex-column align-items-start mt-5 p-3">
                 <Nav className="flex-column w-100">
                     {navLinks.map((link, index) => (
-                        <Nav.Link
+                        <Nav.Link 
                             key={index}
                             as={Link}
                             to={link.to}
-                            className="d-flex align-items-center py-3 navigation-navBar"
+                            className="d-flex align-items-center py-3 navigation-navBar opciones"
                         >
                             <img src={link.icon} className="me-3 icon" alt={link.text} />
                             {link.text}
                         </Nav.Link>
                     ))}
                 </Nav>
-                <hr className="w-100" />
+                <hr className="cerrardiv p-3 w-100" />
                 <Nav className="flex-column w-100">
-                    <Nav.Link onClick={handleLogout} className="d-flex align-items-center py-3 text-danger navigation-navBar logout">
+                    <Nav.Link onClick={handleLogout} className="d-flex align-items-center py-3 text navigation-navBar logout">
                         <img src={salir} className="me-3" alt="Cerrar sesión" width="30" />
                         Cerrar sesión
                     </Nav.Link>
