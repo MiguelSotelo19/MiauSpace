@@ -3,6 +3,7 @@ import { Layout } from "../components/Layout";
 import ListaAmigos from "../components/ListaAmigos";
 import Sugerencias from "../components/SugerenciasAmistad";
 import Solicitudes from "../components/SolicitudesAmistad";
+import Buscador from "../components/Buscador";
 
 export const Amigos = () => {
     const [seccionActiva, setSeccionActiva] = useState("listaAmigos");
@@ -30,6 +31,10 @@ export const Amigos = () => {
                                 </div>
                             ))}
                         </div>
+                    </div>
+
+                    <div className="col-12 justify-content-center my-3 bg-white">
+                        <Buscador />
                     </div>
 
                     <div className="col-12">

@@ -39,5 +39,8 @@ class Amistades(models.Model):
         if self.estado == 'pendiente':
             self.estado = 'rechazado'
             self.save()
-
-
+            
+    def eliminar(self):
+        """Elimina la relación de amistad si está aceptada."""
+        if self.estado == 'aceptado':
+            self.delete()

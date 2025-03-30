@@ -152,3 +152,39 @@ class AmistadesViewset(viewsets.ModelViewSet):
 
         return Response(sugerencias_data, status=status.HTTP_200_OK)
     
+     # Acción personalizada para buscar usuarios
+    @action(detail=False, methods=['get'])
+    def buscar_usuarios(self, request):
+        query = request.query_params.get('q', '').strip()
+        if not query:
+            return Response([], status=status.HTTP_200_OK)
+
+        mascotas = Mascota.objects.filter(
+            Q(nombre_usuario__icontains=query)
+        )[:10]
+
+        resultados = [{
+            "id": mascota.id,
+            "nombre": mascota.nombre_usuario,
+            "foto_perfil": mascota.foto_perfil
+        } for mascota in mascotas]
+
+        return Response(resultados, status=status.HTTP_200_OK)
+    
+    # Acción personalizada para eliminar la amistad
+    @action(detail=True, methods=['delete'], url_path='eliminar_amigo/(?P<amigo_id>\d+)')
+    def eliminar_amigo(self, request, pk=None, amigo_id=None):
+        try:
+            # Obtener la amistad entre las dos mascotas
+            amistad = Amistades.objects.get(
+                Q(mascota_solicitante_id=pk, mascota_receptora_id=amigo_id) |
+                Q(mascota_solicitante_id=amigo_id, mascota_receptora_id=pk)
+            )
+        except Amistades.DoesNotExist:
+            return Response({'error': 'Amistad no encontrada'}, status=status.HTTP_404_NOT_FOUND)
+
+        amistad.eliminar()
+        return Response({'mensaje': 'Amistad eliminada con éxito'}, status=status.HTTP_200_OK)
+
+
+    

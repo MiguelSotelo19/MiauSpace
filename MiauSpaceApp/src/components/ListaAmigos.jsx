@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
 import axios from "axios";
-import img from "../assets/skibidi.jpeg"
+import Swal from "sweetalert2";
 
 const Amigos = () => {
     const [amigos, setAmigos] = useState([]);
@@ -14,7 +14,7 @@ const Amigos = () => {
             try {
                 const response = await axios.get(`http://127.0.0.1:8000/amistades/api/${usuarioId}/obtener_amigos/`);
                 setAmigos(response.data);
-                console.log(response.data)
+                console.log(response.data);
             } catch (error) {
                 console.error("Error al obtener amigos:", error);
             }
@@ -23,6 +23,38 @@ const Amigos = () => {
         fetchAmigos();
     }, [usuarioId]);
 
+    const handleEliminarAmigo = async (amigoId) => {
+        const result = await Swal.fire({
+            title: "¿Estás seguro de eliminar a tu amigo?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Sí, eliminar",
+            cancelButtonText: "Cancelar",
+            reverseButtons: true,
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const response = await axios.delete(`http://127.0.0.1:8000/amistades/api/${usuarioId}/eliminar_amigo/${amigoId}/`);
+                if (response.status === 200) {
+                    setAmigos(amigos.filter(amigo => amigo.id !== amigoId)); 
+                    Swal.fire(
+                        "Eliminado",
+                        "Amigo eliminado correctamente",
+                        "success"
+                    );
+                }
+            } catch (error) {
+                console.error('Error al eliminar amigo:', error);
+                Swal.fire(
+                    "Error",
+                    "Hubo un problema al eliminar al amigo",
+                    "error"
+                );
+            }
+        }
+    };
+
     return (
         <div className="container-fluid min-vh-100 p-0" style={{ backgroundColor: 'white', width: '100%', margin: 0, marginTop: '20px' }}>
             <div className="row">
@@ -30,7 +62,7 @@ const Amigos = () => {
                     <div key={amigo.id} className="col-md-4 mb-4">
                         <div className="card h-100">
                             <img
-                                src={amigo.foto_perfil || img}
+                                src={amigo.foto_perfil}
                                 className="card-img-top"
                                 alt={`Foto de ${amigo.nombre}`}
                                 style={{ height: "200px", objectFit: "cover" }}
@@ -40,10 +72,16 @@ const Amigos = () => {
                                 <small className="text-muted mb-3">0 amigos en común</small>
                                 <div className="mt-auto d-grid gap-2">
                                     <Link to={`/MiauSpace/Perfil/${amigo.nombre}`}>
-                                        <button className="btn btn-outline-primary">
+                                        <button className="btn btn-outline-primary w-100">
                                             Ver perfil
                                         </button>
                                     </Link>
+                                    <button
+                                        className="btn btn-outline-danger mt-2 w-100"
+                                        onClick={() => handleEliminarAmigo(amigo.id)}
+                                    >
+                                        Eliminar amigo
+                                    </button>
                                 </div>
                             </div>
                         </div>
