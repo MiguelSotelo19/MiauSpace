@@ -20,24 +20,24 @@ class MascotaManager(BaseUserManager):
         extra_fields.setdefault('es_admin', True)
         return self.create_user(nombre_usuario, password, **extra_fields)
 
-class Mascota(AbstractBaseUser):  # Se eliminó PermissionsMixin
+class Mascota(AbstractBaseUser):
     nombre_usuario = models.CharField(max_length=50, unique=True)
-    especie = models.CharField(max_length=50)    
-    edad = models.PositiveIntegerField()
-    raza = models.CharField(max_length=50)
+    especie = models.CharField(max_length=50, blank=True, null=True)  
+    edad = models.PositiveIntegerField(blank=True, null=True)
+    raza = models.CharField(max_length=50, blank=True, null=True)
     fecha_nacimiento = models.DateField()
-    sexo = models.CharField(max_length=50)
-    ubicacion = models.CharField(max_length=250)
-    foto_perfil = models.URLField()
-    preferencias = models.TextField()
-    is_active = models.BooleanField(default=True)  # Activo por defecto
-    es_admin = models.BooleanField(default=False)  # Administrador o no
-    join_date = models.DateTimeField(default=now)  # Fecha de registro
+    sexo = models.CharField(max_length=50, blank=True, null=True)
+    ubicacion = models.CharField(max_length=250, blank=True, null=True)
+    foto_perfil = models.TextField(null=True, blank=True) 
+    preferencias = models.TextField(blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    es_admin = models.BooleanField(default=False)
+    join_date = models.DateTimeField(default=now)
 
     objects = MascotaManager()  # Manager para crear usuarios
 
     USERNAME_FIELD = 'nombre_usuario'  # Campo usado para autenticación
-    REQUIRED_FIELDS = ['especie', 'edad', 'raza', 'fecha_nacimiento', 'sexo', 'ubicacion', 'foto_perfil', 'preferencias']
+    REQUIRED_FIELDS = ['fecha_nacimiento']
 
     def __str__(self):
         return self.nombre_usuario

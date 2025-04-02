@@ -120,7 +120,7 @@ export const Login = () => {
                     </div>
 
                     <div className="mt-4 text-center">
-                        ¿No tienes una cuenta? <a href="#">¡Regístrate aquí!</a>
+                        ¿No tienes una cuenta? <a href="/Registro/">¡Regístrate aquí!</a>
                     </div>
                 </div>
             </div>
