@@ -1,6 +1,8 @@
+import { useNavigate } from 'react-router-dom';
 import './css/Comment.css';
 
 export const Comment = ({ usuario, comentario, perfil, fecha_comentario }) => {
+    const navigate = useNavigate();
     const formatFecha = (fecha) => {
         const fechaObj = new Date(fecha);
         const hoy = new Date();
@@ -28,7 +30,7 @@ export const Comment = ({ usuario, comentario, perfil, fecha_comentario }) => {
             </div>
             <div className="d-flex flex-column comment">
                 <div className="d-flex justify-content-between">
-                    <p className='fw-bold'>{usuario}</p>
+                    <p className='fw-bold accionesCount' data-bs-dismiss="modal" onClick={() => navigate(`/MiauSpace/Perfil/${usuario}`)}>{usuario}</p>
                     <p>{formatFecha(fecha_comentario)}</p>
                 </div>
                 <div>{comentario}</div>

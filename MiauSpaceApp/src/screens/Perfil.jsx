@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import fotoPerfil from "../assets/skibidi.jpeg";
 import perfilGenerico from "../assets/perfilGenerico.jpg";
 import { useParams } from "react-router-dom";
 import { Layout } from "../components/Layout";
@@ -12,6 +11,11 @@ import Button from 'react-bootstrap/Button';
 import Swal from "sweetalert2";
 import { Link } from "react-router";
 import { Bounce, ToastContainer, toast } from 'react-toastify';
+
+import ubi from "../assets/ubicacion.png";
+import huella from "../assets/huella.png";
+import genero from "../assets/genero.png";
+import preferencia from "../assets/preferencia.png";
 
 export const Perfil = () => {
     const urlUser = "http://127.0.0.1:8000/mascotas/api/";
@@ -385,7 +389,7 @@ export const Perfil = () => {
                                     className="rounded-top text-white d-flex flex-row"
                                     style={{ backgroundColor: "#40007a", height: "20vh" }}
                                 >
-                                    <div className="ms-4 mt-5 d-flex flex-column" style={{ width: "15%" }}>
+                                    <div className="ms-4 mt-5 d-flex flex-column" style={{ width: "130px" }}>
                                         <img
                                             src={fotoPerf}
                                             alt="Perfil"
@@ -393,9 +397,7 @@ export const Perfil = () => {
                                             draggable="false"
                                             style={{
                                                 zIndex: "1",
-                                                maxWidth: "10vw",
-                                                maxHeight: "13vh",
-                                                minHeight: "13vh"
+                                                height: "13vh"
                                             }}
                                         />
                                     </div>
@@ -433,14 +435,27 @@ export const Perfil = () => {
                                     <div className="mb-5">
                                         <p className="lead fw-normal mb-1">Detalles</p>
                                         <div className="p-4" style={{ backgroundColor: "#f8f9fa" }}>
-                                            <p className="font-italic mb-1">Vive en: {ubicacion}</p>
-                                            <p className="font-italic mb-1">Sexo: {sexo}</p>
-                                            <p className="font-italic mb-0">Especie: {especie}</p>
+                                            <p className="font-italic mb-1 d-flex align-items-center">
+                                                <img src={ubi} alt="Ubicación" style={{ marginRight: "6px" }} />
+                                                Vive en: {ubicacion}
+                                            </p>
+                                            <p className="font-italic mb-1 d-flex align-items-center">
+                                                <img src={genero} alt="Genero" style={{ marginRight: "6px" }} />
+                                                Sexo: {sexo}
+                                            </p>
+                                            <p className="font-italic mb-1 d-flex align-items-center">
+                                                <img src={huella} alt="Especie" style={{ marginRight: "6px" }} />
+                                                Especie: {especie}
+                                            </p>
+                                            <p className="font-italic mb-1 d-flex align-items-center">
+                                                <img src={preferencia} alt="Preferencia" style={{ marginRight: "6px" }} />
+                                                Preferencia: {preferencias}
+                                            </p>
                                         </div>
                                         {btnEditar && (
                                             <button
                                                 className="btn btn-outline-dark"
-                                                style={{ height: "2.5rem" }}
+                                                style={{ height: "2.5rem", backgroundColor: '#7B1FA2', color: "white" }}
                                                 onClick={() => openActModal(id,nomUsuario,edad,especie,fechaNac,fotoPerf,preferencias,raza,sexo,ubicacion)}>
                                                 Editar perfil
                                             </button>
@@ -481,6 +496,7 @@ export const Perfil = () => {
                                     )}
                                     {numPost > 0 && (
                                         <>
+                                            <hr />
                                             <div className="d-flex justify-content-between align-items-center mt-5 mb-4">
                                                 <p className="lead fw-normal mb-0">Publicaciones</p>
                                             </div>
@@ -627,7 +643,7 @@ export const Perfil = () => {
                 show={modalAmigos}
                 onHide={closeModalAmigos}
                 size="md"
-                aria-labelledby="contained-modal-title-vcenter "
+                aria-labelledby="contained-modal-title-vcenter"
                 centered
             >
                 <Modal.Header closeButton>
@@ -635,11 +651,11 @@ export const Perfil = () => {
                         {nomUsuario === loggeado ? 'Tus amigos' : `Amigos de ${nomUsuario}`}
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body style={{ maxHeight: '60vh' }}>
-                    <Container style={{ display: 'flex', flexDirection: 'column' }}>
-                        <div className="container d-flex flex-column w-100 justify-content-center">
+                <Modal.Body>
+                    <Container className="d-flex flex-column">
+                        <div className="d-flex flex-column w-100 justify-content-center">
                             {amigos.map(amigo => (
-                                <div key={amigo.id} className="d-flex justify-content-between align-items-center border-bottom">
+                                <div key={amigo.id} className="d-flex m-2 justify-content-between align-items-center border-bottom">
                                     <Nav>
                                         <Nav.Link to={`/MiauSpace/Perfil/${amigo.nombre}`} as={Link} onClick={() => { closeModalAmigos(); limpiar(); }}>
                                             <div className="d-flex align-items-center">

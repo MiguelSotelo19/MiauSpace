@@ -37,7 +37,7 @@ export const Home = () => {
         if (loading) return;
         setLoading(true);
 
-        try {
+        try {  
             const respuesta = await axios.get(`${url}?page=${page}`);
             let nuevosPosts = respuesta.data;
             nuevosPosts = nuevosPosts.sort(() => Math.random() - 0.5);
@@ -53,11 +53,11 @@ export const Home = () => {
     const getMascotas = async () => {
         const respuesta = await axios.get(urlMascota);
         setMascotas(respuesta.data);
-    };
+    }; 
 
     const handleScroll = () => {
         if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 100) {
-            getPosts();
+            getPosts(); 
         }
     };
 
@@ -151,16 +151,9 @@ export const Home = () => {
 
         <Layout>
             {isSubmitting && <div className="overlay"></div>}
-
-
-
             <div className="col-lg-12 col-md-8 col-12 offset-lg-2 offset-md-3" style={{ paddingTop: '20px', marginLeft: '8px' }}>
                 {showDog && (
-                    <img
-                        src={perro}
-                        alt="Perro"
-                        className="dog-image"
-                    />
+                    <img src={perro} alt="Perro" className="dog-image"/>
 
                 )}
                 <div className="post">
@@ -178,32 +171,17 @@ export const Home = () => {
                             </div>
                             <div className="d-flex mt-4 justify-content-between">
                                 <div>
-                                    <input
-                                        type="file"
-                                        id="image-upload"
-                                        multiple
-                                        accept="image/*"
-                                        onChange={handleImageChange}
-                                        style={{ display: 'none' }}
-                                    />
+                                    <input type="file" id="image-upload" multiple accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
                                     <label htmlFor="image-upload" style={{ cursor: 'pointer' }}>
                                         <img src={imagen} alt="Subir imágenes" width="30" height="30" />
                                     </label>
-                                    <img src={cara_feliz} className="ms-3" alt="Cara feliz" />
                                 </div>
                                 <div>
-                                    <button
-                                        className="btn"
-                                        style={{ backgroundColor: '#7B1FA2', color: 'white' }}
-                                        onClick={handleSubmit}
-                                        disabled={isSubmitting}
-                                    >
+                                    <button className="btn" style={{ backgroundColor: '#7B1FA2', color: 'white' }} onClick={handleSubmit} disabled={isSubmitting}>
                                         {isSubmitting ? "Publicando..." : "Publicar"}
                                     </button>
                                 </div>
                             </div>
-
-
 
                             {imagenes.length > 0 && (
                                 <div className="preview mt-3">

@@ -68,15 +68,15 @@
 }
 
 .reaccion-selected1 {
-    color: #35a1f4;
+    color: #70b1e2;
 }
 
 .reaccion-selected2 {
-    color: #f43535;
+    color: #bb0096;
 }
 
 .reaccion-selected3 {
-    color: #aaac38;
+    color: #cecc6e;
 }
 
 .reaccion:hover {
@@ -134,10 +134,7 @@
 }
 
 .carousel-item img {
-    min-width: 20vh;
-    max-width: 80vw;
-    max-height: 40vh;
-    object-fit: contain;
+    width: 30vw;
     margin: auto;
 }
 

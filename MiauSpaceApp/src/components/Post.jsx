@@ -194,8 +194,6 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
         }
     }
 
-    const modalId = "modalImages" + postId;
-
     const reaccionSelect = () => {
         setSelected(!selected);
 
@@ -346,13 +344,12 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
             </div>
         </div>
 
-{/* Modal solo para Imagenes */}
         <div className="modal fade" id={`imageModal${postId}`} tabIndex="-1" aria-hidden="true">
-            <div className="modal-dialog modal-dialog-centered modal-lg" style={{ maxWidth: "100%", width: "700px", marginRight:'480px' }}>
-                <div className="modal-content" style={{ width: "100%", maxHeight: "90vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <div className="modal-dialog modal-dialog-centered modal-lg">
+                <div className="modal-content shadow-lg rounded-lg overflow-hidden d-flex justify-content-center" style={{ backgroundColor: "#1a1a1a", borderRadius: "12px", padding: "10px", height: '45vh' }}>
                     {picsBody.length > 0 && (
                         <div className="modal-body p-0 d-flex justify-content-center align-items-center">
-                            <div id={`carousel-${postId}`} className="carousel slide">
+                            <div id={`carousel-${postId}`} className="carousel slide" data-bs-ride="carousel">
                                 <div className="carousel-inner">
                                     {picsBody.map((img, index) => (
                                         <div key={index} className={`carousel-item ${index === 0 ? "active" : ""}`}>
@@ -361,23 +358,21 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                                                 className="d-block mx-auto" 
                                                 alt={`Imagen ${index + 1}`} 
                                                 style={{
-                                                    width: "auto",
-                                                    maxWidth: "100%",
-                                                    height: "500px",
-                                                    maxHeight: "200vh", 
-                                                    objectFit: "contain", 
-                                                    display: "block",
-                                                    margin: "0 auto"
+                                                    objectFit: "contain",
+                                                    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)",
+                                                    transition: "opacity 0.5s ease-in-out",
                                                 }} 
                                             />
                                         </div>
                                     ))}
                                 </div>
+                                
+                                {/* Botones de control estilizados */}
                                 <button className="carousel-control-prev" type="button" data-bs-target={`#carousel-${postId}`} data-bs-slide="prev">
-                                    <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span className="carousel-control-prev-icon bg-dark p-3 rounded-circle" aria-hidden="true"></span>
                                 </button>
                                 <button className="carousel-control-next" type="button" data-bs-target={`#carousel-${postId}`} data-bs-slide="next">
-                                    <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span className="carousel-control-next-icon bg-dark p-3 rounded-circle" aria-hidden="true"></span>
                                 </button>
                             </div>
                         </div>
@@ -385,6 +380,7 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                 </div>
             </div>
         </div>
+        
 
         {/* Modal solo para Comentarios */}
         <div className="modal fade" id={`commentModal${postId}`} tabIndex="-1" aria-hidden="true">

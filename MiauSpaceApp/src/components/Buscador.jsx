@@ -25,14 +25,14 @@ const Buscador = () => {
 
     return (
         <div className="relative w-full max-w-lg">
-            <div className="flex items-center border rounded-lg p-2 shadow-md">
+            <div className="d-flex align-items-center border rounded-lg p-2 shadow-md">
                 <span style={{ fontSize: '20px' }}>🔍</span>
                 <input
                     type="text"
                     placeholder="Buscar usuarios..."
                     value={query}
                     onChange={handleSearch}
-                    className="ml-2 w-full border-none focus:ring-0"
+                    className="ml-2 w-100 ms-2 border-none focus:ring-0 form-control"
                 />
             </div>
             {results.length > 0 && (

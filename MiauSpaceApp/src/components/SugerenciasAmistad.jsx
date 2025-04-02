@@ -57,7 +57,7 @@ const Sugerencias = () => {
                                 src={amigo.foto_perfil || img}
                                 className="card-img-top"
                                 alt={`Foto de ${amigo.nombre}`}
-                                style={{ height: "200px", objectFit: "cover" }}
+                                style={{ height: "200px"}}
                             />
                             <div className="card-body d-flex flex-column">
                                 <h5 className="card-title">{amigo.nombre}</h5>

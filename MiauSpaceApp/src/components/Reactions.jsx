@@ -14,13 +14,11 @@ import { useNavigate } from "react-router-dom";
 export const Reactions = ({ mascotas, reacciones }) => {
     const urlAmistades = "http://127.0.0.1:8000/amistades/api/"
     let loggeado = localStorage.getItem("username");
-    console.log("mascotas: ",mascotas)
     const [ allReactions, setAllReactions ] = useState(reacciones);
-    const [ amistades, setAmistades ] = useState([]);
     const [idLoggeado, setIdLoggeado] = useState(null);
     const [misAmigos, setMisAmigos] = useState([]);
     const [solicPendiente, setSolicPendiente] = useState([]);
-        const [solicPendientePropia, setSolicPendientePropia] = useState([]);
+    const [solicPendientePropia, setSolicPendientePropia] = useState([]);
     const imgreacciones = {
         "1": reaccion1,
         "2": reaccion2,
@@ -44,28 +42,16 @@ export const Reactions = ({ mascotas, reacciones }) => {
     }, []);
 
     const getAmistades = async () => {
-        const respuesta = await axios({
-            method: "GET",
-            url: urlAmistades,
-            /*headers: {
-               Authorization: `Bearer ${token}` 
-            }*/
-        });
-
-        console.log(respuesta.data)
-        setAmistades(respuesta.data);
         const usuarioLoggeado = mascotas.find(u => u.nombre_usuario === loggeado);
         if (usuarioLoggeado) {
             setIdLoggeado(usuarioLoggeado.id);
             getAmigosPropio(usuarioLoggeado.id);
         }
-        console.log(usuarioLoggeado)
     }
 
     const getAmigosPropio = async (idLoggeado) => {
         try {
             const respuesta = await axios.get(urlAmistades+idLoggeado+'/obtener_amigos/');
-            
             setMisAmigos(respuesta.data)
         } catch (error) {
             console.error("Error al obtener datos del usuario", error);
@@ -80,7 +66,6 @@ export const Reactions = ({ mascotas, reacciones }) => {
                     solicitud.mascota_solicitante_id === idLoggeado &&
                     solicitud.mascota_receptora_id === idReceptor
                 );
-                console.log(solicitudes)
                 setSolicPendiente(prev => [...prev, ...solicitudes]); 
         
             } catch (error) {
@@ -106,11 +91,8 @@ export const Reactions = ({ mascotas, reacciones }) => {
     
         const enviarSolicitud = async (idLoggeado, idReceptor) => {
             try {
-                const parametros = { mascota_receptora: idReceptor };
-                console.log("enviarSolicitud: ", parametros);
-        
+                const parametros = { mascota_receptora: idReceptor };        
                 const resp = await axios.post(urlAmistades + idLoggeado + "/enviar_solicitud/", parametros);
-                console.log(resp);
         
                 if (resp.data.mensaje === "Solicitud de amistad enviada con éxito") {
                     await getSolicitudesPendientes(idLoggeado, idReceptor);

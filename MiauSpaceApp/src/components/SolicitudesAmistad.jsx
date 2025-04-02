@@ -57,7 +57,7 @@ const Solicitudes = () => {
                                 src={solicitud.mascota_solicitante_foto || img}
                                 className="card-img-top"
                                 alt={`Foto de ${solicitud.mascota_solicitante_nombre}`}
-                                style={{ height: "200px", objectFit: "cover" }}
+                                style={{ height: "200px"}}
                             />
                             <div className="card-body d-flex flex-column">
                                 <h5 className="card-title">{solicitud.mascota_solicitante_nombre}</h5>
