@@ -70,6 +70,11 @@ export const Registro = () => {
         return regex.test(password);
     };
 
+    const validateUsername = (username) => {
+        const regex = /^[a-zA-Z]+$/;
+        return regex.test(username);
+    };
+
     const handleSubmitStep1 = async (e) => {
         e.preventDefault();
 
@@ -88,6 +93,16 @@ export const Registro = () => {
             return;
         }
 
+        if (!validateUsername(formData.nombre_usuario)) {
+            toast.error('El nombre de usuario solo puede contener letras', {
+                autoClose: 5000,
+                style: {
+                    fontSize: '1.1rem',
+                    fontWeight: 'bold'
+                }
+            });
+            return;
+        }
 
         if (!validatePassword(formData.password)) {
             toast.error('La contraseña debe contener al menos una mayúscula, un número y un carácter especial');
@@ -209,6 +224,14 @@ export const Registro = () => {
     const handleSubmitStep3 = async (e) => {
         e.preventDefault();
 
+        const campos = ['especie', 'raza', 'ubicacion'];
+        for (const campo of campos) {
+            if (formData[campo]?.length > 30) {
+                toast.error(`El campo ${campo} excede el límite de 30 caracteres`);
+                return;
+            }
+        }
+
         try {
             const mascotaId = localStorage.getItem('mascotaId');
 
@@ -306,8 +329,13 @@ export const Registro = () => {
                                         name="nombre_usuario"
                                         value={formData.nombre_usuario}
                                         onChange={handleInputChange}
+                                        pattern="[a-zA-Z]+"
+                                        title="Solo letras están permitidas"
                                         required
                                     />
+                                    <small className="text-muted">
+                                        Solo letras (no se permiten números, espacios o caracteres especiales)
+                                    </small>
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="fecha_nacimiento" className="form-label">Fecha de nacimiento</label>
@@ -318,7 +346,7 @@ export const Registro = () => {
                                         name="fecha_nacimiento"
                                         value={formData.fecha_nacimiento}
                                         onChange={handleInputChange}
-                                        max={new Date().toISOString().split('T')[0]} 
+                                        max={new Date().toISOString().split('T')[0]}
                                         required
                                     />
                                 </div>
@@ -420,6 +448,7 @@ export const Registro = () => {
                             <h1 className="text-center mb-3">Queremos conocerte</h1>
                             <h3 className="text-center text-muted mb-4">Añade información a tu perfil para que otras mascotas puedan saber de ti</h3>
                             <form onSubmit={handleSubmitStep3}>
+
                                 <div className="mb-3">
                                     <label htmlFor="especie" className="form-label">Especie</label>
                                     <input
@@ -429,8 +458,14 @@ export const Registro = () => {
                                         name="especie"
                                         value={formData.especie}
                                         onChange={handleInputChange}
+                                        maxLength={30}
                                     />
+                                    {formData.especie?.length > 30 && (
+                                        <small className="text-danger">Excediste el número de letras para este campo</small>
+                                    )}
                                 </div>
+
+
                                 <div className="mb-3">
                                     <label htmlFor="edad" className="form-label">Edad</label>
                                     <input
@@ -438,9 +473,37 @@ export const Registro = () => {
                                         className="form-control"
                                         id="edad"
                                         name="edad"
-                                        value={formData.edad}
-                                        onChange={handleInputChange}
+                                        value={formData.edad > 0 ? formData.edad : ''}
+                                        onChange={(e) => {
+                                            const value = parseInt(e.target.value);
+                                            if (!isNaN(value) && value > 0) {
+                                                handleInputChange({
+                                                    target: {
+                                                        name: e.target.name,
+                                                        value: value
+                                                    }
+                                                });
+                                            } else if (e.target.value === '') {
+                                                handleInputChange(e); 
+                                            }
+                                        }}
+                                        min="1"
+                                        onKeyDown={(e) => {
+                                            if (e.key === '-' || e.key === 'e' || e.key === 'E') {
+                                                e.preventDefault();
+                                            }
+                                        }}
+                                        onBlur={() => {
+                                            if (formData.edad <= 0) {
+                                                toast.error('La edad debe ser mayor a 0', {
+                                                    autoClose: 3000
+                                                });
+                                            }
+                                        }}
                                     />
+                                    {formData.edad <= 0 && (
+                                        <small className="text-danger">La edad debe ser mayor a 0</small>
+                                    )}
                                 </div>
                                 <div className="mb-3">
                                     <label htmlFor="raza" className="form-label">Raza</label>
@@ -451,8 +514,13 @@ export const Registro = () => {
                                         name="raza"
                                         value={formData.raza}
                                         onChange={handleInputChange}
+                                        maxLength={30}
                                     />
+                                    {formData.raza?.length > 30 && (
+                                        <small className="text-danger">Excediste el número de letras para este campo</small>
+                                    )}
                                 </div>
+
                                 <div className="mb-3">
                                     <label htmlFor="sexo" className="form-label">Sexo</label>
                                     <select
@@ -476,7 +544,11 @@ export const Registro = () => {
                                         name="ubicacion"
                                         value={formData.ubicacion}
                                         onChange={handleInputChange}
+                                        maxLength={30}
                                     />
+                                    {formData.ubicacion?.length > 30 && (
+                                        <small className="text-danger">Excediste el número de letras para este campo</small>
+                                    )}
                                 </div>
                                 <div className="mb-4">
                                     <label htmlFor="preferencias" className="form-label">Preferencias</label>
@@ -487,8 +559,13 @@ export const Registro = () => {
                                         rows="4"
                                         value={formData.preferencias}
                                         onChange={handleInputChange}
+                                        maxLength={80}
                                     ></textarea>
+                                    {formData.preferencias?.length > 80 && (
+                                        <small className="text-danger">Excediste el número de letras para este campo</small>
+                                    )}
                                 </div>
+
                                 <div className="d-grid">
                                     <button type="submit" className="btn btn-primary">Registrar información</button>
                                 </div>
