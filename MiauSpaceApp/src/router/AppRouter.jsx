@@ -5,6 +5,7 @@ import { Pagina404 } from '../screens/404.jsx';
 import { Home } from '../screens/Home.jsx';
 import { Perfil } from '../screens/Perfil.jsx';
 import { Amigos } from '../screens/Amigos.jsx';
+import { Registro } from '../screens/Registro.jsx';
 
 const isAuthenticated = () => {
     return sessionStorage.getItem("sessionid") !== null;
@@ -26,6 +27,7 @@ const AppRouter = () => {
                 <Route path='/MiauSpace/Home' element={<ProtectedRoute element={<Home />} />} />
                 <Route path='/MiauSpace/Perfil/:username' element={<ProtectedRoute element={<Perfil />} />} />
                 <Route path='/MiauSpace/Amigos' element={<ProtectedRoute element={<Amigos />} />} />
+                <Route path='/Registro/' element={<Registro />} />
                 <Route path='/404' element={<Pagina404 />} />
                 <Route path='/*' element={<Pagina404 />} />
             </Routes>
