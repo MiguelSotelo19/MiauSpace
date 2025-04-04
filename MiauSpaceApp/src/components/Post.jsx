@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Comment } from "./Comment";
+import { Reactions } from "./Reactions";
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 
 import "./css/Post.css";
@@ -19,13 +21,13 @@ import commentIcon from "../assets/comentario.png";
 import commentsIcon from "../assets/comentarios.png";
 import enviar from "../assets/enviar.png";
 import reaccionesImg from "../assets/reacciones.png";
-import { Reactions } from "./Reactions";
-import { useNavigate } from "react-router-dom";
+import esperar from "../assets/esperar.png";
 
 export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
     const urlReacciones = 'http://127.0.0.1:8000/reacciones/api/';
     const urlComments = 'http://127.0.0.1:8000/comentarios/api/';
     const urlMascota = 'http://127.0.0.1:8000/mascotas/api/';
+    const urlAmigos= 'http://127.0.0.1:8000/amistades/api/';
 
     const imgreacciones = {
         "1": reaccion1,
@@ -54,6 +56,7 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
     const [ reactionText, setReactionText ] = useState("");
     const [ reaction, setReaction ] = useState(null);
     const [ claseReaccion, setClaseReaccion ] = useState("");
+    const [ amgEstado, setAmgEstado ] = useState("");
     const pressTimer = useRef(null);
     const navigate = useNavigate();
 
@@ -97,10 +100,19 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
             url: urlReacciones
         })
 
+        const respuestaA = await axios({
+            method: "GET",
+            url: urlAmigos
+        })
+
         let comentarios = respuestaC.data.filter(comment => comment.post == postId);
         let reacciones = respuestaR.data.filter(reac => reac.post == postId);
-        let user = respuestaM.data.filter(user => user.nombre_usuario == userStorage.nombre_usuario)[0];
-        let reaccionUser = respuestaR.data.filter(reac => reac.mascota == user.id && reac.post == postId);        
+        let reaccionUser = respuestaR.data.filter(reac => reac.mascota == userStorage.id && reac.post == postId);
+        let esAmigo = respuestaA.data.filter(amg => (amg.mascota_receptora == user.id && amg.mascota_solicitante == userStorage.id) || (amg.mascota_receptora == userStorage.id && amg.mascota_solicitante == user.id ))[0]?.estado;
+
+        if(esAmigo != undefined) {
+            setAmgEstado(esAmigo);
+        }
 
         if(reaccionUser.length > 0) {
             setReactionUser(parseInt(reaccionUser[0].tipo_reaccion));
@@ -113,7 +125,7 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
         setComments(comentarios);
         setCantComments(comentarios.length);
         setMascotas(respuestaM.data);
-        setIdUser(user);
+        setIdUser(userStorage);
     }
     
     const registrarReaccion = (selected) => {
@@ -268,7 +280,10 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
             <div className="card-body">
                 <div className="d-flex align-items-center justify-content-start">
                     <img src={picUser} className="me-3 rounded-circle" alt="Usuario" width="40" height="40" />
-                    <p className="m-0 pointer" onClick={() => navigate(`/MiauSpace/Perfil/${user}`)}>{user}</p>
+                    <p className="m-0 pointer" onClick={() => navigate(`/MiauSpace/Perfil/${user.nombre_usuario}`)}>{user.nombre_usuario}</p>
+                    { (amgEstado == "pendiente") ? 
+                    (<btn data-toggle="tooltip" data-placement="top" title="Solicitud pendiente" ><img src={esperar} className="ms-2" alt="pendiente.jpg" /></btn>) 
+                    : (<></>) }
                 </div>
                 <div className="d-flex flex-column mt-2">
                     <p>{body}</p>

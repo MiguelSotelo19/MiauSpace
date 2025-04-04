@@ -151,7 +151,6 @@ export const Reactions = ({ mascotas, reacciones }) => {
                     {react6.length > 0 ? (<button className="btn btn-reaction" onClick={() => setAllReactions(react6)}><img src={reaccion6} className="icon-reaction" alt="Me gusta"/>{react6.length}</button>) : (<></>)}
                     </> 
                 ) : (<></>)}
-                {console.log("allreactions: ",allReactions)}
             </div>
 
             {allReactions.map(reac => (

@@ -338,7 +338,7 @@ export const Registro = () => {
                                     </small>
                                 </div>
                                 <div className="mb-3">
-                                    <label htmlFor="fecha_nacimiento" className="form-label">Fecha de nacimiento</label>
+                                    <label htmlFor="fecha_nacimiento" className="form-label">Fecha de nacimiento de la mascota</label>
                                     <input
                                         type="date"
                                         className="form-control"
@@ -467,7 +467,7 @@ export const Registro = () => {
 
 
                                 <div className="mb-3">
-                                    <label htmlFor="edad" className="form-label">Edad</label>
+                                    <label htmlFor="edad" className="form-label">Edad (años)</label>
                                     <input
                                         type="number"
                                         className="form-control"

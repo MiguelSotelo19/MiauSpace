@@ -206,7 +206,7 @@ export const Home = () => {
                             key={post.id}
                             postId={post.id}
                             picUser={mascotas.find(masc => masc.id === post.mascota)?.foto_perfil}
-                            user={mascotas.find(masc => masc.id === post.mascota)?.nombre_usuario}
+                            user={mascotas.find(masc => masc.id === post.mascota)}
                             body={post.contenido}
                             picsBody={post.imagenes.map(img => img.imagen_base64)}
                         />
