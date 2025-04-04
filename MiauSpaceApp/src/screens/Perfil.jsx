@@ -63,8 +63,31 @@ export const Perfil = () => {
     const [modalAmigos, setModalAmigos] = React.useState(false);
 
     useEffect(() => {
-        getUsers();
-        
+        const cargarDatos = async () => {
+            limpiar();
+    
+            const idObtenido = await getUsers();
+            if (!idObtenido) return; 
+    
+            if (amigos.length > 0) {
+                await Promise.all(
+                    amigos.map(async (amigo) => {
+                        if (amigo?.id) {
+                            await getSolicitudesPendientes(user.id, amigo.id);
+                        }
+                    })
+                );
+            }
+    
+            await Promise.all([
+                getSolicitudesPendientes(user.id, idObtenido),
+                getSolicitudesPendientesPropias(user.id, idObtenido)
+            ]);
+    
+            setLoading(false);
+        };
+    
+        cargarDatos();
     }, [paramUsername]);
 
     const limpiar = () =>{
@@ -79,28 +102,41 @@ export const Perfil = () => {
         setRaza("");
         setSexo("");
         setUbicacion("");
-        setIdPerfil([]);
+        setIdPerfil(null);
         getPosts([]);
-        getAmigos([])
-        getAmigosPropio(0)
+        setAmigos([]);
+        setMisAmigos([]);
         setEsAdmin(false);
         setPassword("")
         setId(0)
+
         setBtnEditar(false);
+        setAmigos([]);
+        setNumAmigos(0);
+        setSolicPendiente([]);
+        setSolicPendientePropia([]);
+        setNumImgs(0);
+        setImgPost(0);
+        setPosts([]);
     }
+
     const getUsers = async () => {
         try {
             const respuesta = await axios.get(urlUser);
             const usuarioEncontrado = respuesta.data.find(u => u.nombre_usuario === paramUsername);
             if (usuarioEncontrado) {
                 setUser(usuarioEncontrado);
-                console.log(usuarioEncontrado)
+                setIdPerfil(usuarioEncontrado.id);
+                console.log(usuarioEncontrado);
+                return usuarioEncontrado.id;
             } else {
                 setFotoPerf(perfilGenerico);
                 setNomUsuario("Perfil no encontrado");
+                return null;
             }
         } catch (error) {
             console.error("Error al obtener datos del usuario", error);
+            return null;
         }
     };
 
@@ -189,6 +225,8 @@ export const Perfil = () => {
 
     const getSolicitudesPendientes = async (idLoggeado, idReceptor) => {
         try {
+            
+            if (!idLoggeado || !idReceptor) return;
             const respuesta = await axios.get(urlAmigos + idReceptor + "/obtener_solicitudes_pendientes/");
     
             const solicitudes = respuesta.data.filter(solicitud =>
@@ -277,14 +315,15 @@ export const Perfil = () => {
         setActIsOpen(false);
     }
 
-    function openModalAmigos(amigos) {
+    async function openModalAmigos(amigos) {
         setAmigos(amigos);
+
+        await Promise.all(amigos.map(async (amigo) => {
+            await getSolicitudesPendientes(user.id, amigo.id);
+            await getSolicitudesPendientesPropias(user.id, amigo.id);
+        }));
+
         setModalAmigos(true);
-        
-        amigos.forEach(amigo => {
-            getSolicitudesPendientes(user.id, amigo.id);
-            getSolicitudesPendientesPropias(user.id, amigo.id);
-        });
     }
     
     function closeModalAmigos() {
@@ -361,21 +400,9 @@ export const Perfil = () => {
         setConfirmarContrasena("");
     };
 
-    useEffect(() => {
-        if (modalAmigos) {
-            amigos.forEach(amigo => {
-                getSolicitudesPendientes(user.id, amigo.id);
-            });
-        }
-    }, [modalAmigos]); 
-
-    useEffect(() => {
-        if (idPerfil) {
-            getSolicitudesPendientes(user.id, idPerfil);
-            getSolicitudesPendientesPropias(user.id, idPerfil);
-        }
-    }, [idPerfil]);
-
+    if (loading) {
+        return <Layout><p>Cargando usuarios...</p></Layout>; // o un spinner
+    }
 
     return (
         <Layout>
