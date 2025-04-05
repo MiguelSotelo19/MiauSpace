@@ -8,11 +8,29 @@ from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 import json
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
+from .serializers import CustomTokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 
 class MascotaViewset(viewsets.ModelViewSet):
     queryset = Mascota.objects.all()
     serializer_class = MascotaSerializer
     renderer_classes = [JSONRenderer]
+    
+    authentication_classes = [JWTAuthentication]
+    permission_classes=[IsAuthenticated]
+    
+    def get_permissions(self):
+        if self.request.method in ['POST','PUT', 'DELETE', 'PATCH']:
+            # Checar si tenemos sesión 
+            return [IsAuthenticated()]
+        #Dar acceso a todo lo demas sin estar logueado
+        return []
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 @csrf_exempt
 def login_mascota(request):

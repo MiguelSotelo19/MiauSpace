@@ -8,11 +8,23 @@ from django.db.models import Q
 from .models import Amistades
 from .serializers import AmistadesSerializer
 from usuario_mascota.models import Mascota
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class AmistadesViewset(viewsets.ModelViewSet):
     queryset = Amistades.objects.all()
     serializer_class = AmistadesSerializer
     renderer_classes = [JSONRenderer]
+    
+    authentication_classes = [JWTAuthentication]
+    permission_classes=[IsAuthenticated]
+    
+    def get_permissions(self):
+        if self.request.method in ['POST','PUT', 'DELETE']:
+            # Checar si tenemos sesión 
+            return [IsAuthenticated()]
+        #Dar acceso a todo lo demas sin estar logueado
+        return []
     
     # Acción personalizada para enviar solicitud
     @action(detail=True, methods=['post'])
