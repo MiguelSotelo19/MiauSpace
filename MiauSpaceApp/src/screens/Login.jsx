@@ -10,25 +10,25 @@ import { useEffect } from "react";
 
 
 export const Login = () => {
-    let urlUser="http://127.0.0.1:8000/mascotas/api/";
+    let urlUser = "http://127.0.0.1:8000/mascotas/api/";
     const navigate = useNavigate();
     const [nombre_usuario, setNombreUsuario] = useState("");
     const [password, setPassword] = useState("");
 
     const isAuthenticated = () => {
-        return !!sessionStorage.getItem("usuario_id"); 
+        return !!sessionStorage.getItem("usuario_id");
     };
-    
+
     const getUsers = async (nombre_usuario) => {
         const respuesta = (await axios({
             method: 'GET',
-            url: urlUser 
+            url: urlUser
         })).data;
-        
-        for (let i = 0; i < respuesta.length; i++) {  
+
+        for (let i = 0; i < respuesta.length; i++) {
             const element = respuesta[i];
             if (element.nombre_usuario == nombre_usuario) {
-                console.log("Entro a if",element)
+                console.log("Entro a if", element)
                 return element
             }
         }
@@ -49,17 +49,17 @@ export const Login = () => {
             });
             return;
         }
-    
+
         try {
             const response = await axios.post("http://127.0.0.1:8000/mascotas/login/", {
                 "nombre_usuario": nombre_usuario,
                 "password": password,
             });
-    
+
             if (response.status === 200) {
                 // Guardar solo el sessionid en sessionStorage
                 sessionStorage.setItem("sessionid", response.data.sessionid);
-                
+
                 const usuario = await getUsers(nombre_usuario);
 
                 if (usuario) {
@@ -68,7 +68,7 @@ export const Login = () => {
 
                 localStorage.setItem("username", nombre_usuario);
                 sessionStorage.setItem("usuario", JSON.stringify(usuario));
-    
+
                 Swal.fire({
                     icon: "success",
                     title: "Inicio de sesión exitoso",
@@ -87,7 +87,7 @@ export const Login = () => {
             });
         }
     };
-    
+
     return (
         <div className="d-flex vh-100">
             <div className="flex-grow-1 d-flex align-items-center justify-content-center">
@@ -117,6 +117,16 @@ export const Login = () => {
                         <button className="btn btn-primary w-100" onClick={handleLogin}>
                             Iniciar Sesión
                         </button>
+                        <div className="mt-1 text-center" style={{ fontSize: '16px' }}>
+                            ¿Olvidaste tu contraseña?
+                            <button
+                                className="btn btn-link p-0 ms-2"
+                                style={{ textDecoration: 'underline', color: '#0d6efd', fontWeight: 'bold' }}
+                                onClick={() => navigate('/EnviarCodigo/')}
+                            >
+                                Recupérala aquí
+                            </button>
+                        </div>
                     </div>
 
                     <div className="mt-4 text-center">

@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-(2)(r7u!vt&0l41=t7ybey_$x4ij^1i(fj4msr$(t0c^*h2f%(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -150,3 +150,11 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'usuario_mascota.Mascota'  # Ajusta según el nombre de tu app y modelo
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+#Configuración para Gmail
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "miauspace14@gmail.com"
+EMAIL_HOST_PASSWORD = "qjcp wakn bist fduu"
