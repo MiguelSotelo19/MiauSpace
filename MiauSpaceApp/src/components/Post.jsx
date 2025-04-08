@@ -24,6 +24,7 @@ import reaccionesImg from "../assets/reacciones.png";
 import esperar from "../assets/esperar.png";
 
 export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
+    console.log(user)
     const urlReacciones = 'http://127.0.0.1:8000/reacciones/api/';
     const urlComments = 'http://127.0.0.1:8000/comentarios/api/';
     const urlMascota = 'http://127.0.0.1:8000/mascotas/api/';
