@@ -416,37 +416,39 @@ export const Perfil = () => {
                                     className="rounded-top text-white d-flex flex-row"
                                     style={{ backgroundColor: "#40007a", height: "20vh" }}
                                 >
-                                    <div className="ms-4 mt-5 d-flex flex-column" style={{ width: "130px" }}>
-                                        <img
-                                            src={fotoPerf}
-                                            alt="Perfil"
-                                            className="mt-4 mb-2 img-thumbnail"
-                                            draggable="false"
-                                            style={{
-                                                zIndex: "1",
-                                                height: "13vh"
-                                            }}
+                                    <div className="ms-4 mt-5 d-flex flex-column" style={{ width: "130px" }}> {/*Que  hace este px? No estaba cuando yo hice este diseño xd*/}
+                                        <img src={fotoPerf} alt="Perfil" className="mt-4 mb-2 img-thumbnail" draggable="false"
+                                            style={{ zIndex: "1", height: "17vh", minHeight:"17vh", minWidth:"9vw", maxWidth:"9vw" }}
                                         />
                                     </div>
-                                    <div className="ms-3" style={{ marginTop: "15vh" }}>
-                                        <h5>{nomUsuario}</h5>
+                                    <div className="d-flex align-items-center justify-content-between w-100" style={{ marginTop: "15vh" }}>
+                                        <div className="ms-3 ">
+                                            <h5>{nomUsuario}</h5>
+                                        </div>
+                                        <div className="p-2 ms-5 me-4" style={{  borderRadius: "5px" }}>
+                                            {user.id === idPerfil ? (
+                                                <h5></h5>
+                                            ) : esAmigo(idPerfil) ? (
+                                                <p className="text-gray mt-2 fs-6">Amigo</p>
+                                            ) : solicPendiente.some(solicitud => solicitud.mascota_receptora_id === idPerfil) ? (
+                                                <p className="text-gray mt-2 fs-6">Solicitud enviada</p>
+                                            ) : solicPendientePropia.some(solicitud => solicitud.mascota_solicitante_id === idPerfil) ? (
+                                                <p className="text-gray mt-2 fs-6">Solicitud pendiente</p>
+                                            ) : (
+                                                <button
+                                                    className="btn btn-outline-light mb-3"
+                                                    style={{ backgroundColor: '#7B1FA2', color: 'white' }}
+                                                    onClick={() => enviarSolicitud(user.id, idPerfil)}
+                                                >
+                                                    Enviar solicitud
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
-                                    {user.id === idPerfil ? (
-                                            <span></span>
-                                        ) :esAmigo(idPerfil) ? (
-                                            <span>Amigo</span>
-                                        ) : solicPendiente.some(solicitud => solicitud.mascota_receptora_id === idPerfil) ? (
-                                            <span>Solicitud enviada</span>
-                                        ) : solicPendientePropia.some(solicitud => solicitud.mascota_solicitante_id === idPerfil) ? (
-                                            <span>Solicitud pendiente</span>
-                                        ): (
-                                            <button className="btn btn-outline-light ms-5 mt-5 " style={{ backgroundColor: '#7B1FA2', color: 'white' }} onClick={() => enviarSolicitud(user.id, idPerfil)}>
-                                                Enviar solicitud
-                                            </button>
-                                        )}
+
                                 </div>
                                 <div className="p-2 pe-4 text-black" style={{ backgroundColor: "#f8f9fa" }}>
-                                    
+
                                     <div className="d-flex justify-content-end text-center py-1">
                                         <div>
                                             <h5 className="mb-1">{numImgs}</h5>
@@ -464,19 +466,19 @@ export const Perfil = () => {
                                         <div className="p-4" style={{ backgroundColor: "#f8f9fa" }}>
                                             <p className="font-italic mb-1 d-flex align-items-center">
                                                 <img src={ubi} alt="Ubicación" style={{ marginRight: "6px" }} />
-                                                Vive en: {ubicacion}
+                                                {ubicacion}
                                             </p>
                                             <p className="font-italic mb-1 d-flex align-items-center">
                                                 <img src={genero} alt="Genero" style={{ marginRight: "6px" }} />
-                                                Sexo: {sexo}
+                                                {sexo}
                                             </p>
                                             <p className="font-italic mb-1 d-flex align-items-center">
                                                 <img src={huella} alt="Especie" style={{ marginRight: "6px" }} />
-                                                Especie: {especie}
+                                                {especie}
                                             </p>
                                             <p className="font-italic mb-1 d-flex align-items-center">
                                                 <img src={preferencia} alt="Preferencia" style={{ marginRight: "6px" }} />
-                                                Preferencia: {preferencias}
+                                                {preferencias}
                                             </p>
                                         </div>
                                         {btnEditar && (
