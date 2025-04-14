@@ -1,6 +1,16 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 from .models import Mascota
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token['nombre_usuario'] = user.nombre_usuario
+        #todos los atributos del modelo
+        return token
 
 class MascotaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -21,3 +31,5 @@ class MascotaSerializer(serializers.ModelSerializer):
             instance.password = make_password(validated_data.pop("password"))
 
         return super().update(instance, validated_data)
+    
+

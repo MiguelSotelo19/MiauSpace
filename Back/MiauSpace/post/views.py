@@ -4,9 +4,22 @@ from rest_framework.decorators import action
 from rest_framework.renderers import JSONRenderer
 from .models import Posts, Imagenes
 from .serializers import PostsSerializer, ImagenesSerializer, PostImagenSerializer
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 class PostsViewset(viewsets.ModelViewSet):
     queryset = Posts.objects.all().prefetch_related('imagenes')
     serializer_class = PostsSerializer
+    
+    authentication_classes = [JWTAuthentication]
+    permission_classes=[IsAuthenticated]
+    
+    def get_permissions(self):
+        if self.request.method in ['POST','PUT', 'DELETE']:
+            # Checar si tenemos sesión 
+            return [IsAuthenticated()]
+        #Dar acceso a todo lo demas sin estar logueado
+        return []
 
     def get_queryset(self):
         """
