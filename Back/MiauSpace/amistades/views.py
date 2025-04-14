@@ -20,7 +20,7 @@ class AmistadesViewset(viewsets.ModelViewSet):
     permission_classes=[IsAuthenticated]
     
     def get_permissions(self):
-        if self.request.method in ['POST','PUT', 'DELETE']:
+        if self.request.method in ['GET','POST','PUT', 'DELETE']:
             # Checar si tenemos sesión 
             return [IsAuthenticated()]
         #Dar acceso a todo lo demas sin estar logueado
