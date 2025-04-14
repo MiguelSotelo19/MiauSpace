@@ -33,6 +33,7 @@ class Mascota(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     es_admin = models.BooleanField(default=False)
     join_date = models.DateTimeField(default=now)
+    correo = models.EmailField(max_length=254, unique=True, blank=True, null=True)
 
     objects = MascotaManager()  # Manager para crear usuarios
 

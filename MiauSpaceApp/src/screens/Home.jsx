@@ -201,16 +201,22 @@ export const Home = () => {
                         </div>
                     </div>
 
-                    {posts.map((post) => (
-                        <Post
-                            key={post.id}
-                            postId={post.id}
-                            picUser={mascotas.find(masc => masc.id === post.mascota)?.foto_perfil}
-                            user={mascotas.find(masc => masc.id === post.mascota)}
-                            body={post.contenido}
-                            picsBody={post.imagenes.map(img => img.imagen_base64)}
-                        />
-                    ))}
+                    {posts.map((post) => {
+                        const mascotaData = mascotas.find(masc => masc.id === post.mascota);
+                        if (!mascotaData) return null;
+
+                        return (
+                            <Post
+                                key={post.id}
+                                postId={post.id}
+                                picUser={mascotaData.foto_perfil}
+                                user={mascotaData}
+                                body={post.contenido}
+                                picsBody={post.imagenes.map(img => img.imagen_base64)}
+                            />
+                        );
+                    })}
+
 
                     {loading && <p className="text-center">Cargando más publicaciones...</p>}
                 </div>
