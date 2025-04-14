@@ -62,6 +62,9 @@ export const Perfil = () => {
     const [modalActIsOpen, setActIsOpen] = React.useState(false);
     const [modalAmigos, setModalAmigos] = React.useState(false);
 
+    const [reloadLayout, setReloadLayout] = useState(false);
+
+
     useEffect(() => {
         const cargarDatos = async () => {
             limpiar();
@@ -335,6 +338,7 @@ export const Perfil = () => {
 
         if (!nomUsuario || nomUsuario.trim() === "") {
             Swal.fire("Nombre faltante","Escribe el nombre de la mascota", "warning");
+            
         } else if (!edad || isNaN(edad) || edad <= 0) {
             Swal.fire("Edad faltante","Escribe una edad válida para la mascota", "warning");
         } else if (!especie || especie.trim() === "") {
@@ -400,13 +404,17 @@ export const Perfil = () => {
         setConfirmarContrasena("");
     };
 
+    const triggerReload = () => {
+        setReloadLayout(prev => !prev); 
+    };
+
     if (loading) {
         return <Layout><p>Cargando usuarios...</p></Layout>; // o un spinner
     }
 
-    return (
-        <Layout>
-            <ToastContainer />
+    const contenido = (
+        <>
+        <ToastContainer />
             <div className="gradient-custom-2">
                 <div className="container py-5 h-100">
                     <div className="row justify-content-center align-items-center h-100">
@@ -713,6 +721,11 @@ export const Perfil = () => {
                     </Container>
                 </Modal.Body>
             </Modal>
+        </>
+    )
+    return (
+        <Layout key={reloadLayout ? "v1" : "v2"}>
+            {contenido}
         </Layout>
         
     );
