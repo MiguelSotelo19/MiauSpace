@@ -3,6 +3,7 @@ import logo from '../assets/logo.png';
 import './css/Header.css';
 
 export const Header = ({ usuario }) => {
+    console.log(usuario)
     return (
         <header className="header">
             <div className="header-container">

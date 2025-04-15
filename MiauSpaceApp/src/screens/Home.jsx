@@ -9,6 +9,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle";
 import { Layout } from "../components/LayoutHome";
 import perro from '../assets/perro.png';
+import axiosInstance from "../services/axiosInstace";
 
 
 export const Home = () => {
@@ -22,7 +23,7 @@ export const Home = () => {
     const [imagenes, setImagenes] = useState([]);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const user = JSON.parse(sessionStorage.getItem("usuario"));
+    const user = sessionStorage.getItem("usuario");
     const [showDog, setShowDog] = useState(false);
 
 
@@ -51,8 +52,16 @@ export const Home = () => {
     };
 
     const getMascotas = async () => {
-        const respuesta = await axios.get(urlMascota);
-        setMascotas(respuesta.data);
+        console.log("HOLA")
+        axiosInstance
+            .get(urlMascota)
+            .then((response) => {
+                setMascotas(response.data);
+                console.log("HOLA2")
+            })
+            .catch((error) => {
+                console.error("Error al cargar los datos:", error);
+            });
     }; 
 
     const handleScroll = () => {

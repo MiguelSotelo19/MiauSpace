@@ -10,7 +10,7 @@ import { EnviarCodigo } from '../screens/EnviarCodigo.jsx'
 import { RestablecerContraseña } from '../screens/RestablecerContraseña.jsx'
 
 const isAuthenticated = () => {
-    return sessionStorage.getItem("sessionid") !== null;
+    return sessionStorage.getItem("usuario") !== null;
 };
 
 const ProtectedRoute = ({ element }) => {

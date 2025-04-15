@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useEffect } from "react";
+import { login } from "../services/authService";
+import axiosInstance from "../services/axiosInstace";
 
 
 export const Login = () => {
@@ -19,26 +21,27 @@ export const Login = () => {
         return !!sessionStorage.getItem("usuario_id");
     };
 
-    const getUsers = async (nombre_usuario) => {
-        const respuesta = (await axios({
-            method: 'GET',
-            url: urlUser
-        })).data;
-
-        for (let i = 0; i < respuesta.length; i++) {
-            const element = respuesta[i];
-            if (element.nombre_usuario == nombre_usuario) {
-                console.log("Entro a if", element)
-                return element
-            }
-        }
-    }
-
     useEffect(() => {
         if (isAuthenticated()) {
             navigate("/MiauSpace/Home", { replace: true });
         }
     }, []);
+
+    const getUsers = async (nombre_usuario) => {
+        axiosInstance
+        .get(urlUser)
+        .then((response) => {
+            const respuesta = response.data;
+
+            for (let i = 0; i < respuesta.length; i++) {
+                const element = respuesta[i];
+                if (element.nombre_usuario == nombre_usuario) {
+
+                    sessionStorage.setItem("usuario", JSON.stringify(element));
+                }
+            }
+        })
+    }
 
     const handleLogin = async () => {
         if (!nombre_usuario || !password) {
@@ -51,23 +54,10 @@ export const Login = () => {
         }
 
         try {
-            const response = await axios.post("http://127.0.0.1:8000/mascotas/login/", {
-                "nombre_usuario": nombre_usuario,
-                "password": password,
-            });
+            const response = await login(nombre_usuario, password);
 
-            if (response.status === 200) {
-                // Guardar solo el sessionid en sessionStorage
-                sessionStorage.setItem("sessionid", response.data.sessionid);
-
-                const usuario = await getUsers(nombre_usuario);
-
-                if (usuario) {
-                    localStorage.setItem("usuario", JSON.stringify(usuario));
-                }
-
-                localStorage.setItem("username", nombre_usuario);
-                sessionStorage.setItem("usuario", JSON.stringify(usuario));
+            if (response) {
+                await getUsers(nombre_usuario);
 
                 Swal.fire({
                     icon: "success",
@@ -80,6 +70,7 @@ export const Login = () => {
                 });
             }
         } catch (error) {
+            console.error(error);
             Swal.fire({
                 icon: "error",
                 title: "Error en el inicio de sesión",

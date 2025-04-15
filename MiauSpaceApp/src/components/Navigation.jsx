@@ -11,15 +11,9 @@ import { useEffect } from "react";
 import './css/Navigation.css';
 
 export const Navigation = () => {
+    const user = JSON.parse(sessionStorage.getItem("usuario"));
     const navigate = useNavigate();
-    let username = localStorage.getItem("username");
-    let linkPerfil = "/MiauSpace/Perfil/" + username
-
-    useEffect(() => {
-        if (!username) {
-            navigate("/MiauSpace/Login");
-        }
-    }, [username, navigate]);
+    let linkPerfil = "/MiauSpace/Perfil/" + user.nombre_usuario
 
     const handleLogout = async () => {
         try {
@@ -56,7 +50,7 @@ export const Navigation = () => {
 
     const navLinks = [
         { to: "/MiauSpace/Home", icon: inicio, text: "Inicio" },
-        { to: `/MiauSpace/Perfil/${username}`, icon: usuario_, text: "Perfil" },
+        { to: `/MiauSpace/Perfil/${user.nombre_usuario}`, icon: usuario_, text: "Perfil" },
         { to: "/MiauSpace/Amigos", icon: amigos, text: "Amigos" },
     ];
 
