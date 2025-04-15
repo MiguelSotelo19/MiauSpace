@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import perfilGenerico from "../assets/perfilGenerico.jpg";
 import { useParams } from "react-router-dom";
 import { Layout } from "../components/Layout";
@@ -16,6 +15,8 @@ import ubi from "../assets/ubicacion.png";
 import huella from "../assets/huella.png";
 import genero from "../assets/genero.png";
 import preferencia from "../assets/preferencia.png";
+import axiosInstance from "../services/axiosInstace";
+import { PostBar } from "../components/PostBar";
 
 export const Perfil = () => {
     const urlUser = "http://127.0.0.1:8000/mascotas/api/";
@@ -125,12 +126,11 @@ export const Perfil = () => {
 
     const getUsers = async () => {
         try {
-            const respuesta = await axios.get(urlUser);
+            const respuesta = await axiosInstance.get(urlUser);
             const usuarioEncontrado = respuesta.data.find(u => u.nombre_usuario === paramUsername);
             if (usuarioEncontrado) {
                 setUser(usuarioEncontrado);
                 setIdPerfil(usuarioEncontrado.id);
-                console.log(usuarioEncontrado);
                 return usuarioEncontrado.id;
             } else {
                 setFotoPerf(perfilGenerico);
@@ -176,7 +176,7 @@ export const Perfil = () => {
         setLoading(true);
 
         try {
-            const respuesta = await axios.get(urlPost);
+            const respuesta = await axiosInstance.get(urlPost);
 
             const publicaciones = respuesta.data.filter(post => post.mascota === idUser);
 
@@ -208,7 +208,7 @@ export const Perfil = () => {
 
     const getAmigos = async (idPerfil) => {
         try {
-            const respuesta = await axios.get(urlAmigos+idPerfil+'/obtener_amigos/');
+            const respuesta = await axiosInstance.get(urlAmigos+idPerfil+'/obtener_amigos/');
             setAmigos(respuesta.data)
             setNumAmigos(respuesta.data.length)
         } catch (error) {
@@ -218,7 +218,7 @@ export const Perfil = () => {
 
     const getAmigosPropio = async (idLoggeado) => {
         try {
-            const respuesta = await axios.get(urlAmigos+idLoggeado+'/obtener_amigos/');
+            const respuesta = await axiosInstance.get(urlAmigos+idLoggeado+'/obtener_amigos/');
             
             setMisAmigos(respuesta.data)
         } catch (error) {
@@ -230,13 +230,12 @@ export const Perfil = () => {
         try {
             
             if (!idLoggeado || !idReceptor) return;
-            const respuesta = await axios.get(urlAmigos + idReceptor + "/obtener_solicitudes_pendientes/");
+            const respuesta = await axiosInstance.get(urlAmigos + idReceptor + "/obtener_solicitudes_pendientes/");
     
             const solicitudes = respuesta.data.filter(solicitud =>
                 solicitud.mascota_solicitante_id === idLoggeado &&
                 solicitud.mascota_receptora_id === idReceptor
             );
-            console.log(solicitudes)
             setSolicPendiente(prev => [...prev, ...solicitudes]); 
     
         } catch (error) {
@@ -246,7 +245,7 @@ export const Perfil = () => {
 
     const getSolicitudesPendientesPropias = async (idLoggeado, idReceptor) => {
         try {
-            const respuesta = await axios.get(urlAmigos + idLoggeado + "/obtener_solicitudes_pendientes/");
+            const respuesta = await axiosInstance.get(urlAmigos + idLoggeado + "/obtener_solicitudes_pendientes/");
     
             const solicitudes = respuesta.data.filter(solicitud =>
                 solicitud.mascota_solicitante_id === idReceptor &&
@@ -263,10 +262,8 @@ export const Perfil = () => {
     const enviarSolicitud = async (idLoggeado, idReceptor) => {
         try {
             const parametros = { mascota_receptora: idReceptor };
-            console.log("enviarSolicitud: ", parametros);
     
-            const resp = await axios.post(urlAmigos + idLoggeado + "/enviar_solicitud/", parametros);
-            console.log(resp);
+            const resp = await axiosInstance.post(urlAmigos + idLoggeado + "/enviar_solicitud/", parametros);            
     
             if (resp.data.mensaje === "Solicitud de amistad enviada con éxito") {
                 await getSolicitudesPendientes(idLoggeado, idReceptor);
@@ -376,8 +373,7 @@ export const Perfil = () => {
                 join_date: joinDate
             };
 
-            console.log(parametros)
-            await axios({
+            await axiosInstance({
                 method: 'PUT',
                 url: urlActualizar,
                 data: parametros
@@ -531,29 +527,31 @@ export const Perfil = () => {
                                             </div>
                                         </>
                                     )}
-                                    {numPost > 0 && (
-                                        <>
-                                            <hr />
-                                            <div className="d-flex justify-content-between align-items-center mt-5 mb-4">
-                                                <p className="lead fw-normal mb-0">Publicaciones</p>
-                                            </div>
-                                            {posts
-                                                .sort((a, b) => b.id - a.id) // Orden descendente
-                                                .map((post) => {
-                                                    const images = post.imagenes ? post.imagenes.map((img) => img.imagen_base64) : (post.img || []);
-                                                    return (
-                                                        <Post
-                                                            key={post.id}
-                                                            postId={post.id}
-                                                            picUser={fotoPerf}
-                                                            user={nomUsuario}
-                                                            body={post.contenido}
-                                                            picsBody={images}
-                                                        />
-                                                    );
-                                                })}
-                                        </>
-                                    )}
+                                    
+                                <hr />
+                                <PostBar user={user} posts={posts} setPosts={setPosts} />
+                                {numPost > 0 && (
+                                    <>
+                                        <div className="d-flex justify-content-between align-items-center mt-5 mb-4">
+                                            <p className="lead fw-normal mb-0">Publicaciones</p>
+                                        </div>
+                                        {posts
+                                            .sort((a, b) => b.id - a.id) // Orden descendente
+                                            .map((post) => {
+                                                const images = post.imagenes ? post.imagenes.map((img) => img.imagen_base64) : (post.img || []);
+                                                return (
+                                                    <Post
+                                                        key={post.id}
+                                                        postId={post.id}
+                                                        picUser={fotoPerf}
+                                                        user={nomUsuario}
+                                                        body={post.contenido}
+                                                        picsBody={images}
+                                                    />
+                                                );
+                                            })}
+                                    </>
+                                )}
                                 </div>
                             </div>
                         </div>

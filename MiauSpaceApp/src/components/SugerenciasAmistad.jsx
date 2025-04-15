@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
 import img from "../assets/skibidi.jpeg";
+import axiosInstance from "../services/axiosInstace";
 
 const Sugerencias = () => {
     const [sugerencias, setSugerencias] = useState([]);
@@ -15,7 +15,7 @@ const Sugerencias = () => {
     const fetchSugerencias = async () => {
         if (!usuarioId) return;
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/amistades/api/${usuarioId}/sugerencias_amigos/`);
+            const response = await axiosInstance.get(`http://127.0.0.1:8000/amistades/api/${usuarioId}/sugerencias_amigos/`);
             setSugerencias(response.data);
         } catch (error) {
             console.error("Error al obtener sugerencias:", error);
@@ -24,7 +24,7 @@ const Sugerencias = () => {
 
     const enviarSolicitud = async (mascotaReceptoraId) => {
         try {
-            await axios.post(`http://127.0.0.1:8000/amistades/api/${usuarioId}/enviar_solicitud/`, {
+            await axiosInstance.post(`http://127.0.0.1:8000/amistades/api/${usuarioId}/enviar_solicitud/`, {
                 mascota_receptora: mascotaReceptoraId
             });
 

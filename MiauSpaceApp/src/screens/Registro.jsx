@@ -5,8 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../screens/css/Registro.css';
-import axios from 'axios';
 import Swal from 'sweetalert2';
+import axios from "axios";
 
 export const Registro = () => {
     const [currentStep, setCurrentStep] = useState(1);

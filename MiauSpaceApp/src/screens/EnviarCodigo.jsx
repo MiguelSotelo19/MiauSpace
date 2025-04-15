@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
 import logo from "../assets/logo.png";
 import banner from "../assets/banner_mascotas.jpg";
+import axiosInstance from "../services/axiosInstace";
 
 export const EnviarCodigo = () => {
     const [correo, setCorreo] = useState("");
 
     const enviarSolicitud = async () => {
         try {
-            const response = await axios.post("http://localhost:8000/mascotas/enviar_correo_recuperacion/", {
+            const response = await axiosInstance.post("http://localhost:8000/mascotas/enviar_correo_recuperacion/", {
                 correo,
             });
 

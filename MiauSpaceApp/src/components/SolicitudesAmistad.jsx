@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
 import img from "../assets/skibidi.jpeg";
+import axiosInstance from "../services/axiosInstace";
 
 const Solicitudes = () => {
     const [solicitudes, setSolicitudes] = useState([]);
@@ -15,7 +15,7 @@ const Solicitudes = () => {
     const fetchSolicitudes = async () => {
         if (!usuarioId) return;
         try {
-            const response = await axios.get(`http://127.0.0.1:8000/amistades/api/${usuarioId}/obtener_solicitudes_pendientes/`);
+            const response = await axiosInstance.get(`http://127.0.0.1:8000/amistades/api/${usuarioId}/obtener_solicitudes_pendientes/`);
             setSolicitudes(response.data);
         } catch (error) {
             console.error("Error al obtener solicitudes de amistad:", error);
@@ -24,7 +24,7 @@ const Solicitudes = () => {
 
     const manejarSolicitud = async (id, accion) => {
         try {
-            await axios.post(`http://127.0.0.1:8000/amistades/api/${id}/${accion}/`);
+            await axiosInstance.post(`http://127.0.0.1:8000/amistades/api/${id}/${accion}/`);
 
             Swal.fire({
                 icon: accion === "aceptar_solicitud" ? "success" : "error",

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
-import axios from "axios";
 import Swal from "sweetalert2";
+import axiosInstance from "../services/axiosInstace";
 
 const Amigos = () => {
     const [amigos, setAmigos] = useState([]);
@@ -12,9 +12,8 @@ const Amigos = () => {
         const fetchAmigos = async () => {
             if (!usuarioId) return;
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/amistades/api/${usuarioId}/obtener_amigos/`);
+                const response = await axiosInstance.get(`http://127.0.0.1:8000/amistades/api/${usuarioId}/obtener_amigos/`);
                 setAmigos(response.data);
-                console.log(response.data);
             } catch (error) {
                 console.error("Error al obtener amigos:", error);
             }
@@ -35,7 +34,7 @@ const Amigos = () => {
 
         if (result.isConfirmed) {
             try {
-                const response = await axios.delete(`http://127.0.0.1:8000/amistades/api/${usuarioId}/eliminar_amigo/${amigoId}/`);
+                const response = await axiosInstance.delete(`http://127.0.0.1:8000/amistades/api/${usuarioId}/eliminar_amigo/${amigoId}/`);
                 if (response.status === 200) {
                     setAmigos(amigos.filter(amigo => amigo.id !== amigoId)); 
                     Swal.fire(

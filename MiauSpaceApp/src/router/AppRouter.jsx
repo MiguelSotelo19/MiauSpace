@@ -7,7 +7,7 @@ import { Perfil } from '../screens/Perfil.jsx';
 import { Amigos } from '../screens/Amigos.jsx';
 import { Registro } from '../screens/Registro.jsx';
 import { EnviarCodigo } from '../screens/EnviarCodigo.jsx'
-import { RestablecerContraseña } from '../screens/RestablecerContraseña.jsx'
+import { RestablecerContrasena } from '../screens/RestablecerContrasena.jsx'
 
 const isAuthenticated = () => {
     return sessionStorage.getItem("usuario") !== null;
@@ -27,7 +27,7 @@ const AppRouter = () => {
                 <Route path='/' element={<RedirectIfAuthenticated element={<Login />} />} />
                 <Route path='/MiauSpace/' element={<RedirectIfAuthenticated element={<Login />} />} />
                 <Route path='/EnviarCodigo/' element={<RedirectIfAuthenticated element={<EnviarCodigo />} />} />
-                <Route path="/recuperar-contraseña/:uid/:token" element={<RestablecerContraseña />} />
+                <Route path="/recuperar-contraseña/:uid/:token" element={<RestablecerContrasena />} />
                 <Route path='/MiauSpace/Home' element={<ProtectedRoute element={<Home />} />} />
                 <Route path='/MiauSpace/Perfil/:username' element={<ProtectedRoute element={<Perfil />} />} />
                 <Route path='/MiauSpace/Amigos' element={<ProtectedRoute element={<Amigos />} />} />

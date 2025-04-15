@@ -1,6 +1,6 @@
 import { useState } from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
+import axiosInstance from "../services/axiosInstace";
 
 const Buscador = () => {
     const [query, setQuery] = useState("");
@@ -12,7 +12,7 @@ const Buscador = () => {
 
         if (searchTerm.length > 2) {
             try {
-                const response = await axios.get(`http://127.0.0.1:8000/amistades/api/buscar_usuarios/?q=${searchTerm}`);
+                const response = await axiosInstance.get(`http://127.0.0.1:8000/amistades/api/buscar_usuarios/?q=${searchTerm}`);
                 setResults(response.data);
             } catch (error) {
                 console.error("Error buscando usuarios:", error);

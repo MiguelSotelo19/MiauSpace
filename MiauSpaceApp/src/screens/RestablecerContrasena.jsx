@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import Swal from "sweetalert2";
 import logo from "../assets/logo.png";
 import banner from "../assets/banner_mascotas.jpg";
+import axios from "axios";
 
-export const RestablecerContraseña = () => {
+export const RestablecerContrasena = () => {
     const { uid, token } = useParams();
     const navigate = useNavigate();
     const [nuevaContraseña, setNuevaContraseña] = useState("");

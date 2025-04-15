@@ -4,7 +4,6 @@ import banner from "../assets/banner_mascotas.jpg";
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import Swal from "sweetalert2";
 import { useEffect } from "react";
 import { login } from "../services/authService";

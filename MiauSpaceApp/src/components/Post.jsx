@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { Comment } from "./Comment";
 import { Reactions } from "./Reactions";
 import { useNavigate } from "react-router-dom";
-import axios from 'axios';
 
 import "./css/Post.css";
 
@@ -22,9 +21,9 @@ import commentsIcon from "../assets/comentarios.png";
 import enviar from "../assets/enviar.png";
 import reaccionesImg from "../assets/reacciones.png";
 import esperar from "../assets/esperar.png";
+import axiosInstance from "../services/axiosInstace";
 
 export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
-    console.log(user)
     const urlReacciones = 'http://127.0.0.1:8000/reacciones/api/';
     const urlComments = 'http://127.0.0.1:8000/comentarios/api/';
     const urlMascota = 'http://127.0.0.1:8000/mascotas/api/';
@@ -80,54 +79,45 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
 
     
     const getData = async () => {
-        const respuestaM = await axios({
-            method: "GET",
-            url: urlMascota,
-            /*headers: {
-               Authorization: `Bearer ${token}` 
-            }*/
-        });
-
-        const respuestaC = await axios({
-            method: "GET",
-            url: urlComments,
-            /*headers: {
-               Authorization: `Bearer ${token}` 
-            }*/
-        });
-
-        const respuestaR = await axios({
-            method: "GET",
-            url: urlReacciones
-        })
-
-        const respuestaA = await axios({
-            method: "GET",
-            url: urlAmigos
-        })
-
-        let comentarios = respuestaC.data.filter(comment => comment.post == postId);
-        let reacciones = respuestaR.data.filter(reac => reac.post == postId);
-        let reaccionUser = respuestaR.data.filter(reac => reac.mascota == userStorage.id && reac.post == postId);
-        let esAmigo = respuestaA.data.filter(amg => (amg.mascota_receptora == user.id && amg.mascota_solicitante == userStorage.id) || (amg.mascota_receptora == userStorage.id && amg.mascota_solicitante == user.id ))[0]?.estado;
-
-        if(esAmigo != undefined) {
-            setAmgEstado(esAmigo);
+        try {
+            const [resM, resC, resR, resA] = await Promise.all([
+                axiosInstance.get(urlMascota),
+                axiosInstance.get(urlComments),
+                axiosInstance.get(urlReacciones),
+                axiosInstance.get(urlAmigos),
+            ]);
+    
+            const comentarios = resC.data.filter(comment => comment.post == postId);
+            const reacciones = resR.data.filter(reac => reac.post == postId);
+            const reaccionUser = resR.data.filter(reac => reac.mascota == userStorage.id && reac.post == postId);
+    
+            const esAmigo = resA.data.find(amg =>
+                (amg.mascota_receptora == user.id && amg.mascota_solicitante == userStorage.id) ||
+                (amg.mascota_receptora == userStorage.id && amg.mascota_solicitante == user.id)
+            )?.estado;
+    
+            if (esAmigo !== undefined) {
+                setAmgEstado(esAmigo);
+            }
+    
+            if (reaccionUser.length > 0) {
+                setReactionUser(parseInt(reaccionUser[0].tipo_reaccion));
+                setReacted(true);
+                setIdReaction(reaccionUser[0].id);
+            }
+    
+            setReacciones(reacciones);
+            setCantReacciones(reacciones.length);
+            setComments(comentarios);
+            setCantComments(comentarios.length);
+            setMascotas(resM.data);
+            setIdUser(userStorage);
+    
+        } catch (e) {
+            console.error("Error al cargar los datos", e);
         }
-
-        if(reaccionUser.length > 0) {
-            setReactionUser(parseInt(reaccionUser[0].tipo_reaccion));
-            setReacted(true);
-            setIdReaction(reaccionUser[0].id);
-        }
-
-        setReacciones(reacciones)
-        setCantReacciones(reacciones.length)
-        setComments(comentarios);
-        setCantComments(comentarios.length);
-        setMascotas(respuestaM.data);
-        setIdUser(userStorage);
-    }
+    };
+    
     
     const registrarReaccion = (selected) => {
         let method = "POST";
@@ -167,12 +157,11 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
     }
 
     const enviarSolicitud = async (metodo, parametros, url, type) =>{
-        await axios({
+        await axiosInstance({
             method: metodo,
             url: url,
             data: parametros
         }).then(function (respuesta) {
-            console.log(respuesta);
             getData();
             if(type == "Reaction"){
                 setReacted(true);
@@ -283,7 +272,7 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                     <img src={picUser} className="me-3 rounded-circle" alt="Usuario" width="40" height="40" />
                     <p className="m-0 pointer" onClick={() => navigate(`/MiauSpace/Perfil/${user.nombre_usuario}`)}>{user.nombre_usuario}</p>
                     { (amgEstado == "pendiente") ? 
-                    (<btn data-toggle="tooltip" data-placement="top" title="Solicitud pendiente" ><img src={esperar} className="ms-2" alt="pendiente.jpg" /></btn>) 
+                    (<div data-toggle="tooltip" data-placement="top" title="Solicitud pendiente" ><img src={esperar} className="ms-2" alt="pendiente.jpg" /></div>) 
                     : (<></>) }
                 </div>
                 <div className="d-flex flex-column mt-2">
