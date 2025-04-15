@@ -1,8 +1,6 @@
 /* Estilos generales del header */
 .header {
     background-color: #360079;
-    /* Azul suave */
-    border-bottom: 1px solid #271b63;
     height: 80px;
     padding: 0 20px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -65,17 +63,18 @@
     padding: 8px 16px;
     border-radius: 20px;
     transition: background-color 0.3s ease;
+    color: white;
 }
 
 .profile-container:hover {
-    background-color: #D8BFD8;
-    /* Naranja */
+    background-color: #200047;
+    /*color: #360079;*/
 }
 
 /* Imagen del perfil */
 .profile-img {
-    width: 35px;
-    height: 35px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     border: 2px solid #FFFFFF;
     /* Blanco */
@@ -89,9 +88,9 @@
 /* Nombre de usuario */
 .profile-username {
     font-family: 'Poppins', sans-serif;
-    font-size: 16px;
     font-weight: 500;
-    color: #FFFFFF;
-    /* Blanco */
     margin: 0;
+}
+
+.profile-username:hover {
 }

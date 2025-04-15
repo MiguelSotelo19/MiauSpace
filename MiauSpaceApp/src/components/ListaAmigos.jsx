@@ -36,7 +36,7 @@ const Amigos = () => {
             try {
                 const response = await axiosInstance.delete(`http://127.0.0.1:8000/amistades/api/${usuarioId}/eliminar_amigo/${amigoId}/`);
                 if (response.status === 200) {
-                    setAmigos(amigos.filter(amigo => amigo.id !== amigoId)); 
+                    setAmigos(amigos.filter(amigo => amigo.id !== amigoId));
                     Swal.fire(
                         "Eliminado",
                         "Amigo eliminado correctamente",
@@ -55,16 +55,16 @@ const Amigos = () => {
     };
 
     return (
-        <div className="container-fluid min-vh-100 p-0" style={{ backgroundColor: 'white', width: '100%', margin: 0, marginTop: '20px' }}>
+        <div className="container-fluid min-vh-100 p-0 rounded-4 mt-2" style={{ backgroundColor: 'white', width: '100%', margin: 0}}>
             <div className="row">
                 {amigos.length > 0 ? amigos.map(amigo => (
-                    <div key={amigo.id} className="col-md-4 mb-4">
-                        <div className="card h-100">
+                    <div key={amigo.id} className="col-md-3 mb-4">
+                        <div className="card h-100 ms-3 me-3 mt-3">
                             <img
                                 src={amigo.foto_perfil}
                                 className="card-img-top"
                                 alt={`Foto de ${amigo.nombre}`}
-                                style={{ height: "200px"}}
+                                style={{ height: "200px" }} 
                             />
                             <div className="card-body d-flex flex-column">
                                 <h5 className="card-title">{amigo.nombre}</h5>
@@ -85,7 +85,7 @@ const Amigos = () => {
                             </div>
                         </div>
                     </div>
-                )) : <p className="text-center">No tienes amigos aún.</p>}
+                )) : <p className="text-center mt-2">No tienes amigos aún.</p>}
             </div>
         </div>
     );

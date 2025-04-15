@@ -6,6 +6,8 @@ import "bootstrap/dist/js/bootstrap.bundle";
 import { Layout } from "../components/LayoutHome";
 import axiosInstance from "../services/axiosInstace";
 import { PostBar } from "../components/PostBar";
+import perro from '../assets/perro.png';
+import { BsImages } from "react-icons/bs";
 
 
 export const Home = () => {

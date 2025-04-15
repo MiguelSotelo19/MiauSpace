@@ -17,27 +17,30 @@ export const Amigos = () => {
     return (
         <Layout>
             <div className="gradient-custom-2">
-                <div className="row g-0">
+                <div className="row g-0 py-2">
                     <div className="col-12">
-                        <div className="row g-0 bg-dark text-white p-3 rounded-0">
+                        <div className="row g-0 text-white p-3 rounded-5 d-flex justify-content-center align-items-center" style={{ backgroundColor: "white" }}>
                             {secciones.map((seccion) => (
-                                <div key={seccion.id} className="col">
-                                    <button
-                                        className={`btn w-50 ms-5 ${seccionActiva === seccion.id ? 'btn-morado' : 'btn-secondary'}`}
-                                        onClick={() => setSeccionActiva(seccion.id)}
-                                    >
-                                        {seccion.label}
-                                    </button>
+                                <div key={seccion.id} className="col d-flex justify-content-center align-items-center">
+                                    <div>
+                                        <button
+                                            className={`btn ${seccionActiva === seccion.id ? 'btn-morado' : 'btn-secondary'}`}
+                                            onClick={() => setSeccionActiva(seccion.id)}
+                                            style={{fontSize:"20px"}}
+                                        >
+                                            {seccion.label}
+                                        </button>
+                                    </div>
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    <div className="col-12 justify-content-center my-3 bg-white">
+                    <div className="my-3 bg-white rounded-4">
                         <Buscador />
                     </div>
 
-                    <div className="col-12">
+                    <div className="col-12 ">
                         {seccionActiva === "listaAmigos" && <ListaAmigos />}
                         {seccionActiva === "solicitudesAmigos" && <Solicitudes />}
                         {seccionActiva === "sugerenciasAmigos" && <Sugerencias />}

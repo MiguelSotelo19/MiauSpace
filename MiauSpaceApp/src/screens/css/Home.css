@@ -154,3 +154,8 @@ header {
         transform: translateX(100%);
     }
 }
+
+.subirimagen{
+    width: 40px;
+    height: 40px;
+}

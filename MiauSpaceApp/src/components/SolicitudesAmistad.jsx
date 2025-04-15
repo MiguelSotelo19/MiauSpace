@@ -48,11 +48,11 @@ const Solicitudes = () => {
     };
 
     return (
-        <div className="container-fluid min-vh-100 p-0" style={{ backgroundColor: 'white', width: '100%', margin: 0, marginTop: '20px' }}>
+        <div className="container-fluid min-vh-100 p-0 rounded-4 mt-2" style={{ backgroundColor: 'white', width: '100%', margin: 0}}>
             <div className="row">
                 {solicitudes.length > 0 ? solicitudes.map(solicitud => (
-                    <div key={solicitud.id} className="col-md-4 mb-4">
-                        <div className="card h-100">
+                    <div key={solicitud.id} className="col-md-3 mb-4">
+                        <div className="card h-100 ms-3 me-3 mt-3">
                             <img
                                 src={solicitud.mascota_solicitante_foto || img}
                                 className="card-img-top"
@@ -73,7 +73,7 @@ const Solicitudes = () => {
                             </div>
                         </div>
                     </div>
-                )) : <p className="text-center">No tienes solicitudes de amistad pendientes.</p>}
+                )) : <p className="text-center mt-2">No tienes solicitudes de amistad pendientes.</p>}
             </div>
         </div>
     );

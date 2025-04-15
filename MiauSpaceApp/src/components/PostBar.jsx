@@ -3,6 +3,7 @@ import imagen from '../assets/imagen.png';
 import sonidoLadrido from '../assets/wao1.mp3';
 import axiosInstance from "../services/axiosInstace";
 import perro from '../assets/perro.png';
+import { BsImages } from "react-icons/bs";
 
 export const PostBar = ({ user, posts, setPosts }) => {
     const url = 'http://127.0.0.1:8000/posts/api/';
@@ -97,27 +98,30 @@ export const PostBar = ({ user, posts, setPosts }) => {
     return(
         <>
         {isSubmitting && <div className="overlay"></div>}
-        <div className="card mb-4">
-            <div className="card-body">
+        <div className="card mb-4 rounded-5">
+            <div className="card-body rounded-5">
                 <div className="d-flex align-items-center justify-content-evenly">
-                    <img src={user.foto_perfil} className="me-3 rounded-circle" width="45" height="40" alt="logo.jpg" />
-                    <input
-                        type="text"
-                        className="form-control ms-2"
-                        placeholder="¿En qué estás pensando?"
-                        value={contenido}
-                        onChange={(e) => setContenido(e.target.value)}
-                    />
+                    <img src={user.foto_perfil} className="me-2 rounded-circle" width="45" height="40" alt="logo.jpg" />
+                    <div className="input-group input-group-lg">
+                        <input
+                            id="inputGroup-sizing-default"
+                            type="text"
+                            className="form-control ms-2"
+                            placeholder="¿En qué estás pensando?"
+                            value={contenido}
+                            onChange={(e) => setContenido(e.target.value)}
+                        />
+                    </div>
                 </div>
                 <div className="d-flex mt-4 justify-content-between">
                     <div>
                         <input type="file" id="image-upload" multiple accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
                         <label htmlFor="image-upload" style={{ cursor: 'pointer' }}>
-                            <img src={imagen} alt="Subir imágenes" width="30" height="30" />
+                            <BsImages className="ms-1 subirimagen" />
                         </label>
                     </div>
                     <div>
-                        <button className="btn" style={{ backgroundColor: '#7B1FA2', color: 'white' }} onClick={handleSubmit} disabled={isSubmitting}>
+                        <button className="btn" style={{ backgroundColor: '#7B1FA2', color: 'white', fontSize:"18px" }} onClick={handleSubmit} disabled={isSubmitting}>
                             {isSubmitting ? "Publicando..." : "Publicar"}
                         </button>
                     </div>
