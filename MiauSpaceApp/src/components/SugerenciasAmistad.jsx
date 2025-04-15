@@ -48,11 +48,11 @@ const Sugerencias = () => {
     };
 
     return (
-        <div className="container-fluid min-vh-100 p-0" style={{ backgroundColor: 'white', width: '100%', margin: 0, marginTop: '20px' }}>
+        <div className="container-fluid min-vh-100 p-0 rounded-4 mt-2" style={{ backgroundColor: 'white', width: '100%', margin: 0}}>
             <div className="row">
                 {sugerencias.length > 0 ? sugerencias.map(amigo => (
-                    <div key={amigo.id} className="col-md-4 mb-4">
-                        <div className="card h-100">
+                    <div key={amigo.id} className="col-md-3 mb-4">
+                        <div className="card h-100 ms-3 me-3 mt-3">
                             <img
                                 src={amigo.foto_perfil || img}
                                 className="card-img-top"
@@ -62,14 +62,14 @@ const Sugerencias = () => {
                             <div className="card-body d-flex flex-column">
                                 <h5 className="card-title">{amigo.nombre}</h5>
                                 <div className="mt-auto d-grid gap-2">
-                                    <button className="btn btn-outline-primary" onClick={() => enviarSolicitud(amigo.id)}>
+                                    <button className="btn btn-outline-primary mt-2 w-100" onClick={() => enviarSolicitud(amigo.id)}>
                                         Enviar solicitud
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-                )) : <p className="text-center">No hay sugerencias de amigos.</p>}
+                )) : <p className="text-center mt-2">No hay sugerencias de amigos.</p>}
             </div>
         </div>
     );

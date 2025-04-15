@@ -277,10 +277,10 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
 
     return (
     <>
-        <div className="card mt-4">
-            <div className="card-body">
+        <div className="card mt-4 rounded-5">
+            <div className="card-body rounded-5">
                 <div className="d-flex align-items-center justify-content-start">
-                    <img src={picUser} className="me-3 rounded-circle" alt="Usuario" width="40" height="40" />
+                    <img src={picUser} className="me-3 rounded-circle" alt="Usuario" width="50" height="50" />
                     <p className="m-0 pointer" onClick={() => navigate(`/MiauSpace/Perfil/${user.nombre_usuario}`)}>{user.nombre_usuario}</p>
                     { (amgEstado == "pendiente") ? 
                     (<btn data-toggle="tooltip" data-placement="top" title="Solicitud pendiente" ><img src={esperar} className="ms-2" alt="pendiente.jpg" /></btn>) 
@@ -304,12 +304,12 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                 </div>
                 <hr />
                 <div className="d-flex justify-content-between align-items-center">
-                    <p className="accionesCount" data-bs-toggle="modal" data-bs-target={`#modalReacciones${postId}`}>
+                    <p className="accionesCount mb-1 ps-5" data-bs-toggle="modal" data-bs-target={`#modalReacciones${postId}`}>
                         {cantReacciones} reacciones
                     </p>
-                    <p className="accionesCount" data-bs-toggle="modal" data-bs-target={`#commentModal${postId}`}>{cantComments} comentarios</p>
+                    <p className="accionesCount mb-1 pe-5" data-bs-toggle="modal" data-bs-target={`#commentModal${postId}`}>{cantComments} comentarios</p>
                 </div>
-                <div className="d-flex justify-content-evenly align-items-center py-2">
+                <div className="d-flex justify-content-evenly align-items-center">
                     <div className="reaction-container" onMouseEnter={() => setShowReactions(true)} onMouseLeave={() => setShowReactions(false)}>
                         <button className={`btn d-flex align-items-center accion ${reaction ? claseReaccion : ""}`} 
                             onClick={reaccionSelect} onMouseDown={handleMouseDown} onMouseUp={handleMouseUp}>

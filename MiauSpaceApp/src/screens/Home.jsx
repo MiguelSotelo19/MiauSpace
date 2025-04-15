@@ -9,6 +9,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle";
 import { Layout } from "../components/LayoutHome";
 import perro from '../assets/perro.png';
+import { BsImages } from "react-icons/bs";
 
 
 export const Home = () => {
@@ -37,7 +38,7 @@ export const Home = () => {
         if (loading) return;
         setLoading(true);
 
-        try {  
+        try {
             const respuesta = await axios.get(`${url}?page=${page}`);
             let nuevosPosts = respuesta.data;
             nuevosPosts = nuevosPosts.sort(() => Math.random() - 0.5);
@@ -53,11 +54,11 @@ export const Home = () => {
     const getMascotas = async () => {
         const respuesta = await axios.get(urlMascota);
         setMascotas(respuesta.data);
-    }; 
+    };
 
     const handleScroll = () => {
         if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 100) {
-            getPosts(); 
+            getPosts();
         }
     };
 
@@ -132,7 +133,7 @@ export const Home = () => {
         }
     };
 
-   
+
 
     const reproducirLadrido = () => {
         const wao = new Audio(sonidoLadrido);
@@ -151,33 +152,38 @@ export const Home = () => {
 
         <Layout>
             {isSubmitting && <div className="overlay"></div>}
-            <div className="col-lg-12 col-md-8 col-12 offset-lg-2 offset-md-3" style={{ paddingTop: '20px', marginLeft: '8px' }}>
+            <div className="col-lg-12 col-md-8 col-12 offset-lg-2 offset-md-3" style={{ paddingTop: '10px', marginLeft: '7px' }}>
                 {showDog && (
-                    <img src={perro} alt="Perro" className="dog-image"/>
+                    <img src={perro} alt="Perro" className="dog-image" />
 
                 )}
                 <div className="post">
-                    <div className="card mb-4">
-                        <div className="card-body">
+                    <div className="card mb-4 rounded-5">
+                        <div className="card-body rounded-5">
                             <div className="d-flex align-items-center justify-content-evenly">
-                                <img src={user.foto_perfil} className="me-3 rounded-circle" width="45" height="40" alt="logo.jpg" />
-                                <input
-                                    type="text"
-                                    className="form-control ms-2"
-                                    placeholder="¿En qué estás pensando?"
-                                    value={contenido}
-                                    onChange={(e) => setContenido(e.target.value)}
-                                />
+                                <img src={user.foto_perfil} className="me-2 rounded-circle" width="50" height="50" alt="logo.jpg" />
+                                <div class="input-group input-group-lg ">
+                                    <input
+                                        id="inputGroup-sizing-default"
+                                        type="text"
+                                        className="form-control ms-2 "
+                                        placeholder="¿En qué estás pensando?"
+                                        value={contenido}
+                                        onChange={(e) => setContenido(e.target.value)}
+                                        
+                                    />
+                                </div>
+
                             </div>
                             <div className="d-flex mt-4 justify-content-between">
                                 <div>
                                     <input type="file" id="image-upload" multiple accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
                                     <label htmlFor="image-upload" style={{ cursor: 'pointer' }}>
-                                        <img src={imagen} alt="Subir imágenes" width="30" height="30" />
+                                        <BsImages className="ms-1 subirimagen" />
                                     </label>
                                 </div>
                                 <div>
-                                    <button className="btn" style={{ backgroundColor: '#7B1FA2', color: 'white' }} onClick={handleSubmit} disabled={isSubmitting}>
+                                    <button className="btn" style={{ backgroundColor: '#7B1FA2', color: 'white', fontSize:"18px"}} onClick={handleSubmit} disabled={isSubmitting}>
                                         {isSubmitting ? "Publicando..." : "Publicar"}
                                     </button>
                                 </div>

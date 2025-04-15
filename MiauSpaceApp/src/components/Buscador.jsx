@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { BsSearch } from "react-icons/bs";
 
 const Buscador = () => {
     const [query, setQuery] = useState("");
@@ -25,15 +26,18 @@ const Buscador = () => {
 
     return (
         <div className="relative w-full max-w-lg">
-            <div className="d-flex align-items-center border rounded-lg p-2 shadow-md">
-                <span style={{ fontSize: '20px' }}>🔍</span>
-                <input
-                    type="text"
-                    placeholder="Buscar usuarios..."
+            <div className="d-flex align-items-center border rounded-lg p-2 shadow-md rounded-4">
+                <div class="input-group flex-nowrap input-group-lg">
+                    <span class="input-group-text" id="addon-wrapping" style={{ fontSize: '20px' }}><BsSearch /></span>
+                    <input type="text" 
+                    class="form-control" 
+                    placeholder="Buscar usuarios..." 
+                    aria-label="Username" 
+                    aria-describedby="addon-wrapping" 
                     value={query}
-                    onChange={handleSearch}
-                    className="ml-2 w-100 ms-2 border-none focus:ring-0 form-control"
-                />
+                    onChange={handleSearch} />
+                </div>
+
             </div>
             {results.length > 0 && (
                 <div className="absolute w-full bg-white shadow-lg mt-2 p-2 rounded-lg max-h-60 overflow-y-auto">

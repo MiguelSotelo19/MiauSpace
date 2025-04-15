@@ -17,10 +17,12 @@ import huella from "../assets/huella.png";
 import genero from "../assets/genero.png";
 import preferencia from "../assets/preferencia.png";
 
+import fondo1 from "../assets/bp.avif"
+
 export const Perfil = () => {
     const urlUser = "http://127.0.0.1:8000/mascotas/api/";
     const urlPost = 'http://127.0.0.1:8000/posts/api/';
-    const urlAmigos= 'http://127.0.0.1:8000/amistades/api/';
+    const urlAmigos = 'http://127.0.0.1:8000/amistades/api/';
 
     let { username: paramUsername } = useParams();
     const user = JSON.parse(sessionStorage.getItem("usuario"));
@@ -65,10 +67,10 @@ export const Perfil = () => {
     useEffect(() => {
         const cargarDatos = async () => {
             limpiar();
-    
+
             const idObtenido = await getUsers();
-            if (!idObtenido) return; 
-    
+            if (!idObtenido) return;
+
             if (amigos.length > 0) {
                 await Promise.all(
                     amigos.map(async (amigo) => {
@@ -78,19 +80,19 @@ export const Perfil = () => {
                     })
                 );
             }
-    
+
             await Promise.all([
                 getSolicitudesPendientes(user.id, idObtenido),
                 getSolicitudesPendientesPropias(user.id, idObtenido)
             ]);
-    
+
             setLoading(false);
         };
-    
+
         cargarDatos();
     }, [paramUsername]);
 
-    const limpiar = () =>{
+    const limpiar = () => {
         setEdad(0);
         setEspecie("");
         setFechaNac("");
@@ -158,12 +160,12 @@ export const Perfil = () => {
         getAmigos(element.id)
         getAmigosPropio(user.id)
 
-        await getSolicitudesPendientesPropias(user.id, element.id) 
+        await getSolicitudesPendientesPropias(user.id, element.id)
         if (element.nombre_usuario == loggeado) {
             setEsAdmin(element.es_admin || false);
             setPassword(element.password)
             setId(element.id)
-            
+
             setBtnEditar(true);
         }
     };
@@ -179,10 +181,10 @@ export const Perfil = () => {
 
             setPosts(publicaciones);
             setnumPost(publicaciones.length)
-            
+
             const postFiltradoDescendente = publicaciones.sort((a, b) => b.id - a.id);
             const imagenesRecientes = postFiltradoDescendente.flatMap(post => post.imagenes)
-                                              .slice(0, 4);
+                .slice(0, 4);
 
             setImgPost(imagenesRecientes);
 
@@ -205,7 +207,7 @@ export const Perfil = () => {
 
     const getAmigos = async (idPerfil) => {
         try {
-            const respuesta = await axios.get(urlAmigos+idPerfil+'/obtener_amigos/');
+            const respuesta = await axios.get(urlAmigos + idPerfil + '/obtener_amigos/');
             setAmigos(respuesta.data)
             setNumAmigos(respuesta.data.length)
         } catch (error) {
@@ -215,8 +217,8 @@ export const Perfil = () => {
 
     const getAmigosPropio = async (idLoggeado) => {
         try {
-            const respuesta = await axios.get(urlAmigos+idLoggeado+'/obtener_amigos/');
-            
+            const respuesta = await axios.get(urlAmigos + idLoggeado + '/obtener_amigos/');
+
             setMisAmigos(respuesta.data)
         } catch (error) {
             console.error("Error al obtener datos del usuario", error);
@@ -225,17 +227,17 @@ export const Perfil = () => {
 
     const getSolicitudesPendientes = async (idLoggeado, idReceptor) => {
         try {
-            
+
             if (!idLoggeado || !idReceptor) return;
             const respuesta = await axios.get(urlAmigos + idReceptor + "/obtener_solicitudes_pendientes/");
-    
+
             const solicitudes = respuesta.data.filter(solicitud =>
                 solicitud.mascota_solicitante_id === idLoggeado &&
                 solicitud.mascota_receptora_id === idReceptor
             );
             console.log(solicitudes)
-            setSolicPendiente(prev => [...prev, ...solicitudes]); 
-    
+            setSolicPendiente(prev => [...prev, ...solicitudes]);
+
         } catch (error) {
             console.error("Error al obtener solicitudes pendientes", error);
         }
@@ -244,14 +246,14 @@ export const Perfil = () => {
     const getSolicitudesPendientesPropias = async (idLoggeado, idReceptor) => {
         try {
             const respuesta = await axios.get(urlAmigos + idLoggeado + "/obtener_solicitudes_pendientes/");
-    
+
             const solicitudes = respuesta.data.filter(solicitud =>
                 solicitud.mascota_solicitante_id === idReceptor &&
                 solicitud.mascota_receptora_id === idLoggeado
             );
-    
-            setSolicPendientePropia(prev => [...prev, ...solicitudes]); 
-    
+
+            setSolicPendientePropia(prev => [...prev, ...solicitudes]);
+
         } catch (error) {
             console.error("Error al obtener solicitudes pendientes", error);
         }
@@ -261,10 +263,10 @@ export const Perfil = () => {
         try {
             const parametros = { mascota_receptora: idReceptor };
             console.log("enviarSolicitud: ", parametros);
-    
+
             const resp = await axios.post(urlAmigos + idLoggeado + "/enviar_solicitud/", parametros);
             console.log(resp);
-    
+
             if (resp.data.mensaje === "Solicitud de amistad enviada con éxito") {
                 await getSolicitudesPendientes(idLoggeado, idReceptor);
                 toast.success("Solicitud enviada con éxito", {
@@ -296,7 +298,7 @@ export const Perfil = () => {
         return misAmigos.some(amigo => amigo.id === amigoId);
     };
 
-    function openActModal(id_, nombre_, edad_, especie_, fecha_nac_, foto_per_, preferencias_,raza_,sexo_,ubicacion_) {
+    function openActModal(id_, nombre_, edad_, especie_, fecha_nac_, foto_per_, preferencias_, raza_, sexo_, ubicacion_) {
         setEdad(edad_);
         setId(id_)
         setEspecie(especie_);
@@ -325,7 +327,7 @@ export const Perfil = () => {
 
         setModalAmigos(true);
     }
-    
+
     function closeModalAmigos() {
         setModalAmigos(false);
     }
@@ -334,34 +336,34 @@ export const Perfil = () => {
         event.preventDefault();
 
         if (!nomUsuario || nomUsuario.trim() === "") {
-            Swal.fire("Nombre faltante","Escribe el nombre de la mascota", "warning");
+            Swal.fire("Nombre faltante", "Escribe el nombre de la mascota", "warning");
         } else if (!edad || isNaN(edad) || edad <= 0) {
-            Swal.fire("Edad faltante","Escribe una edad válida para la mascota", "warning");
+            Swal.fire("Edad faltante", "Escribe una edad válida para la mascota", "warning");
         } else if (!especie || especie.trim() === "") {
-            Swal.fire("Especie faltante","Escribe la especie de la mascota", "warning");
+            Swal.fire("Especie faltante", "Escribe la especie de la mascota", "warning");
         } else if (!fechaNac || fechaNac.trim() === "") {
-            Swal.fire("Fecha de nacimiento faltante","Selecciona una fecha de nacimiento válida", "warning");
+            Swal.fire("Fecha de nacimiento faltante", "Selecciona una fecha de nacimiento válida", "warning");
         } else if (!fotoPerf || fotoPerf.trim() === "" || !fotoPerf.startsWith("http")) {
-            Swal.fire("Foto de perfil no válida","Proporciona una URL válida para la foto de perfil", "warning");
+            Swal.fire("Foto de perfil no válida", "Proporciona una URL válida para la foto de perfil", "warning");
         } else if (!preferencias || preferencias.trim() === "") {
-            Swal.fire("Preferencia faltante","Escribe las preferencias de la mascota", "warning");
+            Swal.fire("Preferencia faltante", "Escribe las preferencias de la mascota", "warning");
         } else if (!raza || raza.trim() === "") {
-            Swal.fire("Raza faltante","Escribe la raza de la mascota", "warning");
-        } else if (!sexo || sexo.trim() === "" || !["Macho", "Hembra","Prefiero no decirlo"].includes(sexo)) {
-            Swal.fire("Sexo faltante","Selecciona un sexo válido", "warning");
+            Swal.fire("Raza faltante", "Escribe la raza de la mascota", "warning");
+        } else if (!sexo || sexo.trim() === "" || !["Macho", "Hembra", "Prefiero no decirlo"].includes(sexo)) {
+            Swal.fire("Sexo faltante", "Selecciona un sexo válido", "warning");
         } else if (!ubicacion || ubicacion.trim() === "") {
-            Swal.fire("Ubicación no válida","Escribe la ubicación de la mascota", "warning");
-        } else if ((nuevaContrasena !== "" || confirmarContrasena !== "") && nuevaContrasena !== confirmarContrasena ) {
-            Swal.fire("Nueva contraseña no es válida","Las contraseñas no pueden estar vacias y deben coincidir", "warning");
+            Swal.fire("Ubicación no válida", "Escribe la ubicación de la mascota", "warning");
+        } else if ((nuevaContrasena !== "" || confirmarContrasena !== "") && nuevaContrasena !== confirmarContrasena) {
+            Swal.fire("Nueva contraseña no es válida", "Las contraseñas no pueden estar vacias y deben coincidir", "warning");
         } else {
-            const urlActualizar= urlUser + id +"/"
+            const urlActualizar = urlUser + id + "/"
             const parametros = {
                 last_login: lastLogin,
                 nombre_usuario: nomUsuario,
                 password: nuevaContrasena !== "" ? nuevaContrasena : password,
                 especie: especie,
                 edad: parseInt(edad),
-                raza: raza,               
+                raza: raza,
                 fecha_nacimiento: fechaNac,
                 sexo: sexo,
                 ubicacion: ubicacion,
@@ -378,18 +380,18 @@ export const Perfil = () => {
                 url: urlActualizar,
                 data: parametros
             }).then(function (result) {
-                if(result.data.status == "OK" && metodo=="PUT"){
-                    Swal.fire("Perfil actualizado","El perfil se ha actualizado correctamente", "success");         
+                if (result.data.status == "OK" && metodo == "PUT") {
+                    Swal.fire("Perfil actualizado", "El perfil se ha actualizado correctamente", "success");
                 }
                 closeModalAct();
                 getUsers();
             })
-            .catch(function (error) {
-                Swal.fire("Ha ocurrido un error","Algo ha ocurrido", "error");         
-            });
+                .catch(function (error) {
+                    Swal.fire("Ha ocurrido un error", "Algo ha ocurrido", "error");
+                });
         }
     };
-    
+
     const [mostrar, setMostrar] = useState(false);
     const [nuevaContrasena, setNuevaContrasena] = useState("");
     const [confirmarContrasena, setConfirmarContrasena] = useState("");
@@ -401,52 +403,61 @@ export const Perfil = () => {
     };
 
     if (loading) {
-        return <Layout><p>Cargando usuarios...</p></Layout>; // o un spinner
+        return <Layout><div className="d-flex justify-content-center align-items-center"><p>Cargando usuarios...</p></div></Layout>; // o un spinner
     }
 
     return (
         <Layout>
             <ToastContainer />
-            <div className="gradient-custom-2">
-                <div className="container py-5 h-100">
+            <div className="d-flex justify-content-center align-items-center">
+                <div className="py-4 h-100">
                     <div className="row justify-content-center align-items-center h-100">
-                        <div className="col-lg-12 col-xl-12" style={{ width: "45vw" }}>
-                            <div className="card">
+                        <div className="col-lg-12 col-xl-12" style={{ width: "50vw" }}>
+                            <div className="card rounded-5 rounded-bottom-5">
                                 <div
-                                    className="rounded-top text-white d-flex flex-row"
-                                    style={{ backgroundColor: "#40007a", height: "20vh" }}
+                                    className="rounded-top-5 text-white d-flex flex-row border border-bottom-0"
+                                    style={{
+                                        backgroundImage: `url(${fondo1})`,
+                                        height: "20vh",
+                                        backgroundSize: "cover",
+                                        backgroundPosition: "center",
+                                    }}
                                 >
-                                    <div className="ms-4 mt-5 d-flex flex-column" style={{ width: "130px" }}>
+                                    <div className="ms-4 mt-5 d-flex flex-column" style={{}}>
                                         <img
                                             src={fotoPerf}
                                             alt="Perfil"
-                                            className="mt-4 mb-2 img-thumbnail"
+                                            className="mt-4 mb-2 img-thumbnail rounded-5"
                                             draggable="false"
                                             style={{
                                                 zIndex: "1",
-                                                height: "13vh"
+                                                height: "20vh",
                                             }}
                                         />
                                     </div>
-                                    <div className="ms-3" style={{ marginTop: "15vh" }}>
-                                        <h5>{nomUsuario}</h5>
+                                    <div className="ms-3" style={{ marginTop: "14vh" }}>
+                                        <h5 style={{ color: "#000000", fontSize:"25px"}}>{nomUsuario}</h5>
                                     </div>
-                                    {user.id === idPerfil ? (
-                                            <span></span>
-                                        ) :esAmigo(idPerfil) ? (
-                                            <span>Amigo</span>
-                                        ) : solicPendiente.some(solicitud => solicitud.mascota_receptora_id === idPerfil) ? (
-                                            <span>Solicitud enviada</span>
-                                        ) : solicPendientePropia.some(solicitud => solicitud.mascota_solicitante_id === idPerfil) ? (
-                                            <span>Solicitud pendiente</span>
-                                        ): (
-                                            <button className="btn btn-outline-light ms-5 mt-5 " style={{ backgroundColor: '#7B1FA2', color: 'white' }} onClick={() => enviarSolicitud(user.id, idPerfil)}>
-                                                Enviar solicitud
-                                            </button>
-                                        )}
+                                    <div className="flex-grow-1 d-flex justify-content-end" >
+                                        <div className="d-flex align-items-center pt-5" style={{color:"black"}}>
+                                            {user.id === idPerfil ? (
+                                                <span className="ms-5 me-5 m-5 p-3"></span>
+                                            ) : esAmigo(idPerfil) ? (
+                                                <span className="ms-5 me-5 m-5 p-3">Amigo</span>
+                                            ) : solicPendiente.some(solicitud => solicitud.mascota_receptora_id === idPerfil) ? (
+                                                <span className=" ms-5 me-5 m-5 p-3">Solicitud enviada</span>
+                                            ) : solicPendientePropia.some(solicitud => solicitud.mascota_solicitante_id === idPerfil) ? (
+                                                <span className=" ms-5 me-5 m-5 p-3">Solicitud pendiente</span>
+                                            ) : (
+                                                <button class="btn" className="btn ms-5 me-5 m-5 p-3" style={{ backgroundColor: '#7B1FA2', color: 'white' }} onClick={() => enviarSolicitud(user.id, idPerfil)}>
+                                                    Enviar solicitud
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="p-2 pe-4 text-black" style={{ backgroundColor: "#f8f9fa" }}>
-                                    
+                                <div className="p-2 pe-4 text-black border border-bottom-0" style={{ backgroundColor: "#f8f9fa" }}>
+
                                     <div className="d-flex justify-content-end text-center py-1">
                                         <div>
                                             <h5 className="mb-1">{numImgs}</h5>
@@ -458,10 +469,10 @@ export const Perfil = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="card-body text-black p-4 pt-2">
-                                    <div className="mb-5">
+                                <div className="card-body text-black p-4 pt-2 border-bottom-0 pb-2">
+                                    <div className="mb-1 mt-1 ">
                                         <p className="lead fw-normal mb-1">Detalles</p>
-                                        <div className="p-4" style={{ backgroundColor: "#f8f9fa" }}>
+                                        <div className="p-4 rounded-5 mt-3 mb-3" style={{ backgroundColor: "#f8f9fa" }}>
                                             <p className="font-italic mb-1 d-flex align-items-center">
                                                 <img src={ubi} alt="Ubicación" style={{ marginRight: "6px" }} />
                                                 Vive en: {ubicacion}
@@ -479,17 +490,19 @@ export const Perfil = () => {
                                                 Preferencia: {preferencias}
                                             </p>
                                         </div>
-                                        {btnEditar && (
-                                            <button
-                                                className="btn btn-outline-dark"
-                                                style={{ height: "2.5rem", backgroundColor: '#7B1FA2', color: "white" }}
-                                                onClick={() => openActModal(id,nomUsuario,edad,especie,fechaNac,fotoPerf,preferencias,raza,sexo,ubicacion)}>
-                                                Editar perfil
-                                            </button>
-                                        )}
+                                        <div className="d-flex justify-content-end">
+                                            {btnEditar && (
+                                                <button
+                                                    className="me-2 btn"
+                                                    style={{ height: "2.5rem", backgroundColor: '#7B1FA2', color: "white", border: 0, fontSize: "18px" }}
+                                                    onClick={() => openActModal(id, nomUsuario, edad, especie, fechaNac, fotoPerf, preferencias, raza, sexo, ubicacion)}>
+                                                    Editar perfil
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="card-body text-black p-4">
+                                <div className="card-body text-black p-4 rounded-bottom-5">
                                     {imgPost.length > 0 && (
                                         <>
                                             <div className="d-flex justify-content-between align-items-center mb-4">
@@ -647,13 +660,13 @@ export const Perfil = () => {
                                 <Col md={6}>
                                     <Form.Group className="mb-3">
                                         <Form.Label className="ms-1">Nueva contraseña:</Form.Label>
-                                        <Form.Control type="password" placeholder="Ingrese nueva contraseña" value={nuevaContrasena} onChange={(e) => setNuevaContrasena(e.target.value)}/>
+                                        <Form.Control type="password" placeholder="Ingrese nueva contraseña" value={nuevaContrasena} onChange={(e) => setNuevaContrasena(e.target.value)} />
                                     </Form.Group>
                                 </Col>
                                 <Col md={6}>
                                     <Form.Group className="mb-3">
                                         <Form.Label className="ms-1">Confirmar contraseña:</Form.Label>
-                                        <Form.Control type="password" placeholder="Confirme nueva contraseña" value={confirmarContrasena} onChange={(e) => setConfirmarContrasena(e.target.value)}/>
+                                        <Form.Control type="password" placeholder="Confirme nueva contraseña" value={confirmarContrasena} onChange={(e) => setConfirmarContrasena(e.target.value)} />
                                     </Form.Group>
                                 </Col>
                             </Row>
@@ -699,7 +712,7 @@ export const Perfil = () => {
                                             <span>Solicitud enviada</span>
                                         ) : solicPendientePropia.some(solicitud => solicitud.mascota_solicitante_id === amigo.id) ? (
                                             <span>Solicitud pendiente</span>
-                                        ): (
+                                        ) : (
                                             <button className="btn" style={{ backgroundColor: '#7B1FA2', color: 'white' }} onClick={() => enviarSolicitud(user.id, amigo.id)}>
                                                 Enviar solicitud
                                             </button>
@@ -712,6 +725,6 @@ export const Perfil = () => {
                 </Modal.Body>
             </Modal>
         </Layout>
-        
+
     );
 };
