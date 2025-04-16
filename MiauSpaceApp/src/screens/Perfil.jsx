@@ -452,7 +452,7 @@ export const Perfil = () => {
                                             ) : solicPendientePropia.some(solicitud => solicitud.mascota_solicitante_id === idPerfil) ? (
                                                 <span className=" ms-5 me-5 m-5 p-3">Solicitud pendiente</span>
                                             ) : (
-                                                <button class="btn" className="btn ms-5 me-5 m-5 p-3" style={{ backgroundColor: '#7B1FA2', color: 'white' }} onClick={() => enviarSolicitud(user.id, idPerfil)}>
+                                                <button className="btn ms-5 me-5 m-5 p-3" style={{ backgroundColor: '#7B1FA2', color: 'white' }} onClick={() => enviarSolicitud(user.id, idPerfil)}>
                                                     Enviar solicitud
                                                 </button>
                                             )}

@@ -27,10 +27,10 @@ const Buscador = () => {
     return (
         <div className="relative w-full max-w-lg">
             <div className="d-flex align-items-center border rounded-lg p-2 shadow-md rounded-4">
-                <div class="input-group flex-nowrap input-group-lg">
-                    <span class="input-group-text" id="addon-wrapping" style={{ fontSize: '20px' }}><BsSearch /></span>
+                <div className="input-group flex-nowrap input-group-lg">
+                    <span className="input-group-text" id="addon-wrapping" style={{ fontSize: '20px' }}><BsSearch /></span>
                     <input type="text" 
-                    class="form-control" 
+                    className="form-control" 
                     placeholder="Buscar usuarios..." 
                     aria-label="Username" 
                     aria-describedby="addon-wrapping" 
