@@ -58,6 +58,8 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
     const [ reaction, setReaction ] = useState(null);
     const [ claseReaccion, setClaseReaccion ] = useState("");
     const [ amgEstado, setAmgEstado ] = useState("");
+    const modalRef = useRef(null);
+    const [modalAbierto, setModalAbierto] = useState(false);
     const pressTimer = useRef(null);
     const navigate = useNavigate();
 
@@ -77,6 +79,25 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
             }
         }
     }, [picsBody]);
+
+    useEffect(() => {
+        const modal = modalRef.current;
+        const handleShow = () => setModalAbierto(true);
+        const handleHide = () => setModalAbierto(false);
+
+        if (modal) {
+            modal.addEventListener("shown.bs.modal", handleShow);
+            modal.addEventListener("hidden.bs.modal", handleHide);
+        }
+
+        return () => {
+            if (modal) {
+                modal.removeEventListener("shown.bs.modal", handleShow);
+                modal.removeEventListener("hidden.bs.modal", handleHide);
+            }
+        };
+    }, []);
+
 
     
     const getData = async () => {
@@ -325,7 +346,7 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
             </div>
         </div>
 
-        <div className="modal fade" id={`modalReacciones${postId}`} tabIndex="-1" aria-hidden="true">
+        <div className="modal fade" id={`modalReacciones${postId}`} tabIndex="-1" aria-hidden="true" ref={modalRef}>
             <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
                     <div className="modal-header">
@@ -334,7 +355,7 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                     </div>
                     <div className="modal-body">
                         {(Array.isArray(reacciones) && reacciones.length > 0) ? (
-                            <Reactions mascotas={mascotas} reacciones={reacciones} />
+                            <Reactions mascotas={mascotas} postId={postId} modalAbierto={modalAbierto} />
                         ):(
                             <>
                             <div className="d-flex flex-column justify-content-center align-items-center">

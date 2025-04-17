@@ -11,11 +11,13 @@ import "./css/Reactions.css";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../services/axiosInstace";
 
-export const Reactions = ({ mascotas, reacciones }) => {
+export const Reactions = ({ mascotas, postId, modalAbierto }) => {
     const API_URL = import.meta.env.VITE_API_URL;
     const urlAmistades = `${API_URL}/amistades/api/`;
+    const urlReacciones = `${API_URL}/reacciones/api/`;
     let loggeado = localStorage.getItem("username");
-    const [ allReactions, setAllReactions ] = useState(reacciones);
+    const [ reacciones, setReacciones ] = useState([]);
+    const [ allReactions, setAllReactions ] = useState([]);
     const [idLoggeado, setIdLoggeado] = useState(null);
     const [misAmigos, setMisAmigos] = useState([]);
     const [solicPendiente, setSolicPendiente] = useState([]);
@@ -38,9 +40,23 @@ export const Reactions = ({ mascotas, reacciones }) => {
     const navigate = useNavigate();
     
     useEffect(() => {
-        getAmistades(); 
-        
-    }, []);
+        if(modalAbierto){
+            getReacciones();
+            getAmistades();
+        }
+    }, [modalAbierto]);
+
+    const getReacciones = async () => {
+        try{
+            const respuesta = await axiosInstance.get(urlReacciones);
+            const reac = respuesta.data.filter(reac => reac.post == postId);
+            console.log("Reacciones: ",reac)
+            setReacciones(reac);
+            setAllReactions(reac);
+        } catch (err) {
+            console.error("Error al obtener las reacciones: ", err)
+        }
+    }
 
     const getAmistades = async () => {
         const usuarioLoggeado = mascotas.find(u => u.nombre_usuario === loggeado);
