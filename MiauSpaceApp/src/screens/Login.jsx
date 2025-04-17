@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useEffect } from "react";
+import perfilGenerico from "../assets/perfilGenerico.jpg";
 import { login } from "../services/authService";
 import axiosInstance from "../services/axiosInstace";
 
@@ -32,10 +33,10 @@ export const Login = () => {
         .get(urlUser)
         .then((response) => {
             const respuesta = response.data;
-
             for (let i = 0; i < respuesta.length; i++) {
                 const element = respuesta[i];
                 if (element.nombre_usuario == nombre_usuario) {
+                    localStorage.setItem("username", nombre_usuario);
 
                     sessionStorage.setItem("usuario", JSON.stringify(element));
                 }

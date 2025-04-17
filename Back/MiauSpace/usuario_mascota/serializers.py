@@ -26,10 +26,11 @@ class MascotaSerializer(serializers.ModelSerializer):
         return instance
 
     def update(self, instance, validated_data):
-        # Si hay una nueva contraseña en la solicitud, la encripta antes de guardarla
-        if "password" in validated_data:
-            instance.password = make_password(validated_data.pop("password"))
-
+        validated_data.pop('password', None) 
         return super().update(instance, validated_data)
-    
 
+    def update_password(self, instance, password):
+        if password:
+            instance.set_password(password) 
+            instance.save()
+        return instance

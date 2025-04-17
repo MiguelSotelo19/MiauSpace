@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import '../screens/css/Registro.css';
 import Swal from 'sweetalert2';
 import axios from "axios";
+import perfilGenerico from "../assets/perfilGenerico.jpg";
 
 export const Registro = () => {
     const API_URL = import.meta.env.VITE_API_URL;
@@ -48,8 +49,23 @@ export const Registro = () => {
 
     const skipStep = async () => {
         if (currentStep === 2) {
-            toast.info('Puedes añadir una foto más tarde desde tu perfil');
-            setCurrentStep(3);
+            try {
+                const response = await fetch(perfilGenerico);
+                const blob = await response.blob();
+    
+                const base64 = await convertToBase64(blob);
+    
+                setFormData(prev => ({
+                    ...prev,
+                    foto_perfil: base64
+                }));
+    
+                toast.info('Puedes añadir una foto más tarde desde tu perfil');
+                setCurrentStep(3);
+            } catch (error) {
+                console.error(error);
+                toast.error('No se pudo cargar la imagen por defecto');
+            }
         } else if (currentStep === 3) {
             await Swal.fire({
                 title: '¡Información guardada!',
@@ -83,7 +99,7 @@ export const Registro = () => {
         hoy.setHours(0, 0, 0, 0);
 
         if (fechaNacimiento > hoy) {
-            toast.error('¿Cómo rayos pretendes hacerle una cuenta a alguien que no ha nacido?', {
+            toast.error('El usuario debe de haber nacido antes de hoy', {
                 autoClose: 5000,
                 style: {
                     fontSize: '1.1rem',
@@ -105,7 +121,7 @@ export const Registro = () => {
         }
 
         if (!validatePassword(formData.password)) {
-            toast.error('La contraseña debe contener al menos una mayúscula, un número y un carácter especial');
+            toast.error('La contraseña debe contener al menos 5 carácteres, una mayúscula, un número y un carácter especial');
             return;
         }
         if (formData.password !== formData.confirmPassword) {
@@ -312,7 +328,7 @@ export const Registro = () => {
                     }}
                 >
                     <div className="step-indicator text-end mb-3">
-                        <span className="text-primary fw-bold">{currentStep} de 3</span>
+                        <span className="text-primary fw-bold">Paso {currentStep} de 3</span>
                     </div>
 
                     {currentStep === 1 && (
@@ -361,7 +377,7 @@ export const Registro = () => {
                                         required
                                     />
                                     <small className="text-muted">
-                                        Debe contener al menos una mayúscula, un número y un carácter especial
+                                        Debe contener al menos 5 carácteres, una mayúscula, un número y un carácter especial
                                     </small>
                                 </div>
                                 <div className="mb-4">

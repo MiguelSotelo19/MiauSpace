@@ -22,7 +22,9 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .serializers import CustomTokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import status
 
 class MascotaViewset(viewsets.ModelViewSet):
     queryset = Mascota.objects.all()
@@ -38,6 +40,18 @@ class MascotaViewset(viewsets.ModelViewSet):
             return [IsAuthenticated()]
         #Dar acceso a todo lo demas sin estar logueado
         return []
+    
+    @action(detail=True, methods=['put'], url_path='actualizar_contrasena')
+    def update_password(self, request, pk=None):
+        mascota = self.get_object()
+        password = request.data.get('password', None)
+
+        if not password:
+            return Response({"error": "El campo 'password' es requerido."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = self.get_serializer()
+        serializer.update_password(mascota, password)
+        return Response({"mensaje": "Contraseña actualizada correctamente."}, status=status.HTTP_200_OK)
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
@@ -123,6 +137,7 @@ def actualizar_mascota(request, id):
             mascota.sexo = data.get("sexo", mascota.sexo)
             mascota.ubicacion = data.get("ubicacion", mascota.ubicacion)
             mascota.preferencias = data.get("preferencias", mascota.preferencias)
+            mascota.correo = data.get("correo", mascota.correo)
 
             mascota.save()
 
@@ -218,3 +233,5 @@ def restablecer_contrasenia(request, uidb64, token):
         return JsonResponse({"error": "Contraseña no proporcionada"}, status=400)
 
     return JsonResponse({"mensaje": "Token válido. Puedes restablecer tu contraseña."})
+
+
