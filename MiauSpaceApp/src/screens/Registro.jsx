@@ -120,7 +120,7 @@ export const Registro = () => {
                 fecha_nacimiento: formData.fecha_nacimiento
             };
 
-            const response = await axios.post(API_URL, payload);
+            const response = await axios.post(`${API_URL}/mascotas/api/`, payload);
 
             if (response.status === 201) {
                 localStorage.setItem('mascotaId', response.data.id);
