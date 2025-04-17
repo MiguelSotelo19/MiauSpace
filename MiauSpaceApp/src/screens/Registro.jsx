@@ -9,11 +9,11 @@ import Swal from 'sweetalert2';
 import axios from "axios";
 
 export const Registro = () => {
+    const API_URL = import.meta.env.VITE_API_URL;
     const [currentStep, setCurrentStep] = useState(1);
     const [opacity, setOpacity] = useState(0);
     const [scale, setScale] = useState(0.8);
     const navigate = useNavigate();
-    const API_URL = import.meta.env.VITE_API_URL;
 
 
     const [formData, setFormData] = useState({

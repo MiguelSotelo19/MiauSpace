@@ -11,6 +11,7 @@ import axiosInstance from "../services/axiosInstace";
 
 
 export const Login = () => {
+    const API_URL = import.meta.env.VITE_API_URL;
     let urlUser = `${API_URL}/mascotas/api/`;
     const navigate = useNavigate();
     const [nombre_usuario, setNombreUsuario] = useState("");
