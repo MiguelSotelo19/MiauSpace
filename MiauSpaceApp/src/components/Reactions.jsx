@@ -12,7 +12,8 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../services/axiosInstace";
 
 export const Reactions = ({ mascotas, reacciones }) => {
-    const urlAmistades = "http://127.0.0.1:8000/amistades/api/"
+    const API_URL = import.meta.env.VITE_API_URL;
+    const urlAmistades = `${API_URL}/amistades/api/`;
     let loggeado = localStorage.getItem("username");
     const [ allReactions, setAllReactions ] = useState(reacciones);
     const [idLoggeado, setIdLoggeado] = useState(null);

@@ -11,7 +11,7 @@ import axiosInstance from "../services/axiosInstace";
 
 
 export const Login = () => {
-    let urlUser = "http://127.0.0.1:8000/mascotas/api/";
+    let urlUser = `${API_URL}/mascotas/api/`;
     const navigate = useNavigate();
     const [nombre_usuario, setNombreUsuario] = useState("");
     const [password, setPassword] = useState("");

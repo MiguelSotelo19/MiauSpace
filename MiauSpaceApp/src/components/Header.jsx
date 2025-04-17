@@ -11,7 +11,6 @@ export const Header = ({ usuario }) => {
                     <h1 className="logo-text" style={{fontSize:"25px"}}>MiauSpace</h1>
                 </div>
 
-                {/* Enlace al perfil del usuario */}
                 <Link to={`/MiauSpace/Perfil/${usuario.nombre_usuario}`} className="profile-link">
                     <div className="profile-container">
                         <img src={usuario.foto_perfil} className="profile-img" alt="perfil.jpg" />

@@ -4,6 +4,7 @@ import img from "../assets/skibidi.jpeg";
 import axiosInstance from "../services/axiosInstace";
 
 const Sugerencias = () => {
+    const API_URL = import.meta.env.VITE_API_URL;
     const [sugerencias, setSugerencias] = useState([]);
     const usuario = JSON.parse(sessionStorage.getItem("usuario"));
     const usuarioId = usuario?.id;
@@ -15,7 +16,7 @@ const Sugerencias = () => {
     const fetchSugerencias = async () => {
         if (!usuarioId) return;
         try {
-            const response = await axiosInstance.get(`http://127.0.0.1:8000/amistades/api/${usuarioId}/sugerencias_amigos/`);
+            const response = await axiosInstance.get(`${API_URL}/amistades/api/${usuarioId}/sugerencias_amigos/`);
             setSugerencias(response.data);
         } catch (error) {
             console.error("Error al obtener sugerencias:", error);
@@ -24,7 +25,7 @@ const Sugerencias = () => {
 
     const enviarSolicitud = async (mascotaReceptoraId) => {
         try {
-            await axiosInstance.post(`http://127.0.0.1:8000/amistades/api/${usuarioId}/enviar_solicitud/`, {
+            await axiosInstance.post(`${API_URL}/amistades/api/${usuarioId}/enviar_solicitud/`, {
                 mascota_receptora: mascotaReceptoraId
             });
 

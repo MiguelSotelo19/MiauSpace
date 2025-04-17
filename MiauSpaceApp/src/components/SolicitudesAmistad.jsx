@@ -4,6 +4,7 @@ import img from "../assets/skibidi.jpeg";
 import axiosInstance from "../services/axiosInstace";
 
 const Solicitudes = () => {
+    const API_URL = import.meta.env.VITE_API_URL;
     const [solicitudes, setSolicitudes] = useState([]);
     const usuario = JSON.parse(sessionStorage.getItem("usuario")); 
     const usuarioId = usuario?.id;
@@ -15,7 +16,7 @@ const Solicitudes = () => {
     const fetchSolicitudes = async () => {
         if (!usuarioId) return;
         try {
-            const response = await axiosInstance.get(`http://127.0.0.1:8000/amistades/api/${usuarioId}/obtener_solicitudes_pendientes/`);
+            const response = await axiosInstance.get(`${API_URL}/amistades/api/${usuarioId}/obtener_solicitudes_pendientes/`);
             setSolicitudes(response.data);
         } catch (error) {
             console.error("Error al obtener solicitudes de amistad:", error);
@@ -24,7 +25,7 @@ const Solicitudes = () => {
 
     const manejarSolicitud = async (id, accion) => {
         try {
-            await axiosInstance.post(`http://127.0.0.1:8000/amistades/api/${id}/${accion}/`);
+            await axiosInstance.post(`${API_URL}/amistades/api/${id}/${accion}/`);
 
             Swal.fire({
                 icon: accion === "aceptar_solicitud" ? "success" : "error",

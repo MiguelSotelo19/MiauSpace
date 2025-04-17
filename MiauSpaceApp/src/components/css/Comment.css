@@ -8,3 +8,11 @@
     margin-top: 20px;
     margin-bottom: 10px;
 }
+
+.notificacion { 
+    display: inline-block;
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

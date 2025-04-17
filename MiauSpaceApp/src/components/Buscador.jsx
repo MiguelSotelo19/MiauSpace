@@ -4,6 +4,7 @@ import axiosInstance from "../services/axiosInstace";
 import { BsSearch } from "react-icons/bs";
 
 const Buscador = () => {
+    const API_URL = import.meta.env.VITE_API_URL;
     const [query, setQuery] = useState("");
     const [results, setResults] = useState([]);
 
@@ -13,7 +14,7 @@ const Buscador = () => {
 
         if (searchTerm.length > 2) {
             try {
-                const response = await axiosInstance.get(`http://127.0.0.1:8000/amistades/api/buscar_usuarios/?q=${searchTerm}`);
+                const response = await axiosInstance.get(`${API_URL}/amistades/api/buscar_usuarios/?q=${searchTerm}`);
                 setResults(response.data);
             } catch (error) {
                 console.error("Error buscando usuarios:", error);

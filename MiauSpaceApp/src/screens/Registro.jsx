@@ -13,7 +13,7 @@ export const Registro = () => {
     const [opacity, setOpacity] = useState(0);
     const [scale, setScale] = useState(0.8);
     const navigate = useNavigate();
-    const API_URL = "http://127.0.0.1:8000/mascotas/api/";
+    const API_URL = import.meta.env.VITE_API_URL;
 
 
     const [formData, setFormData] = useState({
@@ -198,7 +198,7 @@ export const Registro = () => {
             }
 
             const response = await axios.patch(
-                `http://127.0.0.1:8000/mascotas/foto_perfil/${mascotaId}/`,
+                `${API_URL}/mascotas/foto_perfil/${mascotaId}/`,
                 {
                     foto_perfil: formData.foto_perfil
                 },
@@ -250,7 +250,7 @@ export const Registro = () => {
             };
 
             const response = await axios.put(
-                `http://127.0.0.1:8000/mascotas/actualizar/${mascotaId}/`,
+                `${API_URL}/mascotas/actualizar/${mascotaId}/`,
                 payload,
                 {
                     headers: {
@@ -315,7 +315,6 @@ export const Registro = () => {
                         <span className="text-primary fw-bold">{currentStep} de 3</span>
                     </div>
 
-                    {/* Paso 1: Creación de cuenta */}
                     {currentStep === 1 && (
                         <div className="step-content">
                             <h1 className="text-center mb-4">Crea tu cuenta</h1>
@@ -384,7 +383,6 @@ export const Registro = () => {
                         </div>
                     )}
 
-                    {/* Paso 2: Foto de perfil */}
                     {currentStep === 2 && (
                         <div className="step-content text-center">
                             <h1 className="mb-4">Añade una foto de perfil</h1>
@@ -435,7 +433,6 @@ export const Registro = () => {
                         </div>
                     )}
 
-                    {/* Paso 3: Información adicional */}
                     {currentStep === 3 && (
                         <div className="step-content">
                             <button

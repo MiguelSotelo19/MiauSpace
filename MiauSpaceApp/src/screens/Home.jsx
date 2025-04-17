@@ -6,13 +6,12 @@ import "bootstrap/dist/js/bootstrap.bundle";
 import { Layout } from "../components/LayoutHome";
 import axiosInstance from "../services/axiosInstace";
 import { PostBar } from "../components/PostBar";
-import perro from '../assets/perro.png';
-import { BsImages } from "react-icons/bs";
 
 
 export const Home = () => {
-    const url = 'http://127.0.0.1:8000/posts/api/';
-    const urlMascota = 'http://127.0.0.1:8000/mascotas/api/';
+    const API_URL = import.meta.env.VITE_API_URL;
+    const url = `${API_URL}/posts/api/`;
+    const urlMascota = `${API_URL}/mascotas/api/`;
     const [posts, setPosts] = useState([]);
     const [mascotas, setMascotas] = useState([]);
     const [page, setPage] = useState(1);

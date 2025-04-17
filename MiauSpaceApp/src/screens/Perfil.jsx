@@ -21,9 +21,10 @@ import { PostBar } from "../components/PostBar";
 import fondo1 from "../assets/bp.avif"
 
 export const Perfil = () => {
-    const urlUser = "http://127.0.0.1:8000/mascotas/api/";
-    const urlPost = 'http://127.0.0.1:8000/posts/api/';
-    const urlAmigos = 'http://127.0.0.1:8000/amistades/api/';
+    const API_URL = import.meta.env.VITE_API_URL;
+    const urlUser = `${API_URL}/mascotas/api/`;
+    const urlPost = `${API_URL}/posts/api/`;
+    const urlAmigos = `${API_URL}/amistades/api/`;
 
     let { username: paramUsername } = useParams();
     const user = JSON.parse(sessionStorage.getItem("usuario"));
@@ -53,7 +54,6 @@ export const Perfil = () => {
     const [numImgs, setNumImgs] = useState(0);
     const [numPost, setnumPost] = useState(0);
 
-    const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
 
     const [amigos, setAmigos] = useState([]);
@@ -194,13 +194,6 @@ export const Perfil = () => {
             const totalImagenes = publicaciones.reduce((acc, post) => acc + post.imagenes.length, 0);
 
             setNumImgs(totalImagenes);
-            /*
-            let nuevosPosts = publicaciones;
-            
-            nuevosPosts = nuevosPosts.sort(() => Math.random() - 0.5);
-
-            setPosts(prevPosts => [...prevPosts, ...nuevosPosts]);
-            setPage(prevPage => prevPage + 1);*/
         } catch (error) {
             console.error("Error al obtener publicaciones:", error);
         } finally {
@@ -406,7 +399,7 @@ export const Perfil = () => {
     };
 
     if (loading) {
-        return <Layout><div className="d-flex justify-content-center align-items-center"><p>Cargando usuarios...</p></div></Layout>; // o un spinner
+        return <Layout><div className="d-flex justify-content-center align-items-center"><p>Cargando usuarios...</p></div></Layout>;
     }
 
     return (
@@ -546,7 +539,7 @@ export const Perfil = () => {
                                             <p className="lead fw-normal mb-0">Publicaciones</p>
                                         </div>
                                         {posts
-                                            .sort((a, b) => b.id - a.id) // Orden descendente
+                                            .sort((a, b) => b.id - a.id)
                                             .map((post) => {
                                                 const images = post.imagenes ? post.imagenes.map((img) => img.imagen_base64) : (post.img || []);
                                                 return (

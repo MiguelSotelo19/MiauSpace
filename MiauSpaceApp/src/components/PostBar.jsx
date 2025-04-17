@@ -1,12 +1,12 @@
 import { useState } from "react";
-import imagen from '../assets/imagen.png';
 import sonidoLadrido from '../assets/wao1.mp3';
 import axiosInstance from "../services/axiosInstace";
 import perro from '../assets/perro.png';
 import { BsImages } from "react-icons/bs";
 
 export const PostBar = ({ user, posts, setPosts }) => {
-    const url = 'http://127.0.0.1:8000/posts/api/';
+    const API_URL = import.meta.env.VITE_API_URL;
+    const url = `${API_URL}/posts/api/`;
     const [contenido, setContenido] = useState('');
     const [imagenes, setImagenes] = useState([]);
     const [uploadProgress, setUploadProgress] = useState(0);

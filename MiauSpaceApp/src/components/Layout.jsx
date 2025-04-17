@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import axiosInstance from "../services/axiosInstace";
 
 export const Layout = ({ children }) => {
-    const urlUser = "http://127.0.0.1:8000/mascotas/api/";
+    const API_URL = import.meta.env.VITE_API_URL;
+    const urlUser = `${API_URL}/mascotas/api/`;
     const user = JSON.parse(sessionStorage.getItem("usuario"));
     const [usuario, setUsuario] = useState([]);
     useEffect(() => {

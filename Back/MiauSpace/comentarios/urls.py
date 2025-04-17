@@ -8,5 +8,5 @@ router.register(r'api', ComentariosViewset)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('consulta-personalizada/', ConsultaPersonalizadaAPIView.as_view()), #IMPORTANTE NO COLOCAR DIAGONALES EN LA RUTA PQ ENTRA EN CONFLICTO CON EL VIEWSET
+    path('accioneslog/<int:id>/', ConsultaPersonalizadaAPIView.as_view()), #IMPORTANTE NO COLOCAR DIAGONALES EN LA RUTA PQ ENTRA EN CONFLICTO CON EL VIEWSET
 ]

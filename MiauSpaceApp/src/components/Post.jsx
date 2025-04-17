@@ -24,10 +24,11 @@ import esperar from "../assets/esperar.png";
 import axiosInstance from "../services/axiosInstace";
 
 export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
-    const urlReacciones = 'http://127.0.0.1:8000/reacciones/api/';
-    const urlComments = 'http://127.0.0.1:8000/comentarios/api/';
-    const urlMascota = 'http://127.0.0.1:8000/mascotas/api/';
-    const urlAmigos= 'http://127.0.0.1:8000/amistades/api/';
+    const API_URL = import.meta.env.VITE_API_URL;
+    const urlReacciones = `${API_URL}/reacciones/api/`;
+    const urlComments = `${API_URL}/comentarios/api/`;
+    const urlMascota = `${API_URL}/mascotas/api/`;
+    const urlAmigos= `${API_URL}/amistades/api/`;
 
     const imgreacciones = {
         "1": reaccion1,
@@ -135,18 +136,17 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
         const parametros = {
             post: postId,
             mascota: idUser.id,
-            tipo_reaccion: selected,
-            fecha_comentario: new Date().toISOString()
+            tipo_reaccion: selected.toString(),
+            fecha_reaccion: new Date().toISOString()
         }
 
         enviarSolicitud(method, parametros, url, "Reaction");
-        
     }
 
     const enviarComentario = async () => {
         if(comentario.trim() != ""){
             const parametros = {
-                texto: comentario,
+                texto: ""+comentario,
                 fecha_comentario: new Date().toISOString(),
                 post: postId,
                 mascota: userStorage.id
@@ -325,7 +325,6 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
             </div>
         </div>
 
-        {/* Modal solo para Reacciones */}
         <div className="modal fade" id={`modalReacciones${postId}`} tabIndex="-1" aria-hidden="true">
             <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
@@ -372,7 +371,6 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                                     ))}
                                 </div>
                                 
-                                {/* Botones de control estilizados */}
                                 <button className="carousel-control-prev" type="button" data-bs-target={`#carousel-${postId}`} data-bs-slide="prev">
                                     <span className="carousel-control-prev-icon bg-dark p-3 rounded-circle" aria-hidden="true"></span>
                                 </button>
@@ -387,7 +385,6 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
         </div>
         
 
-        {/* Modal solo para Comentarios */}
         <div className="modal fade" id={`commentModal${postId}`} tabIndex="-1" aria-hidden="true">
             <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">

@@ -6,6 +6,7 @@ import banner from "../assets/banner_mascotas.jpg";
 import axios from "axios";
 
 export const RestablecerContrasena = () => {
+    const API_URL = import.meta.env.VITE_API_URL;
     const { uid, token } = useParams();
     const navigate = useNavigate();
     const [nuevaContraseña, setNuevaContraseña] = useState("");
@@ -22,7 +23,7 @@ export const RestablecerContrasena = () => {
         }
 
         try {
-            const response = await axios.post(`http://localhost:8000/mascotas/recuperar-contrasenia/${uid}/${token}/`, {
+            const response = await axios.post(`${API_URL}/mascotas/recuperar-contrasenia/${uid}/${token}/`, {
                 nueva_contraseña: nuevaContraseña,
             });
 

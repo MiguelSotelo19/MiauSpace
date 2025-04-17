@@ -1,27 +1,22 @@
-import usuario_ from '../assets/usuario_.png';
-import salir from '../assets/salir.png';
-import amigos from '../assets/amigos.png';
-import inicio from '../assets/inicio.png';
 import { Navbar, Nav } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { useEffect } from "react";
 
 import { FaPaw, FaBone, FaSignOutAlt } from 'react-icons/fa';
-import { GiSittingDog, GiDogHouse, GiCat, GiDogBowl } from 'react-icons/gi';
+import { GiDogHouse } from 'react-icons/gi';
 
 import './css/Navigation.css';
 import axiosInstance from '../services/axiosInstace';
 
 export const Navigation = () => {
+    const API_URL = import.meta.env.VITE_API_URL;
     const user = JSON.parse(sessionStorage.getItem("usuario"));
     const navigate = useNavigate();
-    let linkPerfil = "/MiauSpace/Perfil/" + user.nombre_usuario
 
     const handleLogout = async () => {
         try {
             const response = await axiosInstance.post(
-                "http://127.0.0.1:8000/mascotas/logout/",
+                `${API_URL}/mascotas/logout/`,
                 {},
                 { withCredentials: true }
             );

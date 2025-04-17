@@ -31,10 +31,10 @@ class ComentariosViewset(viewsets.ModelViewSet):
 class ConsultaPersonalizadaAPIView(APIView):
     authentication_classes = [JWTAuthentication] #esta linea es necesaria para aplicar JWT
     permission_classes=[IsAuthenticated] #esta linea es necesaria para aplicar JWT
-    def get(self, request):
+    def get(self, request, id):
         with connection.cursor() as cursor:
-            cursor.execute("SELECT id, algo, algo2 FROM prueba") #tu consulta (obviamente crear la tabla en la bd)
+            cursor.execute("SELECT * FROM acciones_log WHERE usuario1 = %s", [id]) #tu consulta (obviamente crear la tabla en la bd)
             rows = cursor.fetchall()
             # Convertimos a lista de diccionarios
-            data = [{'id': row[0], 'algo': row[1], 'algo2': row[2]} for row in rows]
+            data = [{'id': row[0], 'reaccion': row[1], 'usuario1': row[2], 'usuario2': row[3], 'post_id': row[4], 'estado': row[5], 'fecha': row[6]} for row in rows]
         return Response(data)

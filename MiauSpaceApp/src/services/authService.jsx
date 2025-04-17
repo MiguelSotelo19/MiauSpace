@@ -1,12 +1,12 @@
 import axios from "axios";
 
-const API_URL = "http://127.0.0.1:8000/mascotas/token/"
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const login = async (nombre_usuario, password) => {
     try{
         const response = await axios({
             method: "POST",
-            url: API_URL,
+            url: `${API_URL}/mascotas/token/`,
             data: {
                 nombre_usuario: nombre_usuario,
                 password: password
