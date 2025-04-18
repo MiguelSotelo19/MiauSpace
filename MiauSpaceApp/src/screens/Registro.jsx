@@ -8,6 +8,9 @@ import '../screens/css/Registro.css';
 import Swal from 'sweetalert2';
 import axios from "axios";
 import perfilGenerico from "../assets/perfilGenerico.jpg";
+import profile1 from "../assets/profile1.jpg"
+import profile2 from "../assets/profile2.jpg"
+import profile3 from "../assets/profile3.jpg"
 
 export const Registro = () => {
     const API_URL = import.meta.env.VITE_API_URL;
@@ -19,6 +22,7 @@ export const Registro = () => {
 
     const [formData, setFormData] = useState({
         nombre_usuario: '',
+        correo: '',
         fecha_nacimiento: '',
         password: '',
         confirmPassword: '',
@@ -50,21 +54,33 @@ export const Registro = () => {
     const skipStep = async () => {
         if (currentStep === 2) {
             try {
-                const response = await fetch(perfilGenerico);
-                const blob = await response.blob();
-    
-                const base64 = await convertToBase64(blob);
-    
+                const mascotaId = localStorage.getItem('mascotaId');
+
+                if (!mascotaId) {
+                    toast.error('No se encontró el ID de la mascota');
+                    return;
+                }
+
+
+                const randomImageBase64 = await getRandomProfileImage();
+
+
+                await axios.patch(
+                    `${API_URL}/mascotas/foto_perfil/${mascotaId}/`,
+                    { foto_perfil: randomImageBase64 },
+                    { headers: { 'Content-Type': 'application/json' } }
+                );
+
                 setFormData(prev => ({
                     ...prev,
-                    foto_perfil: base64
+                    foto_perfil: randomImageBase64
                 }));
-    
-                toast.info('Puedes añadir una foto más tarde desde tu perfil');
+
+                toast.info('Puedes cambiar tu foto más tarde desde tu perfil');
                 setCurrentStep(3);
             } catch (error) {
                 console.error(error);
-                toast.error('No se pudo cargar la imagen por defecto');
+                toast.error('No se pudo asignar una imagen de perfil');
             }
         } else if (currentStep === 3) {
             await Swal.fire({
@@ -91,8 +107,24 @@ export const Registro = () => {
         return regex.test(username);
     };
 
+    const validateEmail = (email) => {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
+    };
+
     const handleSubmitStep1 = async (e) => {
         e.preventDefault();
+
+        if (!validateEmail(formData.correo)) {
+            toast.error('Por favor ingresa un correo electrónico válido', {
+                autoClose: 5000,
+                style: {
+                    fontSize: '1.1rem',
+                    fontWeight: 'bold'
+                }
+            });
+            return;
+        }
 
         const fechaNacimiento = new Date(formData.fecha_nacimiento);
         const hoy = new Date();
@@ -132,6 +164,7 @@ export const Registro = () => {
         try {
             const payload = {
                 nombre_usuario: formData.nombre_usuario,
+                correo: formData.correo,
                 password: formData.password,
                 fecha_nacimiento: formData.fecha_nacimiento
             };
@@ -156,6 +189,8 @@ export const Registro = () => {
                 if (error.response.status === 400) {
                     if (error.response.data.nombre_usuario) {
                         toast.error('Este nombre de usuario ya existe');
+                    } else if (error.response.data.correo) {
+                        toast.error('Este correo electrónico ya está registrado');
                     } else {
                         toast.error('Datos inválidos. Verifica la información');
                     }
@@ -297,6 +332,13 @@ export const Registro = () => {
         }
     };
 
+    const getRandomProfileImage = async () => {
+        const images = [profile1, profile2, profile3];
+        const randomImage = images[Math.floor(Math.random() * images.length)];
+        const response = await fetch(randomImage);
+        const blob = await response.blob();
+        return await convertToBase64(blob);
+    };
 
     return (
         <>
@@ -350,6 +392,21 @@ export const Registro = () => {
                                     />
                                     <small className="text-muted">
                                         Solo letras (no se permiten números, espacios o caracteres especiales)
+                                    </small>
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="correo" className="form-label">Correo electrónico</label>
+                                    <input
+                                        type="email"
+                                        className="form-control"
+                                        id="correo"
+                                        name="correo"
+                                        value={formData.correo}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                    <small className="text-muted">
+                                        Ejemplo: usuario@dominio.com
                                     </small>
                                 </div>
                                 <div className="mb-3">
@@ -497,7 +554,7 @@ export const Registro = () => {
                                                     }
                                                 });
                                             } else if (e.target.value === '') {
-                                                handleInputChange(e); 
+                                                handleInputChange(e);
                                             }
                                         }}
                                         min="1"
