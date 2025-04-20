@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import img from "../assets/skibidi.jpeg";
 import axiosInstance from "../services/axiosInstace";
+import { useNavigate } from "react-router-dom";
+import "./css/Comment.css";
 
 const Solicitudes = () => {
     const API_URL = import.meta.env.VITE_API_URL;
     const [solicitudes, setSolicitudes] = useState([]);
     const usuario = JSON.parse(sessionStorage.getItem("usuario")); 
     const usuarioId = usuario?.id;
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchSolicitudes();
@@ -61,7 +64,7 @@ const Solicitudes = () => {
                                 style={{ height: "200px"}}
                             />
                             <div className="card-body d-flex flex-column">
-                                <h5 className="card-title">{solicitud.mascota_solicitante_nombre}</h5>
+                                <h5 className="card-title accionesCount" onClick={() => navigate(`/MiauSpace/Perfil/${solicitud.mascota_solicitante_nombre}`)} >{solicitud.mascota_solicitante_nombre}</h5>
                                 <small className="text-muted mb-3">Solicitud de amistad</small>
                                 <div className="mt-auto d-grid gap-2">
                                     <button className="btn btn-outline-primary" onClick={() => manejarSolicitud(solicitud.id, 'aceptar_solicitud')}>

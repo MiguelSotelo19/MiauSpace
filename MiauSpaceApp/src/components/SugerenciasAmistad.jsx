@@ -2,12 +2,16 @@ import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import img from "../assets/skibidi.jpeg";
 import axiosInstance from "../services/axiosInstace";
+import { useNavigate } from "react-router-dom";
+
+import "./css/Comment.css";
 
 const Sugerencias = () => {
     const API_URL = import.meta.env.VITE_API_URL;
     const [sugerencias, setSugerencias] = useState([]);
     const usuario = JSON.parse(sessionStorage.getItem("usuario"));
     const usuarioId = usuario?.id;
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchSugerencias();
@@ -61,7 +65,7 @@ const Sugerencias = () => {
                                 style={{ height: "200px"}}
                             />
                             <div className="card-body d-flex flex-column">
-                                <h5 className="card-title">{amigo.nombre}</h5>
+                                <h5 className="card-title accionesCount" onClick={() => navigate(`/MiauSpace/Perfil/${amigo.nombre}`)}>{amigo.nombre}</h5>
                                 <div className="mt-auto d-grid gap-2">
                                     <button className="btn btn-outline-primary mt-2 w-100" onClick={() => enviarSolicitud(amigo.id)}>
                                         Enviar solicitud

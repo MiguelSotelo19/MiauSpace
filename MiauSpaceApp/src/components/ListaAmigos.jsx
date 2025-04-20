@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Swal from "sweetalert2";
 import axiosInstance from "../services/axiosInstace";
 
@@ -8,6 +8,7 @@ const Amigos = () => {
     const [amigos, setAmigos] = useState([]);
     const usuario = JSON.parse(sessionStorage.getItem("usuario"));
     const usuarioId = usuario?.id;
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchAmigos = async () => {
@@ -68,14 +69,9 @@ const Amigos = () => {
                                 style={{ height: "200px" }} 
                             />
                             <div className="card-body d-flex flex-column">
-                                <h5 className="card-title">{amigo.nombre}</h5>
+                                <h5 className="card-title accionesCount" onClick={() => navigate(`/MiauSpace/Perfil/${amigo.nombre}`)} >{amigo.nombre}</h5>
                                 <small className="text-muted mb-3">0 amigos en común</small>
                                 <div className="mt-auto d-grid gap-2">
-                                    <Link to={`/MiauSpace/Perfil/${amigo.nombre}`}>
-                                        <button className="btn btn-outline-primary w-100">
-                                            Ver perfil
-                                        </button>
-                                    </Link>
                                     <button
                                         className="btn btn-outline-danger mt-2 w-100"
                                         onClick={() => handleEliminarAmigo(amigo.id)}

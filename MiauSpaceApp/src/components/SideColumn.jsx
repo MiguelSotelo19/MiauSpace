@@ -54,7 +54,7 @@ export const SideColumn = () => {
             const notificacionesFinales = Object.values(agrupadas).sort(
                 (a, b) => new Date(b.fecha) - new Date(a.fecha)
             );
-
+            
             setNotis(notificacionesFinales);
         } catch (error) {
             console.error("Error al cargar los datos:", error);
@@ -80,7 +80,7 @@ export const SideColumn = () => {
             <div>
                 <p className="mb-2">🔔 Notificaciones</p>
                 <br />
-                {notis.length > 0 ? (
+                {notis && notis.length > 0 ? (
                     <div className="list-unstyled">
                         {notis.map((noti, index) => {
                             const usuariosStr =
@@ -93,17 +93,22 @@ export const SideColumn = () => {
                                         <div className="d-flex align-items-center justify-content-start">
                                             <img src={users.find(us => us.id == noti.lastUser).foto_perfil} className='me-3 rounded-circle' alt='Usuario' width="50" height="50" />
                                             {(noti.reaccion == "reaccion") ? (
-                                                (noti.usuarios.length > 1) ? (
-                                                    <p>{usuariosStr} reaccionaron a tu publicación <br />"<i className='notificacion'>{posts.find(po => po.id == noti.post_id).contenido}"</i></p>
-                                                ): (
-                                                    <p>{users.find(us => us.id == noti.lastUser).nombre_usuario} Reaccionó a tu publicación  <br />"<i className='notificacion'>{posts.find(po => po.id == noti.post_id).contenido}"</i></p>
-                                                )
+                                                (posts ? (
+                                                    (noti.usuarios.length > 1) ? (
+                                                        <p>{usuariosStr} reaccionaron a tu publicación <br />"<i className='notificacion'>{posts.find(po => po.id == noti.post_id).contenido}"</i></p>
+                                                    ): (
+                                                        <p>{users.find(us => us.id == noti.lastUser).nombre_usuario} Reaccionó a tu publicación  <br />"<i className='notificacion'>{posts.find(po => po.id == noti.post_id).contenido}"</i></p>
+                                                    )
+                                                ): (<></>))
                                             ) : (
-                                                (noti.usuarios.length > 1) ? (
-                                                    <p>{usuariosStr} comentaron tu publicación  <br />"<i className='notificacion'>{posts.find(po => po.id == noti.post_id).contenido}"</i></p>
-                                                ): (
-                                                    <p>{users.find(us => us.id == noti.lastUser).nombre_usuario} comentó tu publicación  <br />"<i className='notificacion'>{posts.find(po => po.id == noti.post_id).contenido}"</i></p>
-                                                )
+                                                (posts ? (
+                                                    (noti.usuarios.length > 1) ? (
+                                                        <p>{usuariosStr} comentaron tu publicación  <br />"<i className='notificacion'>{posts.find(po => po.id == noti.post_id).contenido}"</i></p>
+                                                    ): (
+                                                        <p>{users.find(us => us.id == noti.lastUser).nombre_usuario} comentó tu publicación  <br />"<i className='notificacion'>{posts.find(po => po.id == noti.post_id).contenido}"</i></p>
+                                                    )
+                                                ): (<></>))
+                                                
                                             )}
                                         </div>
                                     </div>
