@@ -191,7 +191,6 @@ export const Reactions = ({ mascotas, postId, modalAbierto }) => {
                             </button>
                         )
                     )}
-                    
                 </div>
             ))}
         </div>
