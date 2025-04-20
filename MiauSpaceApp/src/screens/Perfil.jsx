@@ -367,7 +367,7 @@ export const Perfil = () => {
         // Validación para actualizar la contraseña
         const cambiandoContrasena = nuevaContrasena.trim() !== "" || confirmarContrasena.trim() !== "";
         if (cambiandoContrasena) {
-            if(!/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{5,}$/.test(nuevaContrasena)){
+            if (!/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{5,}$/.test(nuevaContrasena)) {
                 Swal.fire("Nueva contraseña no válida", "Debe contener al menos 5 carácteres, una mayúscula, un número y un carácter especial", "warning");
                 return;
             }
@@ -686,18 +686,20 @@ export const Perfil = () => {
                 tabIndex="-1"
                 role="dialog"
                 aria-labelledby="modalActualizarLabel"
-                aria-hidden="true"
+                aria-hidden="true" style={{ width: "90%", height: "100%" }}
             >
-                <div className="modal-dialog modal-lg modal-dialog-centered" role="document">
-                    <div className="modal-content">
-                        <div className="modal-header">
+                <div className="modal-dialog modal-md modal-dialog-centered" >
+                    <div className="modal-content" >
+                        <div className="modal-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                             <h5 className="modal-title" id="modalActualizarLabel">Actualizar datos personales</h5>
-                            <button type="button" className="close" aria-label="Close" onClick={closeModalAct}>
+                            <button type="button" className="close" aria-label="Close" onClick={closeModalAct}
+                                style={{ backgroundColor: "transparent", border: "none", fontSize: "1.25rem", color: "black", cursor: "pointer" }}
+                            >
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <div className="modal-body">
-                            <div className="container">
+                        <div className="modal-body" style={{ maxHeight: "none", overflow: "visible" }}>
+                            <div >
                                 <div className="row mb-3">
                                     <div className="col-md-6 text-center">
                                         <label htmlFor="foto-perfil" className="d-block">
@@ -726,13 +728,13 @@ export const Perfil = () => {
                                             accept="image/*"
                                             onChange={handleFileChange}
                                         />
-                                        <div className="mb-3">
+                                        <div className="mb-3 mt-1">
                                             <label>Nombre completo:</label>
                                             <p>{nomUsuario}</p>
                                         </div>
                                     </div>
                                     <div className="col-md-6">
-                                        <div className="mb-3">
+                                        <div className="mb-3 mt-4">
                                             <label>Correo electrónico:</label>
                                             <input type="email" className="form-control" value={correo} onChange={(e) => setCorreo(e.target.value)} />
                                         </div>
@@ -764,61 +766,64 @@ export const Perfil = () => {
                 role="dialog"
                 aria-labelledby="modalAdicionalesLabel"
                 aria-hidden="true"
+                style={{ width: "95%" }}
             >
-                <div className="modal-dialog modal-lg modal-dialog-centered" role="document">
+                <div className="modal-dialog modal-md modal-dialog-centered" role="document" style={{ maxWidth: "40vw", maxHeight: "10vh" }}>
                     <div className="modal-content">
-                        <div className="modal-header">
+                        <div className="modal-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                             <h5 className="modal-title" id="modalAdicionalesLabel">Datos adicionales</h5>
-                            <button type="button" className="close" aria-label="Close" onClick={closeModalAct}>
+                            <button type="button" className="close" aria-label="Close" onClick={closeModalAct}
+                                style={{ backgroundColor: "transparent", border: "none", fontSize: "1.25rem", color: "black", cursor: "pointer" }}
+                            >
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <div className="modal-body">
-                            <div className="container">
-                                <div className="row mb-3">
-                                    <div className="col-md-6">
-                                        <div className="mb-3">
-                                            <label>Sexo:</label>
-                                            <select className="form-select" value={sexo} onChange={(e) => setSexo(e.target.value)}>
-                                                <option value="">Selecciona tu sexo</option>
-                                                <option value="Macho">Macho</option>
-                                                <option value="Hembra">Hembra</option>
-                                                <option value="Prefiero no decirlo">Prefiero no decirlo</option>
-                                            </select>
-                                        </div>
+
+                        <div className="modal-body" style={{ maxHeight: "40vh", overflow: "hidden" }}>                            <div className="container">
+                            <div className="row mb-3">
+                                <div className="col-md-6">
+                                    <div className="mb-3">
+                                        <label>Sexo:</label>
+                                        <select className="form-select" value={sexo} onChange={(e) => setSexo(e.target.value)}>
+                                            <option value="">Selecciona tu sexo</option>
+                                            <option value="Macho">Macho</option>
+                                            <option value="Hembra">Hembra</option>
+                                            <option value="Prefiero no decirlo">Prefiero no decirlo</option>
+                                        </select>
                                     </div>
-                                    <div className="col-md-6">
-                                        <div className="mb-3">
-                                            <label>Preferencia:</label>
-                                            <input type="text" className="form-control" value={preferencias} onChange={(e) => setPreferencias(e.target.value)} />
-                                        </div>
+                                </div>
+                                <div className="col-md-6">
+                                    <div className="mb-3">
+                                        <label>Preferencia:</label>
+                                        <input type="text" className="form-control" value={preferencias} onChange={(e) => setPreferencias(e.target.value)} />
                                     </div>
-                                    <div className="col-md-6">
-                                        <div className="mb-3">
-                                            <label>Raza:</label>
-                                            <input type="text" className="form-control" value={raza} onChange={(e) => setRaza(e.target.value)} />
-                                        </div>
+                                </div>
+                                <div className="col-md-6">
+                                    <div className="mb-3">
+                                        <label>Raza:</label>
+                                        <input type="text" className="form-control" value={raza} onChange={(e) => setRaza(e.target.value)} />
                                     </div>
-                                    <div className="col-md-6">
-                                        <div className="mb-3">
-                                            <label>Ubicación:</label>
-                                            <input type="text" className="form-control" value={ubicacion} onChange={(e) => setUbicacion(e.target.value)} />
-                                        </div>
+                                </div>
+                                <div className="col-md-6">
+                                    <div className="mb-3">
+                                        <label>Ubicación:</label>
+                                        <input type="text" className="form-control" value={ubicacion} onChange={(e) => setUbicacion(e.target.value)} />
                                     </div>
-                                    <div className="col-md-6">
-                                        <div className="mb-3">
-                                            <label>Edad:</label>
-                                            <input type="number" className="form-control" value={edad} onChange={(e) => setEdad(e.target.value)} />
-                                        </div>
+                                </div>
+                                <div className="col-md-6">
+                                    <div className="mb-3">
+                                        <label>Edad:</label>
+                                        <input type="number" className="form-control" value={edad} onChange={(e) => setEdad(e.target.value)} />
                                     </div>
-                                    <div className="col-md-6">
-                                        <div className="mb-3">
-                                            <label>Fecha de nacimiento:</label>
-                                            <input type="date" className="form-control" value={fechaNac} onChange={(e) => setFechaNac(e.target.value)} />
-                                        </div>
+                                </div>
+                                <div className="col-md-6">
+                                    <div className="mb-3">
+                                        <label>Fecha de nacimiento:</label>
+                                        <input type="date" className="form-control" value={fechaNac} onChange={(e) => setFechaNac(e.target.value)} />
                                     </div>
                                 </div>
                             </div>
+                        </div>
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-light" onClick={() => setStep(3)}>Cambiar contraseña</button>
@@ -841,20 +846,23 @@ export const Perfil = () => {
                 role="dialog"
                 aria-labelledby="modalActualizarContraseñaLabel"
                 aria-hidden="true"
+                style={{ width: "95%" }}
             >
                 <div className="modal-dialog modal-md modal-dialog-centered" role="document">
                     <div className="modal-content">
-                        <div className="modal-header">
+                        <div className="modal-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                             <h5 className="modal-title" id="modalActualizarContraseñaLabel">Actualizar contraseña</h5>
-                            <button type="button" className="close" aria-label="Close" onClick={closeModalAct}>
+                            <button type="button" className="close" aria-label="Close" onClick={closeModalAct}
+                                style={{ backgroundColor: "transparent", border: "none", fontSize: "1.25rem", color: "black", cursor: "pointer" }}
+                            >
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                        <div className="modal-body">
+                        <div className="modal-body" style={{ maxHeight: "30vh", overflow: "hidden" }}>
                             <div className="container">
-                                <div className="row">
+                                <div className="row justify-content-center">
                                     <div className="col-md-6">
-                                        <div className="mb-3">
+                                        <div className="mb-3 ms-2">
                                             <label>Nueva contraseña:</label>
                                             <input
                                                 type="password"
@@ -865,7 +873,7 @@ export const Perfil = () => {
                                         </div>
                                     </div>
                                     <div className="col-md-6">
-                                        <div className="mb-3">
+                                        <div className="mb-3 me-2">
                                             <label>Confirmar contraseña:</label>
                                             <input
                                                 type="password"
@@ -875,9 +883,13 @@ export const Perfil = () => {
                                             />
                                         </div>
                                     </div>
+                                    <small className="text-muted">
+                                        Debe contener al menos 5 carácteres, una mayúscula, un número y un carácter especial
+                                    </small>
                                 </div>
                             </div>
                         </div>
+
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" onClick={closeModalAct}>
                                 Cancelar
@@ -901,14 +913,17 @@ export const Perfil = () => {
                 role="dialog"
                 aria-labelledby="modalAmigosLabel"
                 aria-hidden="true"
+                style={{ width: "90%" }}
             >
                 <div className="modal-dialog modal-md modal-dialog-centered" role="document">
                     <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title" id="modalAmigosLabel">
+                    <div className="modal-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <h5 className="modal-title" id="modalAmigosLabel">
                                 {nomUsuario === loggeado ? 'Tus amigos' : `Amigos de ${nomUsuario}`}
                             </h5>
-                            <button type="button" className="close" aria-label="Close" onClick={closeModalAmigos}>
+                            <button type="button" className="close" aria-label="Close" onClick={closeModalAmigos}
+                                style={{ backgroundColor: "transparent", border: "none", fontSize: "1.25rem", color: "black", cursor: "pointer" }}
+                            >
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -940,17 +955,17 @@ export const Perfil = () => {
                                             </a>
 
                                             {amigo.nombre === loggeado ? null : esAmigo(amigo.id) ? (
-                                                <span>Amigo</span>
+                                                <span className="text-gray fs-6">Amigo</span>
                                             ) : solicPendiente.some(
                                                 (solicitud) =>
                                                     solicitud.mascota_receptora_id === amigo.id
                                             ) ? (
-                                                <span>Solicitud enviada</span>
+                                                <span className="text-gray  fs-6">Solicitud enviada</span>
                                             ) : solicPendientePropia.some(
                                                 (solicitud) =>
                                                     solicitud.mascota_solicitante_id === amigo.id
                                             ) ? (
-                                                <span>Solicitud pendiente</span>
+                                                <span className="text-gray fs-6">Solicitud pendiente</span>
                                             ) : (
                                                 <button
                                                     className="btn"
