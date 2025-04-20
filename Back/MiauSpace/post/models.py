@@ -8,7 +8,8 @@ class Posts(models.Model):
     )
     titulo = models.CharField(max_length=250)
     fecha_creacion = models.DateTimeField(default=now)
-    contenido = models.TextField()
+    contenido = models.TextField(null=True, blank=True)
+
 
     def __str__(self):
         return self.titulo

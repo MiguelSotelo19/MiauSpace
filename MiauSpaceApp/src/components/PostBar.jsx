@@ -34,6 +34,7 @@ export const PostBar = ({ user, posts, setPosts }) => {
     };
 
     const handleSubmit = async () => {
+  
         const fechaActual = new Date().toISOString();
         setIsSubmitting(true);
         setUploadProgress(0);
@@ -45,7 +46,7 @@ export const PostBar = ({ user, posts, setPosts }) => {
                     mascota: user.id,
                     titulo: "try post",
                     fecha_creacion: fechaActual,
-                    contenido: contenido,
+                    contenido: contenido || "",
                     imagenes: imagenes,
                 },
                 {

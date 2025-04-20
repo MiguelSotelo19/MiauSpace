@@ -23,19 +23,28 @@ class PostsSerializer(serializers.ModelSerializer):
         fields = ['id', 'titulo', 'fecha_creacion', 'contenido', 'mascota', 'imagenes']
         read_only_fields = ['id', 'fecha_creacion']
 
-    def create(self, validated_data):
-     
+    def validate(self, validated_data):
+        contenido = validated_data.get('contenido', '')
         imagenes_data = self.context.get('request').data.get('imagenes', [])
-        
+
+        if not contenido and not imagenes_data:
+            raise serializers.ValidationError("La publicación debe tener contenido o al menos una imagen.")
+        return validated_data
+
+    def create(self, validated_data):
+        imagenes_data = self.context.get('request').data.get('imagenes', [])
+
         post = Posts.objects.create(**validated_data)
-        
+
         for imagen_base64 in imagenes_data:
             Imagenes.objects.create(
                 post=post,
                 imagen_base64=imagen_base64
             )
-        
+
         return post
+
+
         
 class PostImagenSerializer(serializers.ModelSerializer):
     class Meta:

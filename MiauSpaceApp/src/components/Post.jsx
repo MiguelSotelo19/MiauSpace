@@ -346,7 +346,7 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
             </div>
         </div>
 
-        <div className="modal fade" id={`modalReacciones${postId}`} tabIndex="-1" aria-hidden="true" ref={modalRef}>
+        <div className="modal fade" id={`modalReacciones${postId}`} tabIndex="-1" aria-hidden="true"  role="dialog" ref={modalRef}>
             <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
                     <div className="modal-header">
