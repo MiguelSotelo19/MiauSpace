@@ -1,0 +1,34 @@
+CREATE TABLE acciones_log(
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    accion VARCHAR(50) NOT NULL,
+    usuario1 INT NOT NULL, #Receptor
+    usuario2 INT NOT NULL, #Quien manda la acción
+    post_id INT,
+    estado VARCHAR(50),
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+DELIMITER //
+CREATE TRIGGER log_reacciones 
+AFTER INSERT ON reacciones_reaccion
+FOR EACH ROW BEGIN
+	DECLARE post_id_user INT;
+    SELECT p.mascota_id INTO post_id_user FROM post_posts p WHERE p.id = NEW.post_id;
+    
+    IF(post_id_user != NEW.mascota_id) THEN 
+		INSERT INTO acciones_log (accion, usuario1, usuario2, post_id, estado) VALUES ('reaccion', post_id_user, NEW.mascota_id, NEW.post_id, '');
+    END IF;
+    
+END ; //
+
+DELIMITER //
+CREATE TRIGGER log_comentarios 
+AFTER INSERT ON comentarios_comentarios
+FOR EACH ROW BEGIN
+	DECLARE post_id_user INT;
+    SELECT c.mascota_id INTO post_id_user FROM comentarios_comentarios c WHERE c.id = NEW.post_id;
+    
+    IF(post_id_user != NEW.mascota_id) THEN 
+		INSERT INTO acciones_log (accion, usuario1, usuario2, post_id, estado) VALUES ('comentario', post_id_user, NEW.mascota_id, NEW.post_id, '');
+    END IF;
+END ; //
