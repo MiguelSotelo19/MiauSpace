@@ -29,20 +29,37 @@ export const Login = () => {
     }, []);
 
     const getUsers = async (nombre_usuario) => {
-        axiosInstance
-        .get(urlUser)
-        .then((response) => {
-            const respuesta = response.data;
-            for (let i = 0; i < respuesta.length; i++) {
-                const element = respuesta[i];
-                if (element.nombre_usuario == nombre_usuario) {
-                    localStorage.setItem("username", nombre_usuario);
+        let usuarioEncontrado = false;
 
-                    sessionStorage.setItem("usuario", JSON.stringify(element));
+        await axiosInstance
+            .get(urlUser)
+            .then((response) => {
+                const respuesta = response.data;
+                for (let i = 0; i < respuesta.length; i++) {
+                    const element = respuesta[i];
+                    if (element.nombre_usuario === nombre_usuario) {
+                        usuarioEncontrado = true;
+                        localStorage.setItem("username", nombre_usuario);
+                        sessionStorage.setItem("usuario", JSON.stringify(element));
+                        break; // Usuario encontrado, salir del ciclo
+                    }
                 }
-            }
-        })
-    }
+
+                if (!usuarioEncontrado) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "No se encontró usuario",
+                        text: "El usuario ingresado no está registrado.",
+                    });
+                }
+            })
+            .catch((error) => {
+                console.error("Error al obtener usuarios", error);
+            });
+
+        return usuarioEncontrado;
+    };
+
 
     const handleLogin = async () => {
         if (!nombre_usuario || !password) {
@@ -58,17 +75,19 @@ export const Login = () => {
             const response = await login(nombre_usuario, password);
 
             if (response) {
-                await getUsers(nombre_usuario);
+                const usuarioEncontrado = await getUsers(nombre_usuario);
 
-                Swal.fire({
-                    icon: "success",
-                    title: "Inicio de sesión exitoso",
-                    text: "Bienvenido a MiauSpace 🐱",
-                    timer: 2000,
-                    showConfirmButton: false,
-                }).then(() => {
-                    navigate("/MiauSpace/Home");
-                });
+                if (usuarioEncontrado) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Inicio de sesión exitoso",
+                        text: "Bienvenido a MiauSpace 🐱",
+                        timer: 2000,
+                        showConfirmButton: false,
+                    }).then(() => {
+                        navigate("/MiauSpace/Home");
+                    });
+                }
             }
         } catch (error) {
             console.error(error);
@@ -79,6 +98,7 @@ export const Login = () => {
             });
         }
     };
+
 
     return (
         <div className="d-flex vh-100">
