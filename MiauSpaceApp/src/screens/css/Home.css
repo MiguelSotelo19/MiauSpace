@@ -1,3 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f0f0f0;
+    font-size: 20px;
+}
+
+img {
+    -webkit-user-drag: none;
+    user-drag: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    pointer-events: none;
+}
+
 header {
     background-color: white;
     position: fixed;
@@ -10,6 +28,10 @@ header {
 }
 
 .principal {
+    padding-top: 80px;
+}
+
+.principalDos {
     background-color: #f0f0f0;
     padding-top: 80px;
 }
@@ -20,13 +42,13 @@ header {
 }
 
 .list {
-    position: fixed; 
+    position: fixed;
     top: 80px;
-    left: 0; 
-    height: calc(99vh - 80px);  
-    background-color: white; 
-    z-index: 9998; 
-    padding-top: 20px; 
+    left: 0;
+    height: calc(99vh - 80px);
+    background-color: white;
+    z-index: 9998;
+    padding-top: 20px;
     padding-right: 0;
 }
 
@@ -41,7 +63,99 @@ header {
 }
 
 .post {
-    overflow-y: auto; 
+    overflow-y: auto;
     max-height: calc(97vh - 80px);
     padding: 1rem;
+}
+
+.btn-morado {
+    background-color: #7B1FA2;
+    color: white;
+    border-color: #7B1FA2;
+}
+
+.btn-morado:hover {
+    background-color: #6a1b8a;
+    border-color: #6a1b8a;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+}
+
+.progress {
+    height: 5px;
+}
+
+.progress-bar {
+    background-color: #7B1FA2;
+}
+
+
+.small-image-wrapper {
+    position: relative;
+    width: 200px;
+    height: 100px;
+    border: 2px solid gray;
+    border-radius: 5px;
+    overflow: hidden;
+    filter: grayscale(80%);
+}
+
+.small-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-count {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 2px 5px;
+    border-radius: 10px;
+}
+
+
+.dog-image {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 250px;
+    height: auto;
+    z-index: 9999;
+    opacity: 0;
+    animation: dogAnimation 8s ease-in-out forwards;
+}
+
+@keyframes dogAnimation {
+    0% {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    15% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    50% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+.subirimagen{
+    width: 40px;
+    height: 40px;
 }

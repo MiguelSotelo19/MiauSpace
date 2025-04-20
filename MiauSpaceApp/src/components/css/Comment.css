@@ -1,0 +1,22 @@
+
+.comment{
+    width: 80%;
+    text-align: start;
+    background-color: rgb(212, 210, 210);
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.notificacion { 
+    display: inline-block;
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.accionesCount:hover {
+    text-decoration: underline;
+}
