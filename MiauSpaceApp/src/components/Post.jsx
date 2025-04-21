@@ -353,7 +353,7 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
                         <h5 className="modal-title">Reacciones</h5>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div className="modal-body">
+                    <div className="modal-body" >
                         {(Array.isArray(reacciones) && reacciones.length > 0) ? (
                             <Reactions mascotas={mascotas} postId={postId} modalAbierto={modalAbierto} />
                         ):(
@@ -369,40 +369,36 @@ export const Post = ({ picUser, user, body, picsBody = [], postId }) => {
             </div>
         </div>
 
-        <div className="modal fade" id={`imageModal${postId}`} tabIndex="-1" aria-hidden="true">
-            <div className="modal-dialog modal-dialog-centered modal-lg">
-                <div className="modal-content shadow-lg rounded-lg overflow-hidden d-flex justify-content-center" style={{ backgroundColor: "#1a1a1a", borderRadius: "12px", padding: "10px", height: '45vh' }}>
-                    {picsBody.length > 0 && (
-                        <div className="modal-body p-0 d-flex justify-content-center align-items-center">
-                            <div id={`carousel-${postId}`} className="carousel slide" data-bs-ride="carousel">
-                                <div className="carousel-inner">
-                                    {picsBody.map((img, index) => (
-                                        <div key={index} className={`carousel-item ${index === 0 ? "active" : ""}`}>
-                                            <img 
-                                                src={img} 
-                                                className="d-block mx-auto" 
-                                                alt={`Imagen ${index + 1}`} 
-                                                style={{
-                                                    objectFit: "contain",
-                                                    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)",
-                                                    transition: "opacity 0.5s ease-in-out",
-                                                }} 
-                                            />
-                                        </div>
-                                    ))}
+        <div className="modal fade" id={`imageModal${postId}`} tabIndex="-1" aria-hidden="true" style={{ width: "92%" }}>
+            <div className="modal-dialog modal-dialog-centered modal-lg" style={{ maxHeight: "none"}}>
+                    <div className="modal-content shadow-lg overflow-hidden d-flex justify-content-center" style={{ backgroundColor: "#1a1a1a", borderRadius: "12px", padding: "10px", maxHeight: "90vh" }}>
+                        {picsBody.length > 0 && (
+                            <div className="modal-body p-0 d-flex justify-content-center align-items-center"
+                                style={{maxHeight: "90vh", maxWidth: "95vw", overflow: "visible"}}>
+                                <div id={`carousel-${postId}`} className="carousel slide w-100 h-100 position-relative" data-bs-ride="false" data-bs-interval="false">
+                                    <div className="carousel-inner" style={{height: "60vh"}}>
+                                        {picsBody.map((img, index) => (
+                                            <div key={index} className={`carousel-item ${index === 0 ? "active" : ""}`}>
+                                                <img src={img} className="d-block mx-auto" alt={`Imagen ${index + 1}`}
+                                                    style={{ objectFit: "contain", boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)", transition: "opacity 0.5s ease-in-out", maxHeight: "60vh"}}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <button className="carousel-control-prev" type="button" data-bs-target={`#carousel-${postId}`} data-bs-slide="prev" style={{ left: "10px" }} >
+                                        <span className="carousel-control-prev-icon bg-dark p-3 rounded-circle" aria-hidden="true" ></span>
+                                    </button>
+
+                                    <button className="carousel-control-next" type="button" data-bs-target={`#carousel-${postId}`} data-bs-slide="next"style={{ right: "10px" }}>
+                                        <span className="carousel-control-next-icon bg-dark p-3 rounded-circle" aria-hidden="true" ></span>
+                                    </button>
                                 </div>
-                                
-                                <button className="carousel-control-prev" type="button" data-bs-target={`#carousel-${postId}`} data-bs-slide="prev">
-                                    <span className="carousel-control-prev-icon bg-dark p-3 rounded-circle" aria-hidden="true"></span>
-                                </button>
-                                <button className="carousel-control-next" type="button" data-bs-target={`#carousel-${postId}`} data-bs-slide="next">
-                                    <span className="carousel-control-next-icon bg-dark p-3 rounded-circle" aria-hidden="true"></span>
-                                </button>
                             </div>
-                        </div>
-                    )}
+                        )}
+
+                    </div>
                 </div>
-            </div>
         </div>
         
 
