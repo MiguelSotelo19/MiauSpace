@@ -14,6 +14,7 @@ import axiosInstance from "../services/axiosInstace";
 import { PostBar } from "../components/PostBar";
 
 import fondo1 from "../assets/bp.avif"
+import axios from "axios";
 
 export const Perfil = () => {
     const API_URL = import.meta.env.VITE_API_URL;
@@ -434,13 +435,13 @@ export const Perfil = () => {
         }
 
         // Llamada para actualizar los datos generales
-        const parametros = {
+        /*const parametros = {
             last_login: lastLogin,
             nombre_usuario: nomUsuario,
             especie: especie,
             edad: parseInt(edad),
             raza: raza,
-            correo: correo,
+            correo: correo.toLowerCase(),
             fecha_nacimiento: fechaNac,
             sexo: sexo,
             ubicacion: ubicacion,
@@ -449,27 +450,47 @@ export const Perfil = () => {
             is_active: isActive,
             es_admin: esAdmin,
             join_date: joinDate
+        };*/
+
+        const parametros1 = {
+            especie: especie,
+            edad: parseInt(edad),
+            raza: raza,
+            correo: correo.toLowerCase(),
+            fecha_nacimiento: fechaNac,
+            sexo: sexo,
+            ubicacion: ubicacion,
+            preferencias: preferencias,
         };
 
-        const urlActualizar = `${urlUser}${id}/`;
+        const urlActualizar = `${API_URL}/mascotas/actualizar/${id}/`;
 
-        await axiosInstance({
-            method: 'PATCH',
-            url: urlActualizar,
-            data: parametros
-        }).then(function (result) {
-            if (result.status === 200) {
-                Swal.fire("Perfil actualizado", "El perfil se actualizó correctamente", "success");
+        try {
+            const result = await axios.put(urlActualizar, parametros1, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (fotoPerfOrig !== fotoPerf) {
+                await axios.patch(
+                    `${API_URL}/mascotas/foto_perfil/${id}/`,
+                    { foto_perfil: fotoPerf },
+                    { headers: { 'Content-Type': 'application/json' } }
+                );
             }
+
+            Swal.fire("Perfil actualizado", "El perfil se actualizó correctamente", "success");
             closeModalAct();
             setStep(1);
             getUsers();
             limpiar();
             triggerReload();
-        }).catch(function (error) {
+
+        } catch (error) {
             console.error(error);
-            Swal.fire("Ha ocurrido un error", "Algo ha ocurrido", "error");
-        });
+            Swal.fire("Ha ocurrido un error", "No se pudo actualizar la mascota", "error");
+        }
     };
 
 

@@ -10,7 +10,6 @@ import perfilGenerico from "../assets/perfilGenerico.jpg";
 import { login } from "../services/authService";
 import axiosInstance from "../services/axiosInstace";
 
-
 export const Login = () => {
     const API_URL = import.meta.env.VITE_API_URL;
     let urlUser = `${API_URL}/mascotas/api/`;
@@ -41,7 +40,7 @@ export const Login = () => {
                         usuarioEncontrado = true;
                         localStorage.setItem("username", nombre_usuario);
                         sessionStorage.setItem("usuario", JSON.stringify(element));
-                        break; // Usuario encontrado, salir del ciclo
+                        break;
                     }
                 }
 
@@ -61,12 +60,46 @@ export const Login = () => {
     };
 
 
+    const validatePassword = (password) => {
+        const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{5,}$/;
+        return regex.test(password);
+    };
+
+    const validateUsername = (username) => {
+        const regex = /^[a-zA-Z]+$/;
+        return regex.test(username);
+    };
+
     const handleLogin = async () => {
         if (!nombre_usuario || !password) {
             Swal.fire({
                 icon: "warning",
                 title: "Campos vacíos",
                 text: "Por favor, ingresa tu usuario y contraseña.",
+            });
+            return;
+        }
+
+        if (!validateUsername(nombre_usuario)) {
+            Swal.fire({
+                icon: "error",
+                title: "Usuario inválido",
+                text: "El usuario solo debe contener letras (sin espacios ni números).",
+            });
+            return;
+        }
+
+        if (!validatePassword(password)) {
+            Swal.fire({
+                icon: "error",
+                title: "Contraseña inválida",
+                html: `
+                    La contraseña debe contener al menos:<br/>
+                    - Una letra mayúscula<br/>
+                    - Un número<br/>
+                    - Un símbolo<br/>
+                    - Y tener mínimo 5 caracteres
+                `,
             });
             return;
         }
@@ -153,4 +186,3 @@ export const Login = () => {
         </div>
     );
 };
-

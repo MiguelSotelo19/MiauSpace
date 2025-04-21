@@ -138,7 +138,9 @@ def actualizar_mascota(request, id):
             mascota.ubicacion = data.get("ubicacion", mascota.ubicacion)
             mascota.preferencias = data.get("preferencias", mascota.preferencias)
             mascota.correo = data.get("correo", mascota.correo)
-
+            fecha_nacimiento = data.get("fecha_nacimiento")
+            if fecha_nacimiento:
+                mascota.fecha_nacimiento = fecha_nacimiento
             mascota.save()
 
             return JsonResponse({"mensaje": "Mascota actualizada exitosamente."}, status=200)

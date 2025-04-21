@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -12,7 +13,27 @@ export const RestablecerContrasena = () => {
     const [nuevaContraseña, setNuevaContraseña] = useState("");
     const [confirmarContraseña, setConfirmarContraseña] = useState("");
 
+    const validatePassword = (password) => {
+        const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{5,}$/;
+        return regex.test(password);
+    };
+
     const handleSubmit = async () => {
+        if (!validatePassword(nuevaContraseña)) {
+            Swal.fire({
+                icon: "error",
+                title: "Contraseña inválida",
+                html: `
+                    La contraseña debe contener al menos:<br/>
+                    - Una letra mayúscula<br/>
+                    - Un número<br/>
+                    - Un símbolo<br/>
+                    - Y tener mínimo 5 caracteres
+                `,
+            });
+            return;
+        }
+
         if (nuevaContraseña !== confirmarContraseña) {
             Swal.fire({
                 icon: "error",

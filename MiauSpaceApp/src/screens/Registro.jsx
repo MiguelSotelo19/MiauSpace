@@ -87,7 +87,7 @@ export const Registro = () => {
                 especie: 'Sin especificar',
                 edad: 1,
                 raza: 'Sin especificar',
-                sexo: 'Sin especificar',
+                sexo: 'Prefiero no decirlo',
                 ubicacion: 'Sin especificar',
                 preferencias: 'Sin especificar',
             };
@@ -184,7 +184,7 @@ export const Registro = () => {
         try {
             const payload = {
                 nombre_usuario: formData.nombre_usuario,
-                correo: formData.correo,
+                correo: formData.correo.toLowerCase(),
                 password: formData.password,
                 fecha_nacimiento: formData.fecha_nacimiento
             };
