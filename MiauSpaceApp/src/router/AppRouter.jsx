@@ -27,7 +27,7 @@ const AppRouter = () => {
                 <Route path='/' element={<RedirectIfAuthenticated element={<Login />} />} />
                 <Route path='/MiauSpace/' element={<RedirectIfAuthenticated element={<Login />} />} />
                 <Route path='/EnviarCodigo/' element={<RedirectIfAuthenticated element={<EnviarCodigo />} />} />
-                <Route path="/recuperar-contraseña/:uid/:token" element={<RestablecerContrasena />} />
+                <Route path="/recuperar-contraseña-contraseña/:uid/:token" element={<RestablecerContrasena />} />
                 <Route path='/MiauSpace/Home' element={<ProtectedRoute element={<Home />} />} />
                 <Route path='/MiauSpace/Perfil/:username' element={<ProtectedRoute element={<Perfil />} />} />
                 <Route path='/MiauSpace/Amigos' element={<ProtectedRoute element={<Amigos />} />} />

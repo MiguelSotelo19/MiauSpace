@@ -184,7 +184,7 @@ export const Registro = () => {
         try {
             const payload = {
                 nombre_usuario: formData.nombre_usuario,
-                correo: formData.correo,
+                correo: formData.correo.toLowerCase(),
                 password: formData.password,
                 fecha_nacimiento: formData.fecha_nacimiento
             };

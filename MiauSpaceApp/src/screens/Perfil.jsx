@@ -440,7 +440,7 @@ export const Perfil = () => {
             especie: especie,
             edad: parseInt(edad),
             raza: raza,
-            correo: correo,
+            correo: correo.toLowerCase(),
             fecha_nacimiento: fechaNac,
             sexo: sexo,
             ubicacion: ubicacion,
