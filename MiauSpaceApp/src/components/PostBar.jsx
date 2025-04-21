@@ -61,12 +61,13 @@ export const PostBar = ({ user, posts, setPosts }) => {
                 ...responsePost.data,
                 imagenes: imagenes.map((img) => ({ imagen_base64: img })),
             };
-
-            setPosts([newPost, ...posts]);
+            
+            setPosts(prevPosts => [newPost, ...prevPosts]);
             setContenido('');
             setImagenes([]);
             setUploadProgress(0);
             reproducirLadrido();
+            
 
             try {
                 const response = await axiosInstance.get(`${url}?page=1`);

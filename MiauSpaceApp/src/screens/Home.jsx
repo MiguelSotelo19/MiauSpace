@@ -7,7 +7,6 @@ import { Layout } from "../components/LayoutHome";
 import axiosInstance from "../services/axiosInstace";
 import { PostBar } from "../components/PostBar";
 
-
 export const Home = () => {
     const API_URL = import.meta.env.VITE_API_URL;
     const url = `${API_URL}/posts/api/`;
@@ -20,7 +19,6 @@ export const Home = () => {
     const user = JSON.parse(sessionStorage.getItem("usuario"));
 
     useEffect(() => {
-        setPosts([]);
         getMascotas();
         getPosts();
     }, []);
@@ -31,26 +29,26 @@ export const Home = () => {
                 getPosts();
             }
         };
-    
+
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, [loading, hasMore, page]);
 
     const getPosts = () => {
         if (loading || !hasMore) return;
-    
+
         setLoading(true);
-    
+
         axiosInstance
             .get(`${url}?page=${page}`)
             .then((response) => {
                 const nuevosPosts = response.data;
-    
+
                 if (nuevosPosts.length === 0) {
                     setHasMore(false);
                     return;
                 }
-    
+
                 const mezclados = nuevosPosts.sort(() => Math.random() - 0.5);
                 setPosts(prevPosts => [...prevPosts, ...mezclados]);
                 setPage(prevPage => prevPage + 1);
@@ -75,7 +73,6 @@ export const Home = () => {
     };
 
     return (
-
         <Layout>
             <div className="col-lg-12 col-md-8 col-12 offset-lg-2 offset-md-3" style={{ paddingTop: '20px', marginLeft: '8px' }}>
                 <div className="post">
@@ -97,8 +94,8 @@ export const Home = () => {
                         );
                     })}
 
-
                     {loading && <p className="text-center">Cargando más publicaciones...</p>}
+                    {!hasMore && !loading && <p className="text-center">Ya no hay más publicaciones</p>}
                 </div>
             </div>
         </Layout>

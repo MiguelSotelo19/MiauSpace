@@ -83,18 +83,38 @@ export const Registro = () => {
                 toast.error('No se pudo asignar una imagen de perfil');
             }
         } else if (currentStep === 3) {
-            await Swal.fire({
-                title: '¡Información guardada!',
-                text: 'Puedes completar estos datos más tarde desde tu muro',
-                icon: 'info',
-                timer: 2000,
-                showConfirmButton: false,
-                timerProgressBar: true,
-                willClose: () => {
-                    navigate('/');
-                }
-            });
+            const defaultValues = {
+                especie: 'Sin especificar',
+                edad: 1,
+                raza: 'Sin especificar',
+                sexo: 'Sin especificar',
+                ubicacion: 'Sin especificar',
+                preferencias: 'Sin especificar',
+            };
+        
+            setFormData(prev => ({
+                ...prev,
+                ...defaultValues
+            }));
+        
+            const success = await handleSubmitStep3(null, defaultValues);
+            if (success) {
+                await Swal.fire({
+                    title: '¡Enhorabuena!',
+                    text: 'Tus datos se han guardado. Ahora inicia sesión con tus credenciales',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    willClose: () => {
+                        localStorage.removeItem('mascotaId');
+                        localStorage.removeItem('mascotaNombre');
+                        navigate('/');
+                    }
+                });
+            }
         }
+        
     };
 
     const validatePassword = (password) => {
@@ -272,34 +292,36 @@ export const Registro = () => {
         }
     };
 
-    const handleSubmitStep3 = async (e) => {
-        e.preventDefault();
-
+    const handleSubmitStep3 = async (e = null, data = null) => {
+        if (e) e.preventDefault();
+    
         const campos = ['especie', 'raza', 'ubicacion'];
+        const valores = data || formData;
+    
         for (const campo of campos) {
-            if (formData[campo]?.length > 30) {
+            if (valores[campo]?.length > 30) {
                 toast.error(`El campo ${campo} excede el límite de 30 caracteres`);
                 return;
             }
         }
-
+    
         try {
             const mascotaId = localStorage.getItem('mascotaId');
-
+    
             if (!mascotaId) {
                 toast.error('No se encontró el ID de la mascota');
                 return;
             }
-
+    
             const payload = {
-                especie: formData.especie,
-                edad: parseInt(formData.edad),
-                raza: formData.raza,
-                sexo: formData.sexo,
-                ubicacion: formData.ubicacion,
-                preferencias: formData.preferencias
+                especie: valores.especie,
+                edad: parseInt(valores.edad),
+                raza: valores.raza,
+                sexo: valores.sexo,
+                ubicacion: valores.ubicacion,
+                preferencias: valores.preferencias
             };
-
+    
             const response = await axios.put(
                 `${API_URL}/mascotas/actualizar/${mascotaId}/`,
                 payload,
@@ -309,9 +331,8 @@ export const Registro = () => {
                     }
                 }
             );
-
-            if (response.status === 200) {
-
+    
+            if (response.status === 200 && !data) {
                 await Swal.fire({
                     title: '¡Enhorabuena!',
                     text: 'Tus datos se han guardado. Ahora inicia sesión con tus credenciales',
@@ -325,12 +346,17 @@ export const Registro = () => {
                         navigate('/');
                     }
                 });
+                return true;
+            } else if (response.status === 200 && data) {
+                return true;
             }
+    
         } catch (error) {
             console.error('Error:', error);
             toast.error('Error al guardar los datos');
         }
     };
+    
 
     const getRandomProfileImage = async () => {
         const images = [profile1, profile2, profile3];
