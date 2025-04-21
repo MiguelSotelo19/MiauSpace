@@ -88,7 +88,7 @@ export const SideColumn = () => {
                                     ? `${noti.usuarios.length} personas`
                                     : '';
                             return (
-                                <div key={`NotiKey${noti.id}`} className="card mt-4 rounded-5">
+                                <div key={`NotiKey${noti?.id ?? Math.random()}`} className="card mt-4 rounded-5">
                                     <div className="card-body rounded-5">
                                         <div className="d-flex align-items-center justify-content-start">
                                             <img src={users.find(us => us.id == noti.lastUser).foto_perfil} className='me-3 rounded-circle' alt='Usuario' width="50" height="50" />
