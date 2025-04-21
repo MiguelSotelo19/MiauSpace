@@ -161,7 +161,7 @@ def enviar_correo_recuperacion(request):
         token = default_token_generator.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
 
-        frontend_url = "http://miauspaceapp.s3-website.us-east-2.amazonaws.com"
+        frontend_url = "http://localhost:5173"
 
         reset_url = f"{frontend_url}/recuperar-contraseña/{uid}/{token}/"
 

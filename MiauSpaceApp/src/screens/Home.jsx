@@ -7,7 +7,6 @@ import { Layout } from "../components/LayoutHome";
 import axiosInstance from "../services/axiosInstace";
 import { PostBar } from "../components/PostBar";
 
-
 export const Home = () => {
     const API_URL = import.meta.env.VITE_API_URL;
     const url = `${API_URL}/posts/api/`;
@@ -17,42 +16,38 @@ export const Home = () => {
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
+    const [allPosts, setAllPosts] = useState([]); // All posts without duplicates
     const user = JSON.parse(sessionStorage.getItem("usuario"));
 
     useEffect(() => {
-        setPosts([]);
         getMascotas();
         getPosts();
     }, []);
 
-    useEffect(() => {
-        const handleScroll = () => {
-            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 && !loading && hasMore) {
-                getPosts();
-            }
-        };
-    
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, [loading, hasMore, page]);
-
     const getPosts = () => {
         if (loading || !hasMore) return;
-    
+
         setLoading(true);
-    
+
         axiosInstance
             .get(`${url}?page=${page}`)
             .then((response) => {
                 const nuevosPosts = response.data;
-    
+
                 if (nuevosPosts.length === 0) {
                     setHasMore(false);
                     return;
                 }
-    
-                const mezclados = nuevosPosts.sort(() => Math.random() - 0.5);
-                setPosts(prevPosts => [...prevPosts, ...mezclados]);
+
+                // Combine old posts with new ones and shuffle them only once
+                setAllPosts(prevPosts => {
+                    const newPosts = [...prevPosts, ...nuevosPosts];
+                    if (prevPosts.length === 0) {
+                        return newPosts.sort(() => Math.random() - 0.5); // Shuffle only once
+                    }
+                    return newPosts;
+                });
+
                 setPage(prevPage => prevPage + 1);
             })
             .catch((error) => {
@@ -74,14 +69,15 @@ export const Home = () => {
             });
     };
 
-    return (
+    const postsToDisplay = allPosts.slice(0, page * 5); // 5 posts per page, you can adjust this number
 
+    return (
         <Layout>
             <div className="col-lg-12 col-md-8 col-12 offset-lg-2 offset-md-3" style={{ paddingTop: '20px', marginLeft: '8px' }}>
                 <div className="post">
-                    <PostBar user={user} posts={posts} setPosts={setPosts} />
+                    <PostBar user={user} posts={postsToDisplay} setPosts={setPosts} />
 
-                    {posts.map((post) => {
+                    {postsToDisplay.map((post) => {
                         const mascotaData = mascotas.find(masc => masc.id === post.mascota);
                         if (!mascotaData) return null;
 
@@ -97,8 +93,9 @@ export const Home = () => {
                         );
                     })}
 
-
                     {loading && <p className="text-center">Cargando más publicaciones...</p>}
+
+                    {!hasMore && !loading && <p className="text-center">Ya no hay más publicaciones</p>}
                 </div>
             </div>
         </Layout>
