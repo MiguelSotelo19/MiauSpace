@@ -8,7 +8,21 @@ export const EnviarCodigo = () => {
     const API_URL = import.meta.env.VITE_API_URL;
     const [correo, setCorreo] = useState("");
 
+    const validarCorreo = (email) => {
+        const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regexCorreo.test(email);
+    };
+
     const enviarSolicitud = async () => {
+        if (!validarCorreo(correo)) {
+            Swal.fire({
+                icon: "warning",
+                title: "Correo inválido",
+                text: "Por favor, ingresa un correo electrónico válido.",
+            });
+            return;
+        }
+
         try {
             const response = await axiosInstance.post(`${API_URL}/mascotas/enviar_correo_recuperacion/`, {
                 correo,
@@ -30,6 +44,7 @@ export const EnviarCodigo = () => {
             });
         }
     };
+
 
     return (
         <div className="d-flex vh-100">

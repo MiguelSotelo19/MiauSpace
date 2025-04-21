@@ -87,7 +87,7 @@ export const Registro = () => {
                 especie: 'Sin especificar',
                 edad: 1,
                 raza: 'Sin especificar',
-                sexo: 'Sin especificar',
+                sexo: 'Prefiero no decirlo',
                 ubicacion: 'Sin especificar',
                 preferencias: 'Sin especificar',
             };
