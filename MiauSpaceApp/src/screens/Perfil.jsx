@@ -149,7 +149,6 @@ export const Perfil = () => {
             const respuesta = await axiosInstance.get(urlUser);
             const usuarioEncontrado = respuesta.data.find(u => u.nombre_usuario === paramUsername);
             if (usuarioEncontrado) {
-                console.log(usuarioEncontrado)
                 setUser(usuarioEncontrado);
                 setIdPerfil(usuarioEncontrado.id);
                 return usuarioEncontrado.id;
@@ -204,7 +203,6 @@ export const Perfil = () => {
             setPassword(element.password);
             setId(element.id);
             setBtnEditar(true);
-            console.log(btnEditar);
         }
     };
 
@@ -396,7 +394,7 @@ export const Perfil = () => {
                     triggerReload();
                 }
             }).catch(function (error) {
-                console.log(error);
+                console.error(error);
                 Swal.fire("Error al actualizar contraseña", "No se pudo actualizar la contraseña", "error");
             });
 
@@ -455,8 +453,6 @@ export const Perfil = () => {
 
         const urlActualizar = `${urlUser}${id}/`;
 
-        console.log(parametros)
-        console.log(urlActualizar)
         await axiosInstance({
             method: 'PATCH',
             url: urlActualizar,
@@ -471,7 +467,7 @@ export const Perfil = () => {
             limpiar();
             triggerReload();
         }).catch(function (error) {
-            console.log(error);
+            console.error(error);
             Swal.fire("Ha ocurrido un error", "Algo ha ocurrido", "error");
         });
     };

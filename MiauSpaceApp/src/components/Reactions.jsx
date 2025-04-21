@@ -50,7 +50,6 @@ export const Reactions = ({ mascotas, postId, modalAbierto }) => {
         try{
             const respuesta = await axiosInstance.get(urlReacciones);
             const reac = respuesta.data.filter(reac => reac.post == postId);
-            console.log("Reacciones: ",reac)
             setReacciones(reac);
             setAllReactions(reac);
         } catch (err) {
