@@ -779,51 +779,52 @@ export const Perfil = () => {
                             </button>
                         </div>
 
-                        <div className="modal-body" style={{ maxHeight: "40vh", overflow: "hidden" }}>                            <div className="container">
-                            <div className="row mb-3">
-                                <div className="col-md-6">
-                                    <div className="mb-3">
-                                        <label>Sexo:</label>
-                                        <select className="form-select" value={sexo} onChange={(e) => setSexo(e.target.value)}>
-                                            <option value="">Selecciona tu sexo</option>
-                                            <option value="Macho">Macho</option>
-                                            <option value="Hembra">Hembra</option>
-                                            <option value="Prefiero no decirlo">Prefiero no decirlo</option>
-                                        </select>
+                        <div className="modal-body" style={{ maxHeight: "40vh", overflow: "hidden" }}>
+                            <div className="container">
+                                <div className="row mb-3">
+                                    <div className="col-md-6">
+                                        <div className="mb-3">
+                                            <label>Sexo:</label>
+                                            <select className="form-select" value={sexo} onChange={(e) => setSexo(e.target.value)}>
+                                                <option value="">Selecciona tu sexo</option>
+                                                <option value="Macho">Macho</option>
+                                                <option value="Hembra">Hembra</option>
+                                                <option value="Prefiero no decirlo">Prefiero no decirlo</option>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="col-md-6">
-                                    <div className="mb-3">
-                                        <label>Preferencia:</label>
-                                        <input type="text" className="form-control" value={preferencias} onChange={(e) => setPreferencias(e.target.value)} />
+                                    <div className="col-md-6">
+                                        <div className="mb-3">
+                                            <label>Preferencia:</label>
+                                            <input type="text" className="form-control" value={preferencias} onChange={(e) => setPreferencias(e.target.value)} />
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="col-md-6">
-                                    <div className="mb-3">
-                                        <label>Raza:</label>
-                                        <input type="text" className="form-control" value={raza} onChange={(e) => setRaza(e.target.value)} />
+                                    <div className="col-md-6">
+                                        <div className="mb-3">
+                                            <label>Raza:</label>
+                                            <input type="text" className="form-control" value={raza} onChange={(e) => setRaza(e.target.value)} />
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="col-md-6">
-                                    <div className="mb-3">
-                                        <label>Ubicación:</label>
-                                        <input type="text" className="form-control" value={ubicacion} onChange={(e) => setUbicacion(e.target.value)} />
+                                    <div className="col-md-6">
+                                        <div className="mb-3">
+                                            <label>Ubicación:</label>
+                                            <input type="text" className="form-control" value={ubicacion} onChange={(e) => setUbicacion(e.target.value)} />
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="col-md-6">
-                                    <div className="mb-3">
-                                        <label>Edad:</label>
-                                        <input type="number" className="form-control" value={edad} onChange={(e) => setEdad(e.target.value)} />
+                                    <div className="col-md-6">
+                                        <div className="mb-3">
+                                            <label>Edad:</label>
+                                            <input type="number" className="form-control" value={edad} onChange={(e) => setEdad(e.target.value)} />
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="col-md-6">
-                                    <div className="mb-3">
-                                        <label>Fecha de nacimiento:</label>
-                                        <input type="date" className="form-control" value={fechaNac} onChange={(e) => setFechaNac(e.target.value)} />
+                                    <div className="col-md-6">
+                                        <div className="mb-3">
+                                            <label>Fecha de nacimiento:</label>
+                                            <input type="date" className="form-control" value={fechaNac} onChange={(e) => setFechaNac(e.target.value)} />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-light" onClick={() => setStep(3)}>Cambiar contraseña</button>
@@ -906,88 +907,96 @@ export const Perfil = () => {
 
 
 
-            <div
-                className={`modal fade ${modalAmigos ? "show d-block" : ""}`}
-                id="modalAmigos"
-                tabIndex="-1"
-                role="dialog"
-                aria-labelledby="modalAmigosLabel"
-                aria-hidden="true"
-                style={{ width: "90%" }}
-            >
-                <div className="modal-dialog modal-md modal-dialog-centered" role="document">
-                    <div className="modal-content">
-                    <div className="modal-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <h5 className="modal-title" id="modalAmigosLabel">
-                                {nomUsuario === loggeado ? 'Tus amigos' : `Amigos de ${nomUsuario}`}
-                            </h5>
-                            <button type="button" className="close" aria-label="Close" onClick={closeModalAmigos}
-                                style={{ backgroundColor: "transparent", border: "none", fontSize: "1.25rem", color: "black", cursor: "pointer" }}
-                            >
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div className="modal-body">
-                            <div className="container d-flex flex-column">
-                                <div className="d-flex flex-column w-100 justify-content-center">
-                                    {amigos.map((amigo) => (
-                                        <div
-                                            key={amigo.id}
-                                            className="d-flex m-2 justify-content-between align-items-center border-bottom"
-                                        >
-                                            <a
-                                                href={`/MiauSpace/Perfil/${amigo.nombre}`}
-                                                className="text-decoration-none"
-                                                onClick={() => {
-                                                    closeModalAmigos();
-                                                    limpiar();
-                                                }}
-                                            >
-                                                <div className="d-flex align-items-center">
-                                                    <img
-                                                        src={amigo.foto_perfil}
-                                                        alt="Perfil"
-                                                        className="rounded-circle perfil-img ms-1"
-                                                        style={{ width: "40px", height: "40px", objectFit: "cover" }}
-                                                    />
-                                                    <p className="mb-0 fw-bold nombre-usuario ms-2">{amigo.nombre}</p>
-                                                </div>
-                                            </a>
+            <div className={`modal fade ${modalAmigos ? "show d-block" : ""}`}
+    id="modalAmigos"
+    tabIndex="-1"
+    role="dialog"
+    aria-labelledby="modalAmigosLabel"
+    aria-hidden="true"
+    style={{ width: "90%" }}
+>
+    <div className="modal-dialog modal-md modal-dialog-centered" role="document">
+        <div className="modal-content">
+            <div className="modal-header d-flex justify-content-between align-items-center">
+                <h5 className="modal-title" id="modalAmigosLabel">
+                    {nomUsuario === loggeado ? 'Tus amigos' : `Amigos de ${nomUsuario}`}
+                </h5>
+                <button
+                    type="button"
+                    className="close"
+                    aria-label="Close"
+                    onClick={closeModalAmigos}
+                    style={{ backgroundColor: "transparent", border: "none", fontSize: "1.25rem", color: "black", cursor: "pointer" }}
+                >
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
 
-                                            {amigo.nombre === loggeado ? null : esAmigo(amigo.id) ? (
-                                                <span className="text-gray fs-6">Amigo</span>
-                                            ) : solicPendiente.some(
-                                                (solicitud) =>
-                                                    solicitud.mascota_receptora_id === amigo.id
-                                            ) ? (
-                                                <span className="text-gray  fs-6">Solicitud enviada</span>
-                                            ) : solicPendientePropia.some(
-                                                (solicitud) =>
-                                                    solicitud.mascota_solicitante_id === amigo.id
-                                            ) ? (
-                                                <span className="text-gray fs-6">Solicitud pendiente</span>
-                                            ) : (
-                                                <button
-                                                    className="btn"
-                                                    style={{ backgroundColor: "#7B1FA2", color: "white" }}
-                                                    onClick={() => enviarSolicitud(user.id, amigo.id)}
-                                                >
-                                                    Enviar solicitud
-                                                </button>
-                                            )}
-                                        </div>
-                                    ))}
-                                </div>
+            {/* Sección con scroll */}
+            <div style={{ maxHeight: "45vh", overflowY: "auto", padding: "0 1rem" }}>
+                <div className="d-flex flex-column w-100 justify-content-center pt-2">
+                    {amigos.length > 0 ? (
+                        amigos.map((amigo) => (
+                            <div
+                                key={amigo.id}
+                                className="d-flex my-2 justify-content-between align-items-center border-bottom pb-2"
+                            >
+                                <a
+                                    href={`/MiauSpace/Perfil/${amigo.nombre}`}
+                                    className="text-decoration-none"
+                                    onClick={() => {
+                                        closeModalAmigos();
+                                        limpiar();
+                                    }}
+                                >
+                                    <div className="d-flex align-items-center">
+                                        <img
+                                            src={amigo.foto_perfil}
+                                            alt="Perfil"
+                                            className="rounded-circle perfil-img ms-1"
+                                            style={{ width: "40px", height: "40px", objectFit: "cover" }}
+                                        />
+                                        <p className="mb-0 fw-bold nombre-usuario ms-2">{amigo.nombre}</p>
+                                    </div>
+                                </a>
+
+                                {amigo.nombre === loggeado ? null : esAmigo(amigo.id) ? (
+                                    <span className="text-gray fs-6">Amigo</span>
+                                ) : solicPendiente.some(
+                                    (solicitud) => solicitud.mascota_receptora_id === amigo.id
+                                ) ? (
+                                    <span className="text-gray fs-6">Solicitud enviada</span>
+                                ) : solicPendientePropia.some(
+                                    (solicitud) => solicitud.mascota_solicitante_id === amigo.id
+                                ) ? (
+                                    <span className="text-gray fs-6">Solicitud pendiente</span>
+                                ) : (
+                                    <button
+                                        className="btn"
+                                        style={{ backgroundColor: "#7B1FA2", color: "white" }}
+                                        onClick={() => enviarSolicitud(user.id, amigo.id)}
+                                    >
+                                        Enviar solicitud
+                                    </button>
+                                )}
                             </div>
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" onClick={closeModalAmigos}>
-                                Cerrar
-                            </button>
-                        </div>
-                    </div>
+                        ))
+                    ) : (
+                        <p className="text-center text-muted mt-3">No hay amigos a mostrar</p>
+                    )}
                 </div>
             </div>
+
+            {/* Footer fuera del scroll */}
+            <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={closeModalAmigos}>
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
             {/* Backdrop oscuro */}
             {modalAmigos && <div className="modal-backdrop fade show"></div>}
         </>
